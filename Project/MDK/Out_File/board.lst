@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.0.0   BOARD                                                             06/15/2020 23:22:16 PAGE 1   
+C51 COMPILER V9.60.0.0   BOARD                                                             06/19/2020 17:42:54 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE BOARD
@@ -62,7 +62,7 @@ line level    source
   47   1        
   48   1        if(IRCBAND)
   49   1          temp_count = 36000000UL + ((IRTRIM - IRC_22M) * 0x128E0UL); //频率的偏差,计算出大概数据
-C51 COMPILER V9.60.0.0   BOARD                                                             06/15/2020 23:22:16 PAGE 2   
+C51 COMPILER V9.60.0.0   BOARD                                                             06/19/2020 17:42:54 PAGE 2   
 
   50   1        else
   51   1          temp_count = 24000000UL + ((IRTRIM - IRC_24M) * 0xBB80UL);  //频率的偏差,计算出大概数据
@@ -126,7 +126,7 @@ line level    source
  109   1        
  110   1        P0M0 = 0x00;
  111   1        P0M1 = 0x00;
-C51 COMPILER V9.60.0.0   BOARD                                                             06/15/2020 23:22:16 PAGE 3   
+C51 COMPILER V9.60.0.0   BOARD                                                             06/19/2020 17:42:54 PAGE 3   
 
  112   1        P1M0 = 0x00;
  113   1        P1M1 = 0x00;
@@ -190,7 +190,7 @@ MODULE INFORMATION:   STATIC OVERLAYABLE
    BIT SIZE         =   ----    ----
    EDATA SIZE       =   ----    ----
    HDATA SIZE       =   ----    ----
-C51 COMPILER V9.60.0.0   BOARD                                                             06/15/2020 23:22:16 PAGE 4   
+C51 COMPILER V9.60.0.0   BOARD                                                             06/19/2020 17:42:54 PAGE 4   
 
    XDATA CONST SIZE =   ----    ----
    FAR CONST SIZE   =   ----    ----

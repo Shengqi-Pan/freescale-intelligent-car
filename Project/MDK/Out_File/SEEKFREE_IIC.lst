@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.0.0   SEEKFREE_IIC                                                      06/15/2020 23:22:19 PAGE 1   
+C51 COMPILER V9.60.0.0   SEEKFREE_IIC                                                      06/19/2020 17:42:57 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE SEEKFREE_IIC
@@ -62,7 +62,7 @@ line level    source
   49          //--------------------------------------------------------------------------------------------------------
              ------------
   50          //  @brief      模拟IIC初始化
-C51 COMPILER V9.60.0.0   SEEKFREE_IIC                                                      06/15/2020 23:22:19 PAGE 2   
+C51 COMPILER V9.60.0.0   SEEKFREE_IIC                                                      06/19/2020 17:42:57 PAGE 2   
 
   51          //  @return     void            
   52          //  @since      v1.0
@@ -126,7 +126,7 @@ line level    source
  107   1          SCL0();
  108   1          simiic_delay();
  109   1      }
-C51 COMPILER V9.60.0.0   SEEKFREE_IIC                                                      06/15/2020 23:22:19 PAGE 3   
+C51 COMPILER V9.60.0.0   SEEKFREE_IIC                                                      06/19/2020 17:42:57 PAGE 3   
 
  110          
  111          
@@ -190,7 +190,7 @@ line level    source
  169   2              simiic_delay();
  170   2              SCL1();         //置时钟线为高，使数据线上数据有效
  171   2              simiic_delay();
-C51 COMPILER V9.60.0.0   SEEKFREE_IIC                                                      06/15/2020 23:22:19 PAGE 4   
+C51 COMPILER V9.60.0.0   SEEKFREE_IIC                                                      06/19/2020 17:42:57 PAGE 4   
 
  172   2              c<<=1;
  173   2              if(SDA) 
@@ -254,7 +254,7 @@ line level    source
  227   1        return dat;
  228   1      }
  229          
-C51 COMPILER V9.60.0.0   SEEKFREE_IIC                                                      06/15/2020 23:22:19 PAGE 5   
+C51 COMPILER V9.60.0.0   SEEKFREE_IIC                                                      06/19/2020 17:42:57 PAGE 5   
 
  230          //--------------------------------------------------------------------------------------------------------
              ------------

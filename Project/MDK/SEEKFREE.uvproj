@@ -662,6 +662,11 @@
           <GroupName>user_c</GroupName>
           <Files>
             <File>
+              <FileName>icm20602.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\CODE\icm20602.c</FilePath>
+            </File>
+            <File>
               <FileName>isr.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\USER\src\isr.c</FilePath>
@@ -685,6 +690,11 @@
               <FileName>isr.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\USER\inc\isr.h</FilePath>
+            </File>
+            <File>
+              <FileName>icm20602.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\CODE\icm20602.h</FilePath>
             </File>
           </Files>
         </Group>

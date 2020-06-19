@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.0.0   SEEKFREE_IPS114_SPI                                               06/15/2020 23:22:19 PAGE 1   
+C51 COMPILER V9.60.0.0   SEEKFREE_IPS114_SPI                                               06/19/2020 17:42:57 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE SEEKFREE_IPS114_SPI
@@ -62,7 +62,7 @@ line level    source
   47          //  @param      void        
   48          //  @return             
   49          //  @since      v1.0
-C51 COMPILER V9.60.0.0   SEEKFREE_IPS114_SPI                                               06/15/2020 23:22:19 PAGE 2   
+C51 COMPILER V9.60.0.0   SEEKFREE_IPS114_SPI                                               06/19/2020 17:42:57 PAGE 2   
 
   50          //  Sample usage:               
   51          //--------------------------------------------------------------------------------------------------------
@@ -126,7 +126,7 @@ line level    source
  102          void ips114_init(void)
  103          {
  104   1          spi_init(IPS114_SPIN_PIN, IPS114_SCL_PIN, IPS114_SDA_PIN, IPS114_SDA_IN_PIN, 0, MASTER, SPI_SYSclk_DIV
-C51 COMPILER V9.60.0.0   SEEKFREE_IPS114_SPI                                               06/15/2020 23:22:19 PAGE 3   
+C51 COMPILER V9.60.0.0   SEEKFREE_IPS114_SPI                                               06/19/2020 17:42:57 PAGE 3   
 
              -_4);
  105   1      
@@ -190,7 +190,7 @@ line level    source
  163   1          ips114_writeData(0x2B);
  164   1          ips114_writeData(0x3F);
  165   1          ips114_writeData(0x54);
-C51 COMPILER V9.60.0.0   SEEKFREE_IPS114_SPI                                               06/15/2020 23:22:19 PAGE 4   
+C51 COMPILER V9.60.0.0   SEEKFREE_IPS114_SPI                                               06/19/2020 17:42:57 PAGE 4   
 
  166   1          ips114_writeData(0x4C);
  167   1          ips114_writeData(0x18);
@@ -254,7 +254,7 @@ line level    source
                   ips114_writedata_16bit(x1+40);
                   ips114_writedata_16bit(x2+40);
                   ips114_writeIndex(0x2b);//行地址设置
-C51 COMPILER V9.60.0.0   SEEKFREE_IPS114_SPI                                               06/15/2020 23:22:19 PAGE 5   
+C51 COMPILER V9.60.0.0   SEEKFREE_IPS114_SPI                                               06/19/2020 17:42:57 PAGE 5   
 
                   ips114_writedata_16bit(y1+53);
                   ips114_writedata_16bit(y2+53);
@@ -318,7 +318,7 @@ line level    source
              ------------
  283          //  @brief      液晶显示字符
  284          //  @param      x               坐标x方向的起点 参数范围 0 -（IPS114_X_MAX-1）
-C51 COMPILER V9.60.0.0   SEEKFREE_IPS114_SPI                                               06/15/2020 23:22:19 PAGE 6   
+C51 COMPILER V9.60.0.0   SEEKFREE_IPS114_SPI                                               06/19/2020 17:42:57 PAGE 6   
 
  285          //  @param      y               坐标y方向的起点 参数范围 0 -（IPS114_Y_MAX/16-1）
  286          //  @param      dat             需要显示的字符
@@ -382,7 +382,7 @@ line level    source
  340          //  Sample usage:               ips114_showint8(0,0,x);//x为int8类型
  341          //--------------------------------------------------------------------------------------------------------
              ------------
-C51 COMPILER V9.60.0.0   SEEKFREE_IPS114_SPI                                               06/15/2020 23:22:19 PAGE 7   
+C51 COMPILER V9.60.0.0   SEEKFREE_IPS114_SPI                                               06/19/2020 17:42:57 PAGE 7   
 
  342          void ips114_showint8(uint16 x,uint16 y,int8 dat)
  343          {
@@ -446,7 +446,7 @@ line level    source
  398          //--------------------------------------------------------------------------------------------------------
              ------------
  399          void ips114_showint16(uint16 x,uint16 y,int16 dat)
-C51 COMPILER V9.60.0.0   SEEKFREE_IPS114_SPI                                               06/15/2020 23:22:19 PAGE 8   
+C51 COMPILER V9.60.0.0   SEEKFREE_IPS114_SPI                                               06/19/2020 17:42:57 PAGE 8   
 
  400          {
  401   1        uint8 a[5];
@@ -510,7 +510,7 @@ line level    source
  456          //  @param      dat             需要显示的变量，数据类型uint32
  457          //  @param      num             需要显示的位数 最高10位  不包含正负号
  458          //  @return     void
-C51 COMPILER V9.60.0.0   SEEKFREE_IPS114_SPI                                               06/15/2020 23:22:19 PAGE 9   
+C51 COMPILER V9.60.0.0   SEEKFREE_IPS114_SPI                                               06/19/2020 17:42:57 PAGE 9   
 
  459          //  @since      v1.0
  460          //  Sample usage:               ips114_showuint32(0,0,x,3);//x可以为int32 uint16 int16 uint8 int8类型
@@ -574,7 +574,7 @@ line level    source
  515   1          {
  516   2              length = zf_sprintf( &buff[1],"%f",dat);
  517   2              length++;
-C51 COMPILER V9.60.0.0   SEEKFREE_IPS114_SPI                                               06/15/2020 23:22:19 PAGE 10  
+C51 COMPILER V9.60.0.0   SEEKFREE_IPS114_SPI                                               06/19/2020 17:42:57 PAGE 10  
 
  518   2          }
  519   1          point = length - 7;         //计算小数点位置

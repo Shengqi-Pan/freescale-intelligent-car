@@ -1,0 +1,62 @@
+C51 COMPILER V9.60.0.0   ICM20602                                                          06/19/2020 19:52:12 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE ICM20602
+OBJECT MODULE PLACED IN .\Out_File\icm20602.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE ..\CODE\icm20602.c LARGE OMF2 OPTIMIZE(8,SPEED) BROWSE INCDIR(..\..\Libr
+                    -aries\libraries;..\..\Libraries\seekfree_libraries;..\..\Libraries\seekfree_peripheral;..\USER\inc;..\USER\src;..\CODE) 
+                    -DEBUG PRINT(.\Out_File\icm20602.lst) TABS(2) OBJECT(.\Out_File\icm20602.obj)
+
+line level    source
+
+   1          /*******************************************
+   2           * @note        基于逐飞ICM20602的进一步封装
+   3           * 
+   4           * 
+   5           * 
+   6           * 
+   7           * 
+   8           *******************************************/
+   9          
+  10          #include"icm20602.h"
+  11          
+  12          /*
+  13           * 从icm读取角度值
+  14           */
+  15          float get_angle_from_icm()
+  16          {
+  17   1          static float degree = 0;
+  18   1          float grav_z, grav_x;
+  19   1          get_icm20602_accdata_simspi();  // 得到加速度计数据16位，如icm_acc_x
+  20   1          grav_x = (icm_acc_x - ACC_X_BIAS) * 1.0 / ACC_X_FACTOR;
+  21   1          grav_z = (icm_acc_z - ACC_Z_BIAS) * 1.0 / ACC_Z_FACTOR;
+  22   1          degree = atan2(grav_x, grav_z) * 57.3;
+  23   1          return degree;
+  24   1          // degree = (39 * degree + atan2(icm_acc_x, icm_acc_z) * 57.3) / 40;
+  25   1      }
+  26          
+  27          /*
+  28           * 从icm读取角速度值
+  29           */
+  30          float get_omega_from_icm()
+  31          {
+  32   1          return 0;
+  33   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    146    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =      4       8
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

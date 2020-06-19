@@ -24,6 +24,7 @@
 ".\Out_File\SEEKFREE_WIRELESS.obj",
 ".\Out_File\SEEKFREE_VIRSCO.obj",
 ".\Out_File\SEEKFREE_PRINTF.obj",
+".\Out_File\icm20602.obj",
 ".\Out_File\isr.obj",
 ".\Out_File\main.obj" 
 TO ".\Out_File\SEEKFREE" 

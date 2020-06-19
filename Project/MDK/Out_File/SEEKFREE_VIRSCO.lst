@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.0.0   SEEKFREE_VIRSCO                                                   06/15/2020 23:22:20 PAGE 1   
+C51 COMPILER V9.60.0.0   SEEKFREE_VIRSCO                                                   06/19/2020 17:42:58 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE SEEKFREE_VIRSCO
@@ -62,7 +62,7 @@ line level    source
   46   3                  else
   47   3                      CRC_Temp = CRC_Temp >> 1;
   48   3              }
-C51 COMPILER V9.60.0.0   SEEKFREE_VIRSCO                                                   06/15/2020 23:22:20 PAGE 2   
+C51 COMPILER V9.60.0.0   SEEKFREE_VIRSCO                                                   06/19/2020 17:42:58 PAGE 2   
 
   49   2          }
   50   1          return(CRC_Temp);

@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.0.0   ZF_GPIO                                                           06/15/2020 23:22:17 PAGE 1   
+C51 COMPILER V9.60.0.0   ZF_GPIO                                                           06/19/2020 17:42:55 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE ZF_GPIO
@@ -62,7 +62,7 @@ line level    source
   47          //--------------------------------------------------------------------------------------------------------
              ------------
   48          //  @brief      GPIO设置引脚模式
-C51 COMPILER V9.60.0.0   ZF_GPIO                                                           06/15/2020 23:22:17 PAGE 2   
+C51 COMPILER V9.60.0.0   ZF_GPIO                                                           06/19/2020 17:42:55 PAGE 2   
 
   49          //  @param      pin         选择引脚（P0_0-P5_4）
   50          //  @param      mode        引脚模式 GPIO:准双向口, GPO_PP:推挽输出, GPI_IMPEDANCE:高阻输入, GPI_OD:开漏输
@@ -126,7 +126,7 @@ line level    source
  106   3          }
  107   2          
  108   2          if(0x30 == (pin&0xF0))  //P3
-C51 COMPILER V9.60.0.0   ZF_GPIO                                                           06/15/2020 23:22:17 PAGE 3   
+C51 COMPILER V9.60.0.0   ZF_GPIO                                                           06/19/2020 17:42:55 PAGE 3   
 
  109   2          {
  110   3            P3M1 &= ~(1<<(pin&0xF));
@@ -190,7 +190,7 @@ line level    source
  168   3            P1M0 |= (1<<(pin&0xF));
  169   3          }
  170   2          if(0x20 == (pin&0xF0))  //P2
-C51 COMPILER V9.60.0.0   ZF_GPIO                                                           06/15/2020 23:22:17 PAGE 4   
+C51 COMPILER V9.60.0.0   ZF_GPIO                                                           06/19/2020 17:42:55 PAGE 4   
 
  171   2          {
  172   3            P2M1 |= (1<<(pin&0xF));
