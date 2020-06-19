@@ -45,18 +45,20 @@ void send_icm(void)
 
 void main()
 {
+    float degree = 0;
+    Omega omega = {0, 0};
+		
     DisableGlobalIRQ(); //  关闭总中断
     board_init(); //  初始化寄存器
     EnableGlobalIRQ(); //  开启总中断
     icm20602_init_simspi(); // icm20602初始化, 引脚查看宏定义
     uart_init(UART_1, UART1_RX_P30, UART1_TX_P31, 115200, TIM_1);  // 串口1初始化，波特率115200，发送引脚TX P31 接收引脚RX P30
-    
+
     while(1)
     {
-        // get_icm20602_accdata_simspi();  // 得到加速度计数据16位，如icm_acc_x
-        // get_icm20602_gyro_simspi();  // 得到陀螺仪数据16位，如icm_gyro_x
         // send_icm();                   // 发送六个数据，顺序见子函数
-        get_angle_from_icm();
+        degree = get_angle_from_icm();
+        omega = get_omega_from_icm();
         delay_ms(100);
     }
 }

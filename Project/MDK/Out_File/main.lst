@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.0.0   MAIN                                                              06/19/2020 19:53:02 PAGE 1   
+C51 COMPILER V9.60.0.0   MAIN                                                              06/19/2020 21:34:15 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE MAIN
@@ -58,31 +58,33 @@ line level    source
   45          
   46          void main()
   47          {
-  48   1          DisableGlobalIRQ(); //  关闭总中断
-  49   1          board_init(); //  初始化寄存器
-  50   1          EnableGlobalIRQ(); //  开启总中断
-  51   1          icm20602_init_simspi(); // icm20602初始化, 引脚查看宏定义
-C51 COMPILER V9.60.0.0   MAIN                                                              06/19/2020 19:53:02 PAGE 2   
+  48   1          float degree = 0;
+  49   1          Omega omega = {0, 0};
+  50   1          
+  51   1          DisableGlobalIRQ(); //  关闭总中断
+C51 COMPILER V9.60.0.0   MAIN                                                              06/19/2020 21:34:15 PAGE 2   
 
-  52   1          uart_init(UART_1, UART1_RX_P30, UART1_TX_P31, 115200, TIM_1);  // 串口1初始化，波特率115200，发送引脚T
+  52   1          board_init(); //  初始化寄存器
+  53   1          EnableGlobalIRQ(); //  开启总中断
+  54   1          icm20602_init_simspi(); // icm20602初始化, 引脚查看宏定义
+  55   1          uart_init(UART_1, UART1_RX_P30, UART1_TX_P31, 115200, TIM_1);  // 串口1初始化，波特率115200，发送引脚T
              -X P31 接收引脚RX P30
-  53   1          
-  54   1          while(1)
-  55   1          {
-  56   2              // get_icm20602_accdata_simspi();  // 得到加速度计数据16位，如icm_acc_x
-  57   2              // get_icm20602_gyro_simspi();  // 得到陀螺仪数据16位，如icm_gyro_x
-  58   2              // send_icm();                   // 发送六个数据，顺序见子函数
-  59   2              get_angle_from_icm();
-  60   2              delay_ms(100);
-  61   2          }
-  62   1      }
-  63          
+  56   1      
+  57   1          while(1)
+  58   1          {
+  59   2              // send_icm();                   // 发送六个数据，顺序见子函数
+  60   2              degree = get_angle_from_icm();
+  61   2              omega = get_omega_from_icm();
+  62   2              delay_ms(100);
+  63   2          }
+  64   1      }
+  65          
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =     82    ----
-   CONSTANT SIZE    =   ----    ----
-   XDATA SIZE       =   ----       1
+   CODE SIZE        =    133    ----
+   CONSTANT SIZE    =      8    ----
+   XDATA SIZE       =   ----      13
    PDATA SIZE       =   ----    ----
    DATA SIZE        =   ----    ----
    IDATA SIZE       =   ----    ----
