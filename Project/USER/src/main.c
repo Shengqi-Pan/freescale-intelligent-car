@@ -19,7 +19,8 @@
 
 #include "headfile.h"
 #include "icm20602.h"
-
+#include "car_info.h"
+#include "kalman.h"
 
 //board.h文件中FOSC的值设置为0,则程序自动识别系统频率
 
@@ -29,25 +30,23 @@
 /*在board_init中,已经将P54引脚设置为复位，
 如果需要使用P54引脚,可以在board.c文件中的board_init()函数中删除SET_P54_RESRT即可*/
 
+// 保存车辆当前的信息
+extern CarInfo car_info;
+
 void send_icm(void)
 {
     uint8 high = icm_acc_x >> 8;
     uint8 low = (uint8)icm_acc_x;
     uart_putchar(UART_1, high);
     uart_putchar(UART_1, low);
-    // uart_putchar(UART_1, icm_acc_x);
-    // uart_putchar(UART_1, icm_acc_y);
-    // uart_putchar(UART_1, icm_acc_z);
-    // uart_putchar(UART_1, icm_gyro_x);
-    // uart_putchar(UART_1, icm_gyro_y);
-    // uart_putchar(UART_1, icm_gyro_z);
 }
 
 void main()
 {
-    float degree = 0;
+    // 保存读取来的信息
+    float angle = 0;
     Omega omega = {0, 0};
-		
+
     DisableGlobalIRQ(); //  关闭总中断
     board_init(); //  初始化寄存器
     EnableGlobalIRQ(); //  开启总中断
@@ -57,9 +56,9 @@ void main()
     while(1)
     {
         // send_icm();                   // 发送六个数据，顺序见子函数
-        degree = get_angle_from_icm();
+        angle = get_angle_from_icm();
         omega = get_omega_from_icm();
+        kalman(angle, omega);
         delay_ms(100);
     }
 }
-
