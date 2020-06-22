@@ -1,0 +1,1 @@
+"..\CODE\car_info.c" LARGE OMF2 OPTIMIZE (8,SPEED) BROWSE INCDIR(..\..\Libraries\libraries;..\..\Libraries\seekfree_libraries;..\..\Libraries\seekfree_peripheral;..\USER\inc;..\USER\src;..\CODE) DEBUG PRINT(.\Out_File\car_info.lst) TABS (2) OBJECT(.\Out_File\car_info.obj)

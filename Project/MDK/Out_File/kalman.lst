@@ -1,0 +1,102 @@
+C51 COMPILER V9.60.0.0   KALMAN                                                            06/22/2020 20:25:31 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE KALMAN
+OBJECT MODULE PLACED IN .\Out_File\kalman.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE ..\CODE\kalman.c LARGE OMF2 OPTIMIZE(8,SPEED) BROWSE INCDIR(..\..\Librar
+                    -ies\libraries;..\..\Libraries\seekfree_libraries;..\..\Libraries\seekfree_peripheral;..\USER\inc;..\USER\src;..\CODE) DE
+                    -BUG PRINT(.\Out_File\kalman.lst) TABS(2) OBJECT(.\Out_File\kalman.obj)
+
+line level    source
+
+   1          /*******************************************
+   2           * @file            kalman
+   3           * @note            对icm20602读到的角度和角速度信息进行卡尔曼滤波
+   4           * @author          psq
+   5           * @software        MDK
+   6           * @target core     STC8H8K64S4
+   7           *******************************************/
+   8          
+   9          #include"kalman.h"
+  10          
+  11          /***************************
+  12           * @breif   对读取到的值进行卡尔曼滤波
+  13           * @param   读取到的角度值angle和角速度值omega
+  14           * @return  车子的倾角
+  15           * @note    
+  16           ***************************/
+  17          void kalman(float angle, Omega omega)
+  18          {
+  19   1          //rangle 80 dt 0.01
+  20   1          static float Q_angle = 0.001;     //2.26   0.001;
+  21   1          static float Q_gyro = 0.003;
+  22   1          static float R_angle = 80;  
+  23   1          //static float dt=0.0011;  //0.005
+  24   1          static float dt = 0.0015;   //绿色用0.00135
+  25   1          static float P[2][2] = {{1, 0}, {0, 1}};
+  26   1          static float Pdot[4] = {0, 0, 0, 0};
+  27   1          static const char C_0 = 1;
+  28   1          static float q_bias = 0;
+  29   1          static float angle_err = 0;
+  30   1          static float PCt_0, PCt_1, E, K_0, K_1, t_0, t_1;
+  31   1          static float R;
+  32   1          
+  33   1          // if(begin_cnt < 2000) // || (Page!=5 && (flag_heng_ref==0 || flag_shu_ref==0)))
+  34   1          // {
+  35   1          //     R_angle = 0.5;
+  36   1          // }
+  37   1          // else
+  38   1          //   R_angle = 80;
+  39   1          // R = R_angle;
+  40   1          R = R_angle;
+  41   1          
+  42   1          // 需要返回的车身角
+  43   1          car_info.angle += (omega.y - q_bias) * dt;                                                   
+  44   1          Pdot[0] = Q_angle - P[0][1] - P[1][0];
+  45   1          Pdot[1] = -P[1][1];
+  46   1          Pdot[2] = -P[1][1];
+  47   1          Pdot[3] = Q_gyro;
+  48   1          
+  49   1          P[0][0] += Pdot[0] * dt; 
+  50   1          P[0][1] += Pdot[1] * dt;
+  51   1          P[1][0] += Pdot[2] * dt;
+  52   1          P[1][1] += Pdot[3] * dt;
+  53   1          angle_err = angle - car_info.angle;
+C51 COMPILER V9.60.0.0   KALMAN                                                            06/22/2020 20:25:31 PAGE 2   
+
+  54   1          PCt_0 = C_0 * P[0][0];
+  55   1          PCt_1 = C_0 * P[1][0];  
+  56   1          E = R_angle + C_0 * PCt_0;
+  57   1          
+  58   1          K_0 = PCt_0 / E;
+  59   1          K_1 = PCt_1 / E;  
+  60   1          t_0 = PCt_0;
+  61   1          t_1 = C_0 * P[0][1];
+  62   1          P[0][0] -= K_0 * t_0;
+  63   1          P[0][1] -= K_0 * t_1;
+  64   1          P[1][0] -= K_1 * t_0;
+  65   1          P[1][1] -= K_1 * t_1;
+  66   1          car_info.angle += K_0 * angle_err; 
+  67   1          q_bias += K_1 * angle_err;
+  68   1      
+  69   1          // 需要返回的车身角速度
+  70   1          car_info.omega.y = omega.y - q_bias;  
+  71   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   1272    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =     89      12
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
