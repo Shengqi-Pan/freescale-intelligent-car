@@ -11,6 +11,10 @@ void motor_init(void)
 	pwm_init(PWM4P_P26, 10000, 0);
 }
 
+/*
+使用前给Angle_Control_P, Angle_Control_D赋值
+*/
+
 float AngleControl(float Car_Angle, float Car_W, float Angle_Set)   //控直立
 {
 	float Motor_AngleControl, Angle_Control;
