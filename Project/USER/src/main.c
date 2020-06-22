@@ -51,5 +51,8 @@ void main()
         angle = get_angle_from_icm();
         omega = get_omega_from_icm();
         kalman(angle, omega);
+        data_conversion((int16)angle, (int16)omega.y, (int16)car_info.angle, car_info.omega.y, virtual_scope_data);
+        // data_conversion(50, 50, 50, 50, virtual_scope_data);
+        uart_putbuff(UART_1, virtual_scope_data, sizeof(virtual_scope_data));
     }
 }
