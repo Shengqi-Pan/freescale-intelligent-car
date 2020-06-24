@@ -21,6 +21,7 @@
 #include "icm20602.h"
 #include "car_info.h"
 #include "kalman.h"
+#include "motor.h"
 
 //board.h文件中FOSC的值设置为0,则程序自动识别系统频率
 
@@ -34,21 +35,20 @@
 extern CarInfo car_info;
 float angle = 0;
 Omega omega = {0, 0};
-uint8 tim4_flag = 0;
 float test[] = {0, 0, 0};
 
 void main()
 {
-    // 保存读取来的信息
-
     DisableGlobalIRQ(); //  关闭总中断
     board_init(); //  初始化寄存器
     pit_timer_ms(TIM_0, 1); // 使用TIMER作为周期中断，时间1ms一次
                             // 进入1000次中断 翻转一次LED，也就是1000MS 翻转一次LED
     icm20602_init_simspi(); // icm20602初始化, 引脚查看宏定义
     // uart_init(UART_1, UART1_RX_P30, UART1_TX_P31, 115200, TIM_1);  // 串口1初始化，波特率115200，发送引脚TX P31 接收引脚RX P30
-    seekfree_wireless_init();
+    seekfree_wireless_init();  // 无线串口初始化
+    motor_init();  // 电机初始化
     delay_ms(10);
+
     EnableGlobalIRQ(); //  开启总中断
 
     while(1)

@@ -122,10 +122,12 @@ void TM0_Isr() interrupt 1
 {
     extern float angle;
     extern Omega omega;
-    extern uint8 tim4_flag;
+    float stand_duty;
     angle = get_angle_from_icm();
     omega = get_omega_from_icm();
     kalman(angle, omega);
+    stand_duty = AngleControl(car_info.angle, car_info.omega.y, 23.85);
+    motor_output(stand_duty);
     // extern float test[];
     // omega = get_omega_from_icm();
     // test[0] += 0;

@@ -23,5 +23,7 @@
 
 #include "icm20602.h"
 #include "kalman.h"
+#include "motor.h"
+#include "car_info.h"
 
 #endif
