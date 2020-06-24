@@ -14,7 +14,7 @@ GyroBias gyro_bais = {0, 0, 0};
 /***************************
  * @breif   从icm读取角度值
  * @param   void
- * @return  车子的倾角
+ * @return  车子的倾角(°)
  * @note    
  ***************************/
 float get_angle_from_icm()
@@ -34,7 +34,7 @@ float get_angle_from_icm()
 /***************************
  * @breif   从icm读取角速度值
  * @param   void
- * @return  车子的角速度
+ * @return  车子的角速度(dps)
  * @note    
  ***************************/
 Omega get_omega_from_icm()

@@ -21,7 +21,7 @@ void kalman(float angle, Omega omega)
     static float Q_gyro = 0.003;
     static float R_angle = 80;  
     //static float dt=0.0011;  //0.005
-    static float dt = 0.0015;   //绿色用0.00135
+    static float dt = 0.001;   //绿色用0.00135
     static float P[2][2] = {{1, 0}, {0, 1}};
     static float Pdot[4] = {0, 0, 0, 0};
     static const char C_0 = 1;

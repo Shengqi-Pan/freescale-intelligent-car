@@ -120,7 +120,12 @@ void INT4_Isr() interrupt 16
 
 void TM0_Isr() interrupt 1
 {
-
+    extern float angle;
+    extern Omega omega;
+    extern uint8 tim4_flag;
+    angle = get_angle_from_icm();
+    // omega = get_omega_from_icm();
+    // kalman(angle, omega);
 }
 void TM1_Isr() interrupt 3
 {
@@ -139,9 +144,8 @@ void TM3_Isr() interrupt 19
 
 void TM4_Isr() interrupt 20
 {
-	TIM4_CLEAR_FLAG; //清除中断标志
-	ccd_collect();
-
+    // ccd_collect();
+    TIM4_CLEAR_FLAG; //清除中断标志
 }
 
 //void  INT0_Isr()  interrupt 0;
