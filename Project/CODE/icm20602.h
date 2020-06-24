@@ -13,13 +13,15 @@
 #include<math.h>
 
 //--------------加速度计---------------//
-#define ACC_X_BIAS 0
-#define ACC_Z_BIAS 0
-#define ACC_X_FACTOR -4110
-#define ACC_Z_FACTOR -4100
+#define ACC_X_BIAS -30
+#define ACC_Z_BIAS -30
+#define ACC_X_FACTOR 4072
+#define ACC_Z_FACTOR 4180
 //--------------陀螺仪---------------//
-#define GYRO_Y_FACTOR 1.99
-#define GYRO_Z_FACTOR 2.0583
+#define GYRO_Y_BIAS -14
+#define GYRO_Z_BIAS 25
+#define GYRO_Y_FACTOR 16.28
+#define GYRO_Z_FACTOR 16.22
 
 //--------------角速度结构体---------------//
 typedef struct
@@ -27,14 +29,6 @@ typedef struct
     float y;
     float z;
 }Omega;
-
-//--------------陀螺仪零漂结构体---------------//
-typedef struct
-{
-    int32 x;
-    int32 y;
-    int32 z;
-}GyroBias;
 
 float get_angle_from_icm();
 Omega get_omega_from_icm();

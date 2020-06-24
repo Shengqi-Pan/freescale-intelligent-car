@@ -124,8 +124,14 @@ void TM0_Isr() interrupt 1
     extern Omega omega;
     extern uint8 tim4_flag;
     angle = get_angle_from_icm();
+    omega = get_omega_from_icm();
+    kalman(angle, omega);
+    // extern float test[];
     // omega = get_omega_from_icm();
-    // kalman(angle, omega);
+    // test[0] += 0;
+    // test[1] += omega.y * 0.001;
+    // test[2] += omega.z * 0.001;
+
 }
 void TM1_Isr() interrupt 3
 {
