@@ -1,7 +1,7 @@
 #include "motor.h"
 
-float Angle_Control_P = 800;
-float Angle_Control_D = 5;
+float Angle_Control_P = 2000;
+float Angle_Control_D = 50;
 
 void motor_init(void)
 {
@@ -26,10 +26,10 @@ float AngleControl(float Car_Angle, float Car_W, float Angle_Set)   //控直立
 void motor_output(float Motor_AngleControl)
 {
     float motor_left, motor_right;
-    if (Motor_AngleControl > 2000)
-        Motor_AngleControl = 2000;
-    if(Motor_AngleControl < -2000)
-        Motor_AngleControl = -2000;
+    if (Motor_AngleControl > AMPLITUDE_LIMIT)
+        Motor_AngleControl = AMPLITUDE_LIMIT;
+    if(Motor_AngleControl < -AMPLITUDE_LIMIT)
+        Motor_AngleControl = -AMPLITUDE_LIMIT;
     motor_left = Motor_AngleControl;
     motor_right = Motor_AngleControl;
     if(motor_left > 10000)

@@ -2,7 +2,7 @@
 #define _MOTOR_H
 
 #include "zf_pwm.h"
-
+#define AMPLITUDE_LIMIT 2000
 extern float Angle_Control_P;
 extern float Angle_Control_D;
 
