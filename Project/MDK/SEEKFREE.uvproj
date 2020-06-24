@@ -149,7 +149,7 @@
             <RestoreSysVw>1</RestoreSysVw>
           </Target>
           <RunDebugAfterBuild>0</RunDebugAfterBuild>
-          <TargetSelection>10</TargetSelection>
+          <TargetSelection>12</TargetSelection>
           <SimDlls>
             <CpuDll></CpuDll>
             <CpuDllArguments></CpuDllArguments>
@@ -662,24 +662,9 @@
           <GroupName>user_c</GroupName>
           <Files>
             <File>
-              <FileName>kalman.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\CODE\kalman.c</FilePath>
-            </File>
-            <File>
-              <FileName>icm20602.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\CODE\icm20602.c</FilePath>
-            </File>
-            <File>
               <FileName>isr.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\USER\src\isr.c</FilePath>
-            </File>
-            <File>
-              <FileName>car_info.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\CODE\car_info.c</FilePath>
             </File>
             <File>
               <FileName>main.c</FileName>
@@ -690,6 +675,26 @@
               <FileName>version.txt</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\Libraries\version.txt</FilePath>
+            </File>
+            <File>
+              <FileName>car_info.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\CODE\car_info.c</FilePath>
+            </File>
+            <File>
+              <FileName>control.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\CODE\control.c</FilePath>
+            </File>
+            <File>
+              <FileName>icm20602.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\CODE\icm20602.c</FilePath>
+            </File>
+            <File>
+              <FileName>kalman.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\CODE\kalman.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -702,14 +707,19 @@
               <FilePath>..\USER\inc\isr.h</FilePath>
             </File>
             <File>
-              <FileName>icm20602.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\CODE\icm20602.h</FilePath>
-            </File>
-            <File>
               <FileName>car_info.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\CODE\car_info.h</FilePath>
+            </File>
+            <File>
+              <FileName>control.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\CODE\control.h</FilePath>
+            </File>
+            <File>
+              <FileName>icm20602.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\CODE\icm20602.h</FilePath>
             </File>
             <File>
               <FileName>kalman.h</FileName>

@@ -31,7 +31,7 @@
 #include "SEEKFREE_ABSOLUTE_ENCODER.h"
 #include "SEEKFREE_WIRELESS.h"
 #include "SEEKFREE_PRINTF.h"
-
+#include "SEEKFREE_VIRSCO.h"
 
 
 

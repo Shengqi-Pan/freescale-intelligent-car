@@ -13,8 +13,8 @@
 #include<math.h>
 
 //--------------加速度计---------------//
-#define ACC_X_BIAS 30
-#define ACC_Z_BIAS -80
+#define ACC_X_BIAS 0
+#define ACC_Z_BIAS 0
 #define ACC_X_FACTOR -4110
 #define ACC_Z_FACTOR -4100
 //--------------陀螺仪---------------//

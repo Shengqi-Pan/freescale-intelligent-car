@@ -33,14 +33,6 @@
 // 保存车辆当前的信息
 extern CarInfo car_info;
 
-void send_icm(void)
-{
-    uint8 high = icm_acc_x >> 8;
-    uint8 low = (uint8)icm_acc_x;
-    uart_putchar(UART_1, high);
-    uart_putchar(UART_1, low);
-}
-
 void main()
 {
     // 保存读取来的信息
@@ -55,10 +47,12 @@ void main()
 
     while(1)
     {
-        // send_icm();                   // 发送六个数据，顺序见子函数
+        delay_ms(100);
         angle = get_angle_from_icm();
         omega = get_omega_from_icm();
         kalman(angle, omega);
-        delay_ms(100);
+        data_conversion((int16)angle, (int16)omega.y, (int16)car_info.angle, car_info.omega.y, virtual_scope_data);
+        // data_conversion(50, 50, 50, 50, virtual_scope_data);
+        uart_putbuff(UART_1, virtual_scope_data, sizeof(virtual_scope_data));
     }
 }
