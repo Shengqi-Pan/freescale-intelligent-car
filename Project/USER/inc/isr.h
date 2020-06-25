@@ -20,7 +20,7 @@
 #ifndef __ISR_H_
 #define __ISR_H_
 
-
+#include "encoder.h"
 #include "icm20602.h"
 #include "kalman.h"
 #include "motor.h"

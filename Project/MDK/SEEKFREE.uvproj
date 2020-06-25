@@ -711,6 +711,11 @@
               <FileType>1</FileType>
               <FilePath>..\CODE\motor_encoder.c</FilePath>
             </File>
+            <File>
+              <FileName>encoder.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\CODE\encoder.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -755,6 +760,11 @@
               <FileName>motor_encoder.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\CODE\motor_encoder.h</FilePath>
+            </File>
+            <File>
+              <FileName>encoder.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\CODE\encoder.h</FilePath>
             </File>
           </Files>
         </Group>

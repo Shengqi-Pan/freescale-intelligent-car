@@ -23,20 +23,21 @@ float angle_control(float car_angle, float car_w, float angle_set)   //控直立
 
 /***************************
  * @breif   速度控制函数
- * @param   给定速度和当前速度
+ * @param   speed_real      左右轮转速真实值取平均
+ * @param   speed_set       给定速度
  * @return  控速附加角
  * @note    
  * @author  psq
  ***************************/
-float speed_control(int speed_real, int speed_set)
+float speed_control(int16 speed_real, int16 speed_set)
 {
-    int speed_deviation = speed_real - speed_set;
-    if(speed_deviation < -400)        return -14;
-    else if(speed_deviation < -200)   return -10;  // 直道很慢 
-    else if(speed_deviation < 0)      return -8;
-    else if(speed_deviation < 100)    return -2;
-    else if(speed_deviation < 200)    return 1;
-    else if(speed_deviation >= 300)   return 2;  // 若超3m  附加角+2度
+    int16 speed_deviation = speed_real - speed_set;
+    if(speed_deviation < -400)        return 6;
+    else if(speed_deviation < -200)   return 4;  // 直道很慢 
+    else if(speed_deviation < 0)      return 2;
+    else if(speed_deviation < 100)    return 0;
+    else if(speed_deviation < 200)    return -2;
+    else if(speed_deviation >= 300)   return -4;  // 若超3m  附加角+2度
     return 0;
 }
 
