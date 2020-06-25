@@ -54,16 +54,6 @@ void main()
 
     while(1)
     {   
-<<<<<<< HEAD
-        //induc_test();
-        //data_conversion((int16)angle, (int16)omega.y,
-                        //(int16)car_info.angle, (int16)car_info.omega.y,
-                        //virtual_scope_data);
-        /*data_conversion(ad_test[0], ad_test[1],
-                        //ad_test[2], ad_test[3],
-                        //virtual_scope_data);
-        uart_putbuff(WIRELESS_UART, virtual_scope_data, sizeof(virtual_scope_data));*/
-=======
         induc_test();
         // 上位机查看角度和角速度等
         // data_conversion((int16)angle, (int16)omega.y,
@@ -77,6 +67,5 @@ void main()
                         0, 0,
                         virtual_scope_data);
         uart_putbuff(WIRELESS_UART, virtual_scope_data, sizeof(virtual_scope_data));
->>>>>>> 768f369c872a6e8717c770867ccbd1fa2b084358
     }
 }

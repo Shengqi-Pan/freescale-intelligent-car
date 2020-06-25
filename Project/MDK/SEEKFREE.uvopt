@@ -1107,21 +1107,6 @@
     <File>
       <GroupNumber>5</GroupNumber>
       <FileNumber>70</FileNumber>
-<<<<<<< HEAD
-      <FileType>5</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>..\CODE\l_ad.h</PathWithFileName>
-      <FilenameWithoutPath>l_ad.h</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>5</GroupNumber>
-      <FileNumber>71</FileNumber>
-=======
->>>>>>> 768f369c872a6e8717c770867ccbd1fa2b084358
       <FileType>5</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -1133,11 +1118,7 @@
     </File>
     <File>
       <GroupNumber>5</GroupNumber>
-<<<<<<< HEAD
-      <FileNumber>72</FileNumber>
-=======
       <FileNumber>71</FileNumber>
->>>>>>> 768f369c872a6e8717c770867ccbd1fa2b084358
       <FileType>5</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>

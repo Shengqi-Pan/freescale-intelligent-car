@@ -22,11 +22,7 @@
 extern int16 ad_test[4];
 float angle_control(float car_angle, float car_w, float angle_set);
 void induc_test(void);
-<<<<<<< HEAD
-int16 direction_control(void);
-=======
 float direction_control(void);
 float speed_control(int16 speed_real, int16 speed_set);
->>>>>>> 768f369c872a6e8717c770867ccbd1fa2b084358
 
 #endif
