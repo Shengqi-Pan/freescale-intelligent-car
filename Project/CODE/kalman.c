@@ -10,11 +10,11 @@
 
 /***************************
  * @breif   对读取到的值进行卡尔曼滤波
- * @param   读取到的角度值angle和角速度值omega
+ * @param   读取到的角度值angle和y轴角速度值omega
  * @return  车子的倾角
  * @note    
  ***************************/
-void kalman(float angle, Omega omega)
+void kalman(float angle, float omega)
 {
     static float Q_angle = 0.001;     //2.26   0.001;
     static float Q_gyro = 0.003;
@@ -38,7 +38,7 @@ void kalman(float angle, Omega omega)
     R = R_angle;
     
     // 需要返回的车身角
-    car_info.angle += (omega.y - q_bias) * dt;	                                                 
+    car_info.angle += (omega - q_bias) * dt;	                                                 
     Pdot[0] = Q_angle - P[0][1] - P[1][0];
     Pdot[1] = -P[1][1];
     Pdot[2] = -P[1][1];
@@ -65,5 +65,5 @@ void kalman(float angle, Omega omega)
     q_bias += K_1 * angle_err;
 
     // 需要返回的车身角速度
-    car_info.omega.y = omega.y - q_bias;  
+    car_info.omega.y = omega - q_bias;  
 }

@@ -1,7 +1,11 @@
+/*******************************************
+ * @file            motor
+ * @note            基于逐飞pwm的电机底层驱动
+ * @author          btk
+ * @software        MDK
+ * @target core     STC8H8K64S4
+ *******************************************/
 #include "motor.h"
-
-float Angle_Control_P = 2000;
-float Angle_Control_D = 50;
 
 void motor_init(void)
 {
@@ -9,18 +13,6 @@ void motor_init(void)
     pwm_init(PWM7_P22, 10000, 0);
     pwm_init(PWM6_P01, 10000, 0);
     pwm_init(PWM4P_P26, 10000, 0);
-}
-
-/*
-使用前给Angle_Control_P, Angle_Control_D赋值
-*/
-
-float AngleControl(float Car_Angle, float Car_W, float Angle_Set)   //控直立
-{
-    float Motor_AngleControl, Angle_Control;
-    Angle_Control = Angle_Set - Car_Angle;  
-    Motor_AngleControl=Angle_Control*Angle_Control_P + Car_W*Angle_Control_D;
-    return Motor_AngleControl;
 }
 
 void motor_output(float Motor_AngleControl)
@@ -48,7 +40,7 @@ void motor_output(float Motor_AngleControl)
     else
     {
         pwm_duty(PWM5_P00, 0);
-        pwm_duty(PWM6_P01, (int)(-1*motor_right));	
+        pwm_duty(PWM6_P01, (int)(-motor_right));	
     }
     if(motor_left >= 0)
     {
@@ -58,6 +50,6 @@ void motor_output(float Motor_AngleControl)
     else
     {
         pwm_duty(PWM7_P22, 0);
-        pwm_duty(PWM4P_P26, (int)(-1*motor_left));	
+        pwm_duty(PWM4P_P26, (int)(-motor_left));	
     }
-    }
+}
