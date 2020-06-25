@@ -120,6 +120,19 @@ void INT4_Isr() interrupt 16
 
 void TM0_Isr() interrupt 1
 {
+    extern float angle;
+    extern Omega omega;
+    float stand_duty;
+    angle = get_angle_from_icm();
+    omega = get_omega_from_icm();
+    kalman(angle, omega);
+    stand_duty = AngleControl(car_info.angle, car_info.omega.y, 23.87);
+    motor_output(stand_duty);
+    // extern float test[];
+    // omega = get_omega_from_icm();
+    // test[0] += 0;
+    // test[1] += omega.y * 0.001;
+    // test[2] += omega.z * 0.001;
 
 }
 void TM1_Isr() interrupt 3
@@ -139,9 +152,8 @@ void TM3_Isr() interrupt 19
 
 void TM4_Isr() interrupt 20
 {
-	TIM4_CLEAR_FLAG; //清除中断标志
-	ccd_collect();
-
+    // ccd_collect();
+    TIM4_CLEAR_FLAG; //清除中断标志
 }
 
 //void  INT0_Isr()  interrupt 0;

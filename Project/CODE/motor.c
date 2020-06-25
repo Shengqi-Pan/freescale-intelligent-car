@@ -1,7 +1,7 @@
 #include "motor.h"
 
-float Angle_Control_P;
-float Angle_Control_D;
+float Angle_Control_P = 2000;
+float Angle_Control_D = 50;
 
 void motor_init(void)
 {
@@ -18,7 +18,7 @@ void motor_init(void)
 float AngleControl(float Car_Angle, float Car_W, float Angle_Set)   //控直立
 {
     float Motor_AngleControl, Angle_Control;
-    Angle_Control = Car_Angle - Angle_Set;  
+    Angle_Control = Angle_Set - Car_Angle;  
     Motor_AngleControl=Angle_Control*Angle_Control_P + Car_W*Angle_Control_D;
     return Motor_AngleControl;
 }
@@ -26,6 +26,10 @@ float AngleControl(float Car_Angle, float Car_W, float Angle_Set)   //控直立
 void motor_output(float Motor_AngleControl)
 {
     float motor_left, motor_right;
+    if (Motor_AngleControl > AMPLITUDE_LIMIT)
+        Motor_AngleControl = AMPLITUDE_LIMIT;
+    if(Motor_AngleControl < -AMPLITUDE_LIMIT)
+        Motor_AngleControl = -AMPLITUDE_LIMIT;
     motor_left = Motor_AngleControl;
     motor_right = Motor_AngleControl;
     if(motor_left > 10000)
@@ -44,7 +48,7 @@ void motor_output(float Motor_AngleControl)
     else
     {
         pwm_duty(PWM5_P00, 0);
-        pwm_duty(PWM6_P01, (int)motor_right);	
+        pwm_duty(PWM6_P01, (int)(-1*motor_right));	
     }
     if(motor_left >= 0)
     {
@@ -54,6 +58,6 @@ void motor_output(float Motor_AngleControl)
     else
     {
         pwm_duty(PWM7_P22, 0);
-        pwm_duty(PWM4P_P26, (int)motor_left);	
+        pwm_duty(PWM4P_P26, (int)(-1*motor_left));	
     }
     }
