@@ -123,19 +123,20 @@ void TM0_Isr() interrupt 1
     extern float angle;
     extern Omega omega;
     float stand_duty;
+    int16 turn_duty;
     // 读取角度和角速度并卡尔曼滤波
     angle = get_angle_from_icm();
     omega = get_omega_from_icm();
     kalman(angle, omega.y);
     // 控直立
     stand_duty = angle_control(car_info.angle, car_info.omega.y, 23.87);
-    motor_output(stand_duty);
+    turn_duty = direction_control(); 
+    motor_output(stand_duty, turn_duty);
     // extern float test[];
     // omega = get_omega_from_icm();
     // test[0] += 0;
     // test[1] += omega.y * 0.001;
     // test[2] += omega.z * 0.001;
-
 }
 void TM1_Isr() interrupt 3
 {

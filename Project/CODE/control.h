@@ -18,9 +18,8 @@
 #define DIRECTION_ON 1
 #define AMP_FACTOR 800
 extern int16 ad_test[4];
-
 float angle_control(float car_angle, float car_w, float angle_set);
 void induc_test(void);
-float direction_control(void);
+int16 direction_control(void);
 
 #endif

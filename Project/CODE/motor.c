@@ -15,23 +15,42 @@ void motor_init(void)
     pwm_init(PWM4P_P26, 10000, 0);
 }
 
-void motor_output(float Motor_AngleControl)
+void motor_output(float motor_angle_control, int16 motor_turn_control)
 {
     float motor_left, motor_right;
-    if (Motor_AngleControl > AMPLITUDE_LIMIT)
-        Motor_AngleControl = AMPLITUDE_LIMIT;
-    if(Motor_AngleControl < -AMPLITUDE_LIMIT)
-        Motor_AngleControl = -AMPLITUDE_LIMIT;
-    motor_left = Motor_AngleControl;
-    motor_right = Motor_AngleControl;
-    if(motor_left > 10000)
-        motor_left = 10000;
-    if(motor_left < -10000)
-        motor_left = -10000;
-    if(motor_right > 10000)
-        motor_right = 10000;
-    if(motor_right < -10000)
-        motor_right = -10000;
+    motor_left = motor_angle_control - motor_turn_control;
+    motor_right = motor_angle_control + motor_turn_control;  
+     
+    
+    // if (motor_angle_control > AMPLITUDE_LIMIT)
+    //     motor_angle_control = AMPLITUDE_LIMIT;
+    // if(motor_angle_control < -AMPLITUDE_LIMIT)
+    //     motor_angle_control = -AMPLITUDE_LIMIT;
+    
+    if(motor_left > AMPLITUDE_LIMIT)
+        motor_left = AMPLITUDE_LIMIT;
+    else if(motor_left < -AMPLITUDE_LIMIT)
+        motor_left = -AMPLITUDE_LIMIT;
+    if(motor_right > AMPLITUDE_LIMIT)
+        motor_right = AMPLITUDE_LIMIT;
+    else if(motor_right < -AMPLITUDE_LIMIT)
+        motor_right = -AMPLITUDE_LIMIT;
+    if(motor_left > 0)
+    {
+        motor_left += DEAD_TIME;
+    }
+    else if(motor_left < 0)
+    {
+        motor_left -= DEAD_TIME;
+    }
+    if(motor_right > 0)
+    {
+        motor_right += DEAD_TIME;
+    }
+    else if(motor_right < 0)
+    {
+        motor_right -= DEAD_TIME;
+    }
     if(motor_right >= 0)
     {
         pwm_duty(PWM5_P00, (int)motor_right);

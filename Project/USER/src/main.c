@@ -54,13 +54,13 @@ void main()
 
     while(1)
     {   
-        induc_test();
+        //induc_test();
         //data_conversion((int16)angle, (int16)omega.y,
                         //(int16)car_info.angle, (int16)car_info.omega.y,
                         //virtual_scope_data);
-        data_conversion(ad_test[0], ad_test[1],
-                        ad_test[2], ad_test[3],
-                        virtual_scope_data);
-        uart_putbuff(WIRELESS_UART, virtual_scope_data, sizeof(virtual_scope_data));
+        /*data_conversion(ad_test[0], ad_test[1],
+                        //ad_test[2], ad_test[3],
+                        //virtual_scope_data);
+        uart_putbuff(WIRELESS_UART, virtual_scope_data, sizeof(virtual_scope_data));*/
     }
 }

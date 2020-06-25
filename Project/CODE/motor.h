@@ -11,10 +11,9 @@
 #include "zf_pwm.h"
 
 #define AMPLITUDE_LIMIT 2000
-extern float Angle_Control_P;
-extern float Angle_Control_D;
+#define DEAD_TIME 50
 
 void motor_init(void);
-void motor_output(float Motor_AngleControl);
+void motor_output(float motor_angle_control, int16 motor_turn_control);
 
 #endif

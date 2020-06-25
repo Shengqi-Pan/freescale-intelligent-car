@@ -37,6 +37,7 @@ float speed_control(int speed_real, int speed_set)
     else if(speed_deviation < 100)    return -2;
     else if(speed_deviation < 200)    return 1;
     else if(speed_deviation >= 300)   return 2;  // 若超3m  附加角+2度
+    return 0;
 }
 
 /*
@@ -44,9 +45,13 @@ float speed_control(int speed_real, int speed_set)
 */
 
 void induc_test(void)
-{
-    int i,j; 
-    for(i=0;i<4;i++)
+{ 
+    getl_once();
+    ad_test[0] = (4*ad_test[0] + l_h_1)/5;
+    ad_test[1] = (4*ad_test[1] + l_h_2)/5;
+    ad_test[2] = (4*ad_test[2] + l_s_1)/5;
+    ad_test[3] = (4*ad_test[3] + l_s_2)/5;
+    /*for(i=0;i<4;i++)
         ad_test[i] = 0;
     for(j=0;j<3;j++)
     {
@@ -63,39 +68,63 @@ void induc_test(void)
         // {
         //   Induc_Ref[2*i]=ad_test[i];
         // }
-    }
+    }*/
 }
 
 /*
-输出转向控制对应电机的浮点数
+输出转向控制对应电机的duty
 */
-float direction_control(void)
+int16 direction_control(void)
 {
-    int i;
+    uint16 induc_ref[4] = {700, 700, 700, 700};
+    int16 motor_turn;
     static uint16 deviation_h_reg = 0;
-    uint16 deviation_h_dot;
-    uint16 deviation_h;
-    uint16 ad[4] = {0, 0, 0, 0};
-    for(i=0;i<3;i++)
-    {
-        getl_once();
-        ad[0] += l_h_1;
-        ad[1] += l_h_2;
-        ad[2] += l_s_1;
-        ad[3] += l_s_2;
-    }
-    for(i=0;i<4;i++)
-        ad[i] = ad[i]/3;
+    int16 deviation_h_dot;
+    int16 deviation_h;
+    int16 sensor[4];
+    int16 turn_p, turn_d;
+    static uint16 ad[4] = {0, 0, 0, 0};
+    getl_once();
+    ad[0] = (4*ad[0] + l_h_1)/5;
+    ad[1] = (4*ad[1] + l_h_2)/5;
+    ad[2] = (4*ad[2] + l_s_1)/5;
+    ad[3] = (4*ad[3] + l_s_2)/5;
     if (DIRECTION_ON == 1)
     {
-        //TODO: 归一化处理
-        deviation_h = (l_h_1 - l_h_2)/(l_h_1 + l_h_2);
-        //TODO: 限幅
-        //TODO: 根据不同偏移量进行不同的偏移量求解
-        deviation_h_dot = deviation_h - deviation_h_reg;
+        sensor[0] = (int)(ad[0]*HENG_FACTOR/induc_ref[0]);
+        sensor[1] = (int)(ad[1]*HENG_FACTOR/induc_ref[1]);
+        sensor[2] = (int)(ad[2]*SHU_FACTOR/induc_ref[2]);
+        sensor[3] = (int)(ad[3]*SHU_FACTOR/induc_ref[3]);
+        deviation_h = (int)(sensor[0]*1.3 - sensor[1]) * AMP_FACTOR / (sensor[0]*1.3 + sensor[1]);
+        //限幅
+        if (deviation_h > 600)
+        {
+            deviation_h = 600;
+        }
+        else if (deviation_h < -600)
+        {
+            deviation_h = -600;
+        }
+        //根据不同偏移量进行不同的偏移量求解
+        if(deviation_h < 200 && deviation_h > -200)
+         deviation_h_dot = (4*deviation_h_dot + deviation_h - deviation_h_reg)/5;
+        else
+         deviation_h_dot = (9*deviation_h_dot + deviation_h - deviation_h_reg)/10;
         deviation_h_reg = deviation_h;
-        //TODO: 偏差变化率限幅
+        //偏差变化率限幅
+        if (deviation_h_dot > 15)
+            deviation_h_dot = 15;
+        else if (deviation_h_dot < -15)
+            deviation_h_dot = -15;
         //TODO: 模糊控制得到P和D
+        turn_p = 3;
+        turn_d = 8;
+        motor_turn = turn_p * deviation_h + turn_d * deviation_h_dot;
+        return motor_turn;
     }
-    return -1;
+    else
+    {
+        return 0;
+    }
+    
 }
