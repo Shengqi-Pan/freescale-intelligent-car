@@ -14,6 +14,6 @@
 
 extern CarInfo car_info;
 
-void kalman(float gsensor_angle, Omega gyro_w);
+void kalman(float angle, float omega);
 
 #endif

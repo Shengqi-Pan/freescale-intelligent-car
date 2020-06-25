@@ -48,7 +48,7 @@ void motor_output(float Motor_AngleControl)
     else
     {
         pwm_duty(PWM5_P00, 0);
-        pwm_duty(PWM6_P01, (int)(-1*motor_right));	
+        pwm_duty(PWM6_P01, (int)(-motor_right));	
     }
     if(motor_left >= 0)
     {
@@ -58,6 +58,6 @@ void motor_output(float Motor_AngleControl)
     else
     {
         pwm_duty(PWM7_P22, 0);
-        pwm_duty(PWM4P_P26, (int)(-1*motor_left));	
+        pwm_duty(PWM4P_P26, (int)(-motor_left));	
     }
     }

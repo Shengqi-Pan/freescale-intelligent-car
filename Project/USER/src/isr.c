@@ -123,9 +123,11 @@ void TM0_Isr() interrupt 1
     extern float angle;
     extern Omega omega;
     float stand_duty;
+    // 读取角度和角速度并卡尔曼滤波
     angle = get_angle_from_icm();
     omega = get_omega_from_icm();
-    kalman(angle, omega);
+    kalman(angle, omega.y);
+    // 控直立
     stand_duty = AngleControl(car_info.angle, car_info.omega.y, 23.87);
     motor_output(stand_duty);
     // extern float test[];
