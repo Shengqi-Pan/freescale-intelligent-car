@@ -37,6 +37,8 @@ float speed_control(int speed_real, int speed_set)
     else if(speed_deviation < 100)    return -2;
     else if(speed_deviation < 200)    return 1;
     else if(speed_deviation >= 300)   return 2;  // 若超3m  附加角+2度
+}
+
 /*
 观察电磁读取的ad值，便于后面处理，不出现在主函数中
 */
