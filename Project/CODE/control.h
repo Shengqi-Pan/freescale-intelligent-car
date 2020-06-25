@@ -1,7 +1,7 @@
 /*******************************************
  * @file            control
  * @note            控制相关的函数，包括直立，速度，转向
- * @author          psq
+ * @author          psq&btk
  * @software        MDK
  * @target core     STC8H8K64S4
  *******************************************/
