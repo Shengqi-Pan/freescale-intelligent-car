@@ -25,5 +25,6 @@
 #include "kalman.h"
 #include "motor.h"
 #include "car_info.h"
+#include "control.h"
 
 #endif

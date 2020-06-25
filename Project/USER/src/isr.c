@@ -128,7 +128,7 @@ void TM0_Isr() interrupt 1
     omega = get_omega_from_icm();
     kalman(angle, omega.y);
     // ¿ØÖ±Á¢
-    stand_duty = AngleControl(car_info.angle, car_info.omega.y, 23.87);
+    stand_duty = angle_control(car_info.angle, car_info.omega.y, 23.87);
     motor_output(stand_duty);
     // extern float test[];
     // omega = get_omega_from_icm();
