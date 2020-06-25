@@ -706,6 +706,11 @@
               <FileType>1</FileType>
               <FilePath>..\CODE\l_ad.c</FilePath>
             </File>
+            <File>
+              <FileName>encoder.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\CODE\encoder.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -745,6 +750,11 @@
               <FileName>l_ad.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\CODE\l_ad.h</FilePath>
+            </File>
+            <File>
+              <FileName>encoder.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\CODE\encoder.h</FilePath>
             </File>
           </Files>
         </Group>

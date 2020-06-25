@@ -120,26 +120,31 @@ void INT4_Isr() interrupt 16
 
 void TM0_Isr() interrupt 1
 {
+
+}
+void TM1_Isr() interrupt 3
+{
     extern float angle;
     extern Omega omega;
-    float stand_duty;
+    float stand_duty;  //控直立的占空比
+    static uint16 encoder_read_cnt = 0;  // 编码器读取间隔
+    int16 speed_set = 400;  // 给定速度1000mm/s
+    static float angle_set = 23.87;  // 给定角度
     // 读取角度和角速度并卡尔曼滤波
     angle = get_angle_from_icm();
     omega = get_omega_from_icm();
     kalman(angle, omega.y);
     // 控直立
-    stand_duty = angle_control(car_info.angle, car_info.omega.y, 23.87);
+    stand_duty = angle_control(car_info.angle, car_info.omega.y, angle_set);
     motor_output(stand_duty);
-    // extern float test[];
-    // omega = get_omega_from_icm();
-    // test[0] += 0;
-    // test[1] += omega.y * 0.001;
-    // test[2] += omega.z * 0.001;
-
-}
-void TM1_Isr() interrupt 3
-{
-
+    // 控速度
+    if (++encoder_read_cnt == 5)
+    {
+        encoder_read_cnt = 0;
+        car_info.speed = get_speed(5);
+        if (car_info.angle < 50 && car_info.angle > 0)
+            angle_set += speed_control((car_info.speed.left + car_info.speed.right) / 2, speed_set);
+    }
 }
 void TM2_Isr() interrupt 12
 {
