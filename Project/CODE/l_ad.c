@@ -1,13 +1,13 @@
 #include "l_ad.h"
 
-uint16 l_h_1,l_h_2,l_s_1,l_s_2;
+int16 l_h_1,l_h_2,l_s_1,l_s_2;
 
 void l_init(void)
 {
-    adc_init(ADC_P10,0);						//P10引脚		
-	adc_init(ADC_P11,0);						//P11引脚		
-	adc_init(ADC_P13,0);						//P13引脚		
-	adc_init(ADC_P14,0);						//P14引脚		
+    adc_init(ADC_P10, ADC_SYSclk_DIV_2);						//P10引脚		
+	adc_init(ADC_P11, ADC_SYSclk_DIV_2);						//P11引脚		
+	adc_init(ADC_P13, ADC_SYSclk_DIV_2);						//P13引脚		
+	adc_init(ADC_P14, ADC_SYSclk_DIV_2);						//P14引脚		
 }
 
 void getl_once(void)

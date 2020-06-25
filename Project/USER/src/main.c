@@ -22,6 +22,7 @@
 #include "car_info.h"
 #include "kalman.h"
 #include "motor.h"
+#include "control.h"
 
 //board.h文件中FOSC的值设置为0,则程序自动识别系统频率
 
@@ -35,7 +36,6 @@
 extern CarInfo car_info;
 float angle = 0;
 Omega omega = {0, 0};
-float test[] = {0, 0, 0};
 
 void main()
 {
@@ -47,14 +47,19 @@ void main()
     // uart_init(UART_1, UART1_RX_P30, UART1_TX_P31, 115200, TIM_1);  // 串口1初始化，波特率115200，发送引脚TX P31 接收引脚RX P30
     seekfree_wireless_init();  // 无线串口初始化
     motor_init();  // 电机初始化
+    l_init();  //ad初始化
     delay_ms(10);
 
     EnableGlobalIRQ(); //  开启总中断
 
     while(1)
-    {
-        data_conversion((int16)angle, (int16)omega.y,
-                        (int16)car_info.angle, (int16)car_info.omega.y,
+    {   
+        induc_test();
+        //data_conversion((int16)angle, (int16)omega.y,
+                        //(int16)car_info.angle, (int16)car_info.omega.y,
+                        //virtual_scope_data);
+        data_conversion(ad_test[0], ad_test[1],
+                        ad_test[2], ad_test[3],
                         virtual_scope_data);
         uart_putbuff(WIRELESS_UART, virtual_scope_data, sizeof(virtual_scope_data));
     }
