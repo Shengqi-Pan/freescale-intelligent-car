@@ -149,7 +149,7 @@
             <RestoreSysVw>1</RestoreSysVw>
           </Target>
           <RunDebugAfterBuild>0</RunDebugAfterBuild>
-          <TargetSelection>12</TargetSelection>
+          <TargetSelection>10</TargetSelection>
           <SimDlls>
             <CpuDll></CpuDll>
             <CpuDllArguments></CpuDllArguments>
@@ -701,6 +701,11 @@
               <FileType>1</FileType>
               <FilePath>..\CODE\motor.c</FilePath>
             </File>
+            <File>
+              <FileName>l_ad.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\CODE\l_ad.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -735,6 +740,11 @@
               <FileName>motor.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\CODE\motor.h</FilePath>
+            </File>
+            <File>
+              <FileName>l_ad.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\CODE\l_ad.h</FilePath>
             </File>
           </Files>
         </Group>
