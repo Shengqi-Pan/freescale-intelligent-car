@@ -1,8 +1,8 @@
 #include "turn_control.h"
 
-uint16 Induc_Ref[4] = {0, 0, 0, 0};
+uint16 induc_ref[4] = {0, 0, 0, 0};
 
-void Induc_test(void)
+void induc_test(void)
 {
   int i,j; 
   int ad_test[4]={0,0,0,0};
