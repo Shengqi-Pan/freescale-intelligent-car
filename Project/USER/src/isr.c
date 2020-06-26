@@ -127,23 +127,52 @@ void TM1_Isr() interrupt 3
     extern float angle;
     extern Omega omega;
     float stand_duty;  //控直立的占空比
-    static uint16 encoder_read_cnt = 0;  // 编码器读取间隔
     int16 speed_set = 400;  // 给定速度1000mm/s
-    static float angle_set = 23.87;  // 给定角度
+    static float angle_set = 21;  // 给定角度,车辆平衡角为23.87，要前进可以多给一些
+    static float angle_bias = 0;  // 用于控直立的偏移角
+    
+    //--------------下面存一些定时间隔---------------//
+    static uint16 encoder_read_cnt = 0;  // 编码器读取间隔
+    static uint16 take_off_cnt = 0;  // 起步时间
+
     // 读取角度和角速度并卡尔曼滤波
     angle = get_angle_from_icm();
     omega = get_omega_from_icm();
     kalman(angle, omega.y);
     // 控直立
-    stand_duty = angle_control(car_info.angle, car_info.omega.y, angle_set);
+    stand_duty = angle_control(car_info.angle, car_info.omega.y, angle_set + angle_bias);
     motor_output(stand_duty);
-    // 控速度
-    if (++encoder_read_cnt == 5)
+    // 本质就是一个状态机，根据车辆当前判到的状态进行不同的控制
+    switch(car_info.state)
     {
-        encoder_read_cnt = 0;
-        car_info.speed = get_speed(5);
-        if (car_info.angle < 50 && car_info.angle > 0)
-            angle_set += speed_control((car_info.speed.left + car_info.speed.right) / 2, speed_set);
+        case TAKE_OFF:
+            if(++take_off_cnt > 500)
+                car_info.state = STRAIGHT_AHEAD;
+            break;
+        case STRAIGHT_AHEAD:
+            // 控速度
+            if (++encoder_read_cnt == 5)
+            {
+                encoder_read_cnt = 0;
+                car_info.speed = get_speed(5);
+                if (car_info.angle < 25 && car_info.angle > 15)
+                    angle_bias = speed_control((car_info.speed.left + car_info.speed.right) / 2, speed_set);
+            }
+            break;
+        case TURN_LEFT:
+            break;
+        case TURN_RIGHT:
+            break;
+        case RAMP_UP:
+            break;
+        case RAMP_DOWN:
+            break;
+        case RING:
+            break;
+        case STOP:
+            break;
+        default:
+            break;
     }
 }
 void TM2_Isr() interrupt 12

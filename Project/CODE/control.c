@@ -8,6 +8,7 @@
 
 #include "control.h"
 int16 ad_test[4] = {0, 0, 0, 0};
+
 /*
 使用前给ANGLE_CONTROL_P, ANGLE_CONTROL_D赋值
 输入kalman滤波后的车身角 车身角速度 设定角
@@ -32,19 +33,18 @@ float angle_control(float car_angle, float car_w, float angle_set)   //控直立
 float speed_control(int16 speed_real, int16 speed_set)
 {
     int16 speed_deviation = speed_real - speed_set;
-    if(speed_deviation < -400)        return 6;
-    else if(speed_deviation < -200)   return 4;  // 直道很慢 
-    else if(speed_deviation < 0)      return 2;
+    if(speed_deviation < -400)        return 10;
+    else if(speed_deviation < -200)   return 6;  // 直道很慢 
+    else if(speed_deviation < 0)      return 4;
     else if(speed_deviation < 100)    return 0;
-    else if(speed_deviation < 200)    return -2;
-    else if(speed_deviation >= 300)   return -4;  // 若超3m  附加角+2度
+    else if(speed_deviation < 200)    return -4;
+    else if(speed_deviation >= 300)   return -6;  // 若超3m  附加角+2度
     return 0;
 }
 
 /*
 观察电磁读取的ad值，便于后面处理，不出现在主函数中
 */
-
 void induc_test(void)
 {
     int i,j; 
@@ -100,4 +100,16 @@ float direction_control(void)
         //TODO: 模糊控制得到P和D
     }
     return -1;
+}
+
+/***************************
+ * @breif   起步函数
+ * @param   void
+ * @return  void
+ * @note    起步时先控角度使车稳定，随后再往前冲
+ * @author  psq
+ ***************************/
+void take_off(void)
+{
+
 }

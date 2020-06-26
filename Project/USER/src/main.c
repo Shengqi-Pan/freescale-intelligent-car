@@ -33,7 +33,7 @@
 /*在board_init中,已经将P54引脚设置为复位，
 如果需要使用P54引脚,可以在board.c文件中的board_init()函数中删除SET_P54_RESRT即可*/
 
-// 保存车辆当前的信息
+// 保存车辆当前的原始信息(尚未经过卡尔曼滤波的)
 float angle = 0;
 Omega omega = {0, 0};
 

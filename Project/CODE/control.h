@@ -25,5 +25,6 @@ float angle_control(float car_angle, float car_w, float angle_set);
 void induc_test(void);
 float direction_control(void);
 float speed_control(int16 speed_real, int16 speed_set);
+void take_off(void);
 
 #endif
