@@ -52,24 +52,6 @@ void induc_test(void)
     ad_test[1] = (4*ad_test[1] + l_h_2)/5;
     ad_test[2] = (4*ad_test[2] + l_s_1)/5;
     ad_test[3] = (4*ad_test[3] + l_s_2)/5;
-    /*for(i=0;i<4;i++)
-        ad_test[i] = 0;
-    for(j=0;j<3;j++)
-    {
-        getl_once();
-        ad_test[0] += l_h_1;
-        ad_test[1] += l_h_2;   
-        ad_test[2] += l_s_1; 
-        ad_test[3] += l_s_2;
-    }
-    for(i=0;i<4;i++)
-    {
-        ad_test[i]=ad_test[i]/3;  
-        // if(ad_test[i]>Induc_Ref[2*i])
-        // {
-        //   Induc_Ref[2*i]=ad_test[i];
-        // }
-    }*/
 }
 
 /*
@@ -77,55 +59,51 @@ void induc_test(void)
 */
 int16 direction_control(void)
 {
-    uint16 induc_ref[4] = {700, 700, 700, 700};
+    int16 induc_ref[4] = {200, 240, 700, 700};
     int16 motor_turn;
-    static uint16 deviation_h_reg = 0;
-    int16 deviation_h_dot;
+    static int16 deviation_h_reg = 0;
+    int16 deviation_h_dot = 0;
     int16 deviation_h;
     int16 sensor[4];
     int16 turn_p, turn_d;
-    static uint16 ad[4] = {0, 0, 0, 0};
+    static int16 ad[4] = {0, 0, 0, 0};
     getl_once();
     ad[0] = (4*ad[0] + l_h_1)/5;
     ad[1] = (4*ad[1] + l_h_2)/5;
     ad[2] = (4*ad[2] + l_s_1)/5;
     ad[3] = (4*ad[3] + l_s_2)/5;
-    if (DIRECTION_ON == 1)
+    sensor[0] = (int)(ad[0]*HENG_FACTOR/induc_ref[0]);
+    sensor[1] = (int)(ad[1]*HENG_FACTOR/induc_ref[1]);
+    sensor[2] = (int)(ad[2]*SHU_FACTOR/induc_ref[2]);
+    sensor[3] = (int)(ad[3]*SHU_FACTOR/induc_ref[3]);
+    //data_conversion(ad[0], ad[1], sensor[0], sensor[1],virtual_scope_data);
+    deviation_h = (sensor[0] - sensor[1]) * AMP_FACTOR / (sensor[0] + sensor[1]);
+    //限幅
+    if (deviation_h > 100)
     {
-        sensor[0] = (int)(ad[0]*HENG_FACTOR/induc_ref[0]);
-        sensor[1] = (int)(ad[1]*HENG_FACTOR/induc_ref[1]);
-        sensor[2] = (int)(ad[2]*SHU_FACTOR/induc_ref[2]);
-        sensor[3] = (int)(ad[3]*SHU_FACTOR/induc_ref[3]);
-        deviation_h = (int)(sensor[0]*1.3 - sensor[1]) * AMP_FACTOR / (sensor[0]*1.3 + sensor[1]);
-        //限幅
-        if (deviation_h > 600)
-        {
-            deviation_h = 600;
-        }
-        else if (deviation_h < -600)
-        {
-            deviation_h = -600;
-        }
-        //根据不同偏移量进行不同的偏移量求解
-        if(deviation_h < 200 && deviation_h > -200)
-         deviation_h_dot = (4*deviation_h_dot + deviation_h - deviation_h_reg)/5;
-        else
-         deviation_h_dot = (9*deviation_h_dot + deviation_h - deviation_h_reg)/10;
-        deviation_h_reg = deviation_h;
-        //偏差变化率限幅
-        if (deviation_h_dot > 15)
-            deviation_h_dot = 15;
-        else if (deviation_h_dot < -15)
-            deviation_h_dot = -15;
-        //TODO: 模糊控制得到P和D
-        turn_p = 3;
-        turn_d = 8;
-        motor_turn = turn_p * deviation_h + turn_d * deviation_h_dot;
-        return motor_turn;
+        deviation_h = 100;
     }
+    else if (deviation_h < -100)
+    {
+        deviation_h = -100;
+    }
+    //根据不同偏移量进行不同的偏移量求解
+    if(deviation_h < 25 && deviation_h > -25)
+        deviation_h_dot = (4*deviation_h_dot + deviation_h - deviation_h_reg)/5;
     else
-    {
-        return 0;
-    }
+        deviation_h_dot = (9*deviation_h_dot + deviation_h - deviation_h_reg)/10;
+    deviation_h_reg = deviation_h;
+    //偏差变化率限幅
+    if (deviation_h_dot > 10)
+        deviation_h_dot = 10;
+    else if (deviation_h_dot < -10)
+        deviation_h_dot = -10;
+    //TODO: 模糊控制得到P和D
+    turn_p = 80;
+    turn_d = 20;
+    motor_turn = turn_p * deviation_h + turn_d * deviation_h_dot;
+    return motor_turn;
+    
+
     
 }

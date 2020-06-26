@@ -10,7 +10,7 @@
 
 #include "zf_pwm.h"
 
-#define AMPLITUDE_LIMIT 2000
+#define AMPLITUDE_LIMIT 1500
 #define DEAD_TIME 50
 
 void motor_init(void);

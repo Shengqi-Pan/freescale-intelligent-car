@@ -124,13 +124,21 @@ void TM0_Isr() interrupt 1
     extern Omega omega;
     float stand_duty;
     int16 turn_duty;
+    // static int16 turn_control_cnt = 0; //进转向控制标志
     // 读取角度和角速度并卡尔曼滤波
     angle = get_angle_from_icm();
     omega = get_omega_from_icm();
     kalman(angle, omega.y);
     // 控直立
-    stand_duty = angle_control(car_info.angle, car_info.omega.y, 24);
-    turn_duty = direction_control(); 
+    stand_duty = angle_control(car_info.angle, car_info.omega.y, 21);
+    /*if(turn_control_cnt % 5 == 0)
+    {
+        turn_duty = direction_control(); 
+    }
+    turn_control_cnt++;
+    if(turn_control_cnt == 9)
+        turn_control_cnt = 0;*/
+    turn_duty = direction_control();
     motor_output(stand_duty, turn_duty);
     // extern float test[];
     // omega = get_omega_from_icm();

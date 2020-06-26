@@ -41,48 +41,49 @@ void main()
 {
     DisableGlobalIRQ(); //  关闭总中断
     board_init(); //  初始化寄存器
-    pit_timer_ms(TIM_1, 1); // 使用TIMER作为周期中断，时间1ms一次
+    pit_timer_ms(TIM_0, 1); // 使用TIMER作为周期中断，时间1ms一次
     icm20602_init_simspi(); // icm20602初始化, 引脚查看宏定义
     // uart_init(UART_1, UART1_RX_P30, UART1_TX_P31, 115200, TIM_1);  // 串口1初始化，波特率115200，发送引脚TX P31 接收引脚RX P30
     seekfree_wireless_init();  // 无线串口初始化
     motor_init();  // 电机初始化
     l_init();  //ad初始化
-    encoder_init();
+    //encoder_init();
     delay_ms(10);
 
     EnableGlobalIRQ(); //  开启总中断
 
     while(1)
     {   
-        induc_test();
         /*用于测试电感检测值*/
-        static uint16 ref[4] = {0, 0, 0, 0};
+        /*static uint16 ref[4] = {0, 0, 0, 0};
         uint8 to_send;
         int i;
+        induc_test();
         for(i=0;i<4;i++)
         {
             if(ref[i] < ad_test[i])
             {
-                ref[i] = ad_test[i]
-                to_send = i & 0xff;
+                ref[i] = ad_test[i];
+                to_send = (uint8)(i & 0xff);
                 uart_putchar(WIRELESS_UART, to_send);
-                to_send = （ref[i] >> 8） & 0xff;
+                to_send = (uint8)((ref[i] >> 8) & 0xff);
                 uart_putchar(WIRELESS_UART, to_send);
-                to_send = ref[i] & 0xff;
+                to_send = (uint8)(ref[i] & 0xff);
                 uart_putchar(WIRELESS_UART, to_send); 
             }
-        }
+        }*/
         // 上位机查看角度和角速度等
         // data_conversion((int16)angle, (int16)omega.y,
         //                 (int16)car_info.angle, (int16)car_info.omega.y,
         //                 virtual_scope_data);
         // 上位机查看四个电感的值
+        //induc_test();
         /*data_conversion(ad_test[0], ad_test[1],
                         ad_test[2], ad_test[3],
                         virtual_scope_data);*/
         /*data_conversion(car_info.speed.left, car_info.speed.right,
                         0, 0,
                         virtual_scope_data);*/
-        /*uart_putbuff(WIRELESS_UART, virtual_scope_data, sizeof(virtual_scope_data));*/
+        //uart_putbuff(WIRELESS_UART, virtual_scope_data, sizeof(virtual_scope_data));
     }
 }
