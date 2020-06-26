@@ -55,17 +55,34 @@ void main()
     while(1)
     {   
         induc_test();
+        /*用于测试电感检测值*/
+        static uint16 ref[4] = {0, 0, 0, 0};
+        uint8 to_send;
+        int i;
+        for(i=0;i<4;i++)
+        {
+            if(ref[i] < ad_test[i])
+            {
+                ref[i] = ad_test[i]
+                to_send = i & 0xff;
+                uart_putchar(WIRELESS_UART, to_send);
+                to_send = （ref[i] >> 8） & 0xff;
+                uart_putchar(WIRELESS_UART, to_send);
+                to_send = ref[i] & 0xff;
+                uart_putchar(WIRELESS_UART, to_send); 
+            }
+        }
         // 上位机查看角度和角速度等
         // data_conversion((int16)angle, (int16)omega.y,
         //                 (int16)car_info.angle, (int16)car_info.omega.y,
         //                 virtual_scope_data);
         // 上位机查看四个电感的值
-        // data_conversion(ad_test[0], ad_test[1],
-        //                 ad_test[2], ad_test[3],
-        //                 virtual_scope_data);
-        data_conversion(car_info.speed.left, car_info.speed.right,
+        /*data_conversion(ad_test[0], ad_test[1],
+                        ad_test[2], ad_test[3],
+                        virtual_scope_data);*/
+        /*data_conversion(car_info.speed.left, car_info.speed.right,
                         0, 0,
-                        virtual_scope_data);
-        uart_putbuff(WIRELESS_UART, virtual_scope_data, sizeof(virtual_scope_data));
+                        virtual_scope_data);*/
+        /*uart_putbuff(WIRELESS_UART, virtual_scope_data, sizeof(virtual_scope_data));*/
     }
 }
