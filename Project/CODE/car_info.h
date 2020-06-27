@@ -16,6 +16,7 @@ typedef struct
 {
     int16 left;
     int16 right;
+    int16 average;
 }Speed;
 
 //--------------车辆当前状态---------------//

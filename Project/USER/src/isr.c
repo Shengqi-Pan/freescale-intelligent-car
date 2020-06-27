@@ -138,13 +138,28 @@ void TM1_Isr() interrupt 3
 
     int16 turn_duty;
     // static int16 turn_control_cnt = 0; //进转向控制标志
+
     // 读取角度和角速度并卡尔曼滤波
     angle = get_angle_from_icm();
     omega = get_omega_from_icm();
     kalman(angle, omega.y);
+
     // 控直立
     stand_duty = angle_control(car_info.angle, car_info.omega.y, angle_set + angle_bias);
+    turn_duty = direction_control();
     motor_output(stand_duty, 0);
+    // if (car_info.speed.average > 500 || car_info.speed.average < -500)
+    //     motor_output(0, 0);
+    // else
+    //     motor_output(stand_duty, 0);
+
+    // 读速度
+    if (++encoder_read_cnt == 5)
+    {
+        encoder_read_cnt = 0;
+        car_info.speed = get_speed(5);
+        
+    }
     // 本质就是一个状态机，根据车辆当前判到的状态进行不同的控制
     switch(car_info.state)
     {
@@ -156,15 +171,9 @@ void TM1_Isr() interrupt 3
         // 直道
         case STRAIGHT_AHEAD:
             // 控速度
-            break;
-            if (++encoder_read_cnt == 5)
-            {
-                LED = 0;
-                encoder_read_cnt = 0;
-                car_info.speed = get_speed(5);
-                // if (car_info.angle < 25 && car_info.angle > 15)
-                angle_bias = speed_control((car_info.speed.left + car_info.speed.right) / 2, speed_set);
-            }
+            LED = 0;
+            // if (car_info.angle < 25 && car_info.angle > 15)
+            angle_bias = speed_control((car_info.speed.left + car_info.speed.right) / 2, speed_set);
             break;
         case TURN_LEFT:
             break;
@@ -181,11 +190,11 @@ void TM1_Isr() interrupt 3
         default:
             break;
     }
-    turn_control_cnt++;
-    if(turn_control_cnt == 9)
-        turn_control_cnt = 0;
-    turn_duty = direction_control();
-    motor_output(stand_duty, turn_duty);
+    // turn_control_cnt++;
+    // if(turn_control_cnt == 9)
+    //     turn_control_cnt = 0;
+    // turn_duty = direction_control();
+    // motor_output(stand_duty, turn_duty);
     // extern float test[];
     // omega = get_omega_from_icm();
     // test[0] += 0;

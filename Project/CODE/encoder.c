@@ -48,6 +48,7 @@ Speed get_speed(uint16 time)
     // 单位:mm/s
     speed.left = (int16)(temp_pulse_left * 86.6248 / time);
     speed.right = (int16)(temp_pulse_right * 86.6248 / time);
+    speed.average = (speed.left + speed.right) / 2;
     data_conversion(speed.left, speed.right,
                     temp_pulse_left, temp_pulse_right,
                     virtual_scope_data);
