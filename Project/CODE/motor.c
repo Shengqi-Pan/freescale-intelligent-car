@@ -9,10 +9,10 @@
 
 void motor_init(void)
 {
-    pwm_init(PWM5_P00, 10000, 0);   //初始化10kHz
-    pwm_init(PWM7_P22, 10000, 0);
-    pwm_init(PWM6_P01, 10000, 0);
-    pwm_init(PWM4P_P26, 10000, 0);
+    pwm_init(PWM5_P00, 30000, 0);   //初始化10kHz
+    pwm_init(PWM7_P22, 30000, 0);
+    pwm_init(PWM6_P01, 30000, 0);
+    pwm_init(PWM4P_P26, 30000, 0);
 }
 
 void motor_output(float motor_angle_control, int16 motor_turn_control)

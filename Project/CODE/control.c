@@ -8,6 +8,7 @@
 
 #include "control.h"
 int16 ad_test[4] = {0, 0, 0, 0};
+
 /*
 使用前给ANGLE_CONTROL_P, ANGLE_CONTROL_D赋值
 输入kalman滤波后的车身角 车身角速度 设定角
@@ -31,20 +32,31 @@ float angle_control(float car_angle, float car_w, float angle_set)   //控直立
  ***************************/
 float speed_control(int16 speed_real, int16 speed_set)
 {
+    static float angle_bias, angle_bias_last;
     int16 speed_deviation = speed_real - speed_set;
-    if(speed_deviation < -400)        return 6;
-    else if(speed_deviation < -200)   return 4;  // 直道很慢 
-    else if(speed_deviation < 0)      return 2;
-    else if(speed_deviation < 100)    return 0;
-    else if(speed_deviation < 200)    return -2;
-    else if(speed_deviation >= 300)   return -4;  // 若超3m  附加角+2度
-    return 0;
+    /************直道控速************/
+    // 速度慢了
+    if(speed_deviation < -400)        angle_bias = 6;
+    else if(speed_deviation < -200)   angle_bias = 4;  // 直道很慢 
+    else if(speed_deviation < 0)      angle_bias = 2;
+    // 速度快了
+    else if(speed_deviation < 100)    angle_bias = 1; // TODO:这是因为给定的平衡角小于自然平衡角
+    else if(speed_deviation < 200)    angle_bias = -1;
+    else if(speed_deviation >= 300)   angle_bias = -2;  // 若超3m  附加角+2度
+
+    /************限制bias变化防止突变************/
+    if (angle_bias - angle_bias_last > 0.5)
+        angle_bias = angle_bias_last + 0.5;
+    else if (angle_bias - angle_bias_last < -0.5)
+        angle_bias = angle_bias_last - 0.5;
+    angle_bias_last = angle_bias;
+
+    return angle_bias;
 }
 
 /*
 观察电磁读取的ad值，便于后面处理，不出现在主函数中
 */
-
 void induc_test(void)
 { 
     getl_once();
@@ -103,7 +115,16 @@ int16 direction_control(void)
     turn_d = 20;
     motor_turn = turn_p * deviation_h + turn_d * deviation_h_dot;
     return motor_turn;
-    
+}
 
-    
+/***************************
+ * @breif   起步函数
+ * @param   void
+ * @return  void
+ * @note    起步时先控角度使车稳定，随后再往前冲
+ * @author  psq
+ ***************************/
+void take_off(void)
+{
+
 }

@@ -18,6 +18,19 @@ typedef struct
     int16 right;
 }Speed;
 
+//--------------车辆当前状态---------------//
+typedef enum
+{
+    TAKE_OFF,  // 起步
+    STRAIGHT_AHEAD,  // 走直道
+    TURN_LEFT,  // 左转
+    TURN_RIGHT,  // 右转
+    RAMP_UP,  // 上坡
+    RAMP_DOWN,  // 下坡
+    RING,  //圆环
+    STOP  //结束
+}CarState;
+
 //--------------车身相关信息的结构体---------------//
 typedef struct
 {
@@ -27,6 +40,8 @@ typedef struct
     Omega omega;
     // 车速
     Speed speed;
+    // 车辆状态
+    CarState state;
 }CarInfo;
 
 extern CarInfo car_info;
