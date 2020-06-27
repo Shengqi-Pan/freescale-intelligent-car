@@ -33,16 +33,52 @@ float angle_control(float car_angle, float car_w, float angle_set)   //控直立
 float speed_control(int16 speed_real, int16 speed_set)
 {
     static float angle_bias, angle_bias_last;
-    int16 speed_deviation = speed_real - speed_set;
-    /************直道控速************/
-    // 速度慢了
-    if(speed_deviation < -400)        angle_bias = 6;
-    else if(speed_deviation < -200)   angle_bias = 4;  // 直道很慢 
-    else if(speed_deviation < 0)      angle_bias = 2;
-    // 速度快了
-    else if(speed_deviation < 100)    angle_bias = 1; // TODO:这是因为给定的平衡角小于自然平衡角
-    else if(speed_deviation < 200)    angle_bias = -1;
-    else if(speed_deviation >= 300)   angle_bias = -2;  // 若超3m  附加角+2度
+    int16 speed_deviation = speed_real - speed_set;  // 实际速度和设定速度差值
+    switch (car_info.state)
+    {
+        case STRAIGHT_AHEAD:
+        /************直道控速************/
+            // 速度慢了
+            if(speed_deviation < -400)        angle_bias = 6;
+            else if(speed_deviation < -200)   angle_bias = 4;  // 直道很慢 
+            else if(speed_deviation < 0)      angle_bias = 2;
+            // 速度快了
+            else if(speed_deviation < 100)    angle_bias = 1; // TODO:这是因为给定的平衡角小于自然平衡角
+            else if(speed_deviation < 200)    angle_bias = -1;
+            else if(speed_deviation >= 300)   angle_bias = -2;  // 若超3m  附加角+2度
+            break;
+        case INTO_TURN:
+        /************出/入弯控速************/
+            // TODO:参数待调
+            if(car_info.speed.average > 400)    // 连续小弯加速
+                angle_bias = 2;
+            else
+                angle_bias = 8;
+            break;
+        case IN_TURN:
+        /************弯中控速************/
+            // TODO:参数待调
+            if(car_info.speed.average > 400)    // 连续小弯加速
+                angle_bias = 3;
+            else
+                angle_bias = 10;
+            break;
+        case RAMP_UP:
+        /************上坡************/
+            // TODO:不知道wwt这里这么调节的目的
+            if(car_info.speed.average < 500)
+                angle_bias = 1;
+            else
+                angle_bias = 3;
+            break;
+        case RAMP_DOWN:
+        /************下坡************/
+            // TODO:不知道wwt这里这么调节的目的
+            angle_bias = 5;
+            break;
+        default:
+            break;
+    }
 
     /************限制bias变化防止突变************/
     if (angle_bias - angle_bias_last > 0.5)
