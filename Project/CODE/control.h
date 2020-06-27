@@ -19,7 +19,7 @@
 #define ANGLE_CONTROL_D 50
 #define HENG_FACTOR 50
 #define SHU_FACTOR 50
-#define AMP_FACTOR 200
+#define AMP_FACTOR 400
 
 extern int16 ad_test[4];
 float angle_control(float car_angle, float car_w, float angle_set);
@@ -27,5 +27,6 @@ void induc_test(void);
 int16 direction_control(void);
 float speed_control(int16 speed_real, int16 speed_set);
 void take_off(void);
+void direction_pd_fuzzy(int16 deviation, float *p, float *d);
 
 #endif

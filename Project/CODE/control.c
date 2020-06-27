@@ -66,9 +66,13 @@ void induc_test(void)
     ad_test[3] = (4*ad_test[3] + l_s_2)/5;
 }
 
-/*
-输出转向控制对应电机的duty
-*/
+/***************************
+ * @breif   转向控制函数
+ * @param   void
+ * @return  motor_turn 转向时的电机占空比
+ * @note    返回转向时用的p、d参数
+ * @author  btk
+ ***************************/
 int16 direction_control(void)
 {
     int16 induc_ref[4] = {200, 240, 700, 700};
@@ -77,30 +81,34 @@ int16 direction_control(void)
     int16 deviation_h_dot = 0;
     int16 deviation_h;
     int16 sensor[4];
-    int16 turn_p, turn_d;
+    float turn_p, turn_d;
     static int16 ad[4] = {0, 0, 0, 0};
     getl_once();
     ad[0] = (4*ad[0] + l_h_1)/5;
     ad[1] = (4*ad[1] + l_h_2)/5;
     ad[2] = (4*ad[2] + l_s_1)/5;
     ad[3] = (4*ad[3] + l_s_2)/5;
-    sensor[0] = (int)(ad[0]*HENG_FACTOR/induc_ref[0]);
+    sensor[0] = (int)(ad[0]*HENG_FACTOR/induc_ref[0]); // -angle_additional*低头ad变化/偏差度数
     sensor[1] = (int)(ad[1]*HENG_FACTOR/induc_ref[1]);
     sensor[2] = (int)(ad[2]*SHU_FACTOR/induc_ref[2]);
     sensor[3] = (int)(ad[3]*SHU_FACTOR/induc_ref[3]);
     //data_conversion(ad[0], ad[1], sensor[0], sensor[1],virtual_scope_data);
     deviation_h = (sensor[0] - sensor[1]) * AMP_FACTOR / (sensor[0] + sensor[1]);
     //限幅
-    if (deviation_h > 100)
+    if (deviation_h > 200)
     {
-        deviation_h = 100;
+        deviation_h = 200;
     }
-    else if (deviation_h < -100)
+    else if (deviation_h < -200)
     {
-        deviation_h = -100;
+        deviation_h = -200;
     }
+    if(deviation_h - deviation_h_reg > 15)
+        deviation_h = deviation_h_reg + 15;
+    else if(deviation_h - deviation_h_reg < -15)
+        deviation_h = deviation_h_reg - 15;
     //根据不同偏移量进行不同的偏移量求解
-    if(deviation_h < 25 && deviation_h > -25)
+    if(deviation_h < 50 && deviation_h > -50)
         deviation_h_dot = (4*deviation_h_dot + deviation_h - deviation_h_reg)/5;
     else
         deviation_h_dot = (9*deviation_h_dot + deviation_h - deviation_h_reg)/10;
@@ -111,9 +119,8 @@ int16 direction_control(void)
     else if (deviation_h_dot < -10)
         deviation_h_dot = -10;
     //TODO: 模糊控制得到P和D
-    turn_p = 80;
-    turn_d = 20;
-    motor_turn = turn_p * deviation_h + turn_d * deviation_h_dot;
+    direction_pd_fuzzy(deviation_h, &turn_p, &turn_d);
+    motor_turn = (int16)(turn_p * deviation_h + turn_d * deviation_h_dot* 20);
     return motor_turn;
 }
 
@@ -127,4 +134,46 @@ int16 direction_control(void)
 void take_off(void)
 {
 
+}
+
+/***************************
+ * @breif   模糊pd控制函数
+ * @param   int16 deviation, float *turn_p, float *turn_d
+ * @return  void
+ * @note    返回转向时用的p、d参数
+ * @author  btk
+ ***************************/
+void direction_pd_fuzzy(int16 deviation, float *p, float *d)
+{
+    int16 deviation_table[15] = {-200, -150, -100, -75, -50, 0, 50, 75, 100, 150, 200};
+    float turn_p_table[15] = {10.5, 10.5 ,14.5, 14.5, 12, 9, 6, 4, 6, 9, 12, 14.5, 14.5, 10.5, 10.5};
+    float turn_d_table[15] = {25, 25, 24, 20, 13, 9, 7, 3, 7, 9, 13, 20, 24, 25, 25};
+    int8 i;
+    int8 judge_flag = 1;
+    if(deviation <= deviation_table[0])
+    {
+        *p = turn_p_table[0];
+        *d = turn_d_table[0];
+        judge_flag = 0;
+    }
+    if(deviation >= deviation_table[14])
+    {
+        *p = turn_p_table[14];
+        *d = turn_p_table[14];
+        judge_flag = 0;
+    }
+    if(judge_flag == 1)
+    {
+        for(i=0;i<14;i++)
+        {
+            if(deviation >= deviation_table[i] && deviation <= deviation_table[i+1])
+            {
+                *p = turn_p_table[i] + (deviation - deviation_table[i])*(turn_p_table[i+1] - turn_p_table[i])/(deviation_table[i+1] - deviation_table[i]);
+                *d = turn_d_table[i] + (deviation - deviation_table[i])*(turn_d_table[i+1] - turn_d_table[i])/(deviation_table[i+1] - deviation_table[i]);
+                break;
+            }
+        }
+    }
+
+    
 }

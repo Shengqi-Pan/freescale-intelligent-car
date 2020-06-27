@@ -142,7 +142,7 @@ void TM1_Isr() interrupt 3
     // 控直立
     stand_duty = angle_control(car_info.angle, car_info.omega.y, angle_set + angle_bias);
     turn_duty = direction_control();
-    motor_output(stand_duty, 0);
+    motor_output(stand_duty, turn_duty);
     // 本质就是一个状态机，根据车辆当前判到的状态进行不同的控制
     switch(car_info.state)
     {
