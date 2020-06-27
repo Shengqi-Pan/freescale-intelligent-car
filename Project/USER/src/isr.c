@@ -150,33 +150,33 @@ void TM1_Isr() interrupt 3
     // else
     //     motor_output(stand_duty, 0);
 
-    // 读速度, 5ms一次
-    if (++encoder_read_cnt == 5)
-    {
-        encoder_read_cnt = 0;
-        car_info.speed = get_speed(5);
-    }
     // 本质就是一个状态机，根据车辆当前判到的状态进行不同的控制
     switch(car_info.state)
     {
         // 起步
         case TAKE_OFF:
             // 状态转移条件:开机500ms后自动变为直道状态
-            if(++take_off_cnt >= 500)
+            if(++take_off_cnt >= 50000)
                 car_info.state = STRAIGHT_AHEAD;
             break;
         // 直道
         case STRAIGHT_AHEAD:
             // 状态转移条件:
             // 轮胎差速不是非常大，入弯
-            if (car_info.speed.left_right_diff >= 300 && car_info.speed.left_right_diff <= 600)
-                car_info.state = INTO_TURN;
-            // 轮胎差速很大，弯中
-            if (car_info.speed.left_right_diff > 600)
-                car_info.state = IN_TURN;
+            // if (car_info.speed.left_right_diff >= 300 && car_info.speed.left_right_diff <= 600)
+            //     car_info.state = INTO_TURN;
+            // // 轮胎差速很大，弯中
+            // if (car_info.speed.left_right_diff > 600)
+            //     car_info.state = IN_TURN;
             // 控速度
             // LED = 0;
-            angle_bias = speed_control(car_info.speed.average, speed_set);
+            if (++encoder_read_cnt == 5)
+            {
+                encoder_read_cnt = 0;
+                // 读速度, 5ms一次
+                car_info.speed = get_speed(5);
+                angle_bias = speed_control(car_info.speed.average, speed_set);
+            }
             break;
         case INTO_TURN:
             break;

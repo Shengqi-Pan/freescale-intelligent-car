@@ -86,6 +86,9 @@ float speed_control(int16 speed_real, int16 speed_set)
     else if (angle_bias - angle_bias_last < -0.5)
         angle_bias = angle_bias_last - 0.5;
     angle_bias_last = angle_bias;
+    // data_conversion(angle_bias, 0,
+    //                 0, 0,
+    //                 virtual_scope_data);
 
     return angle_bias;
 }

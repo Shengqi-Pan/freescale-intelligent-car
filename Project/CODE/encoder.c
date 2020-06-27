@@ -51,8 +51,8 @@ Speed get_speed(uint16 time)
     speed.average = (speed.left + speed.right) / 2;
     speed.left_right_diff = speed.left - speed.right;
     speed.left_right_diff = speed.left_right_diff > 0 ? speed.left_right_diff : -speed.left_right_diff;  // 取abs
-    data_conversion(speed.left, speed.right,
-                    temp_pulse_left, temp_pulse_right,
-                    virtual_scope_data);
+    // data_conversion(speed.left, speed.right,
+    //                 temp_pulse_left, temp_pulse_right,
+    //                 virtual_scope_data);
     return speed;
 }
