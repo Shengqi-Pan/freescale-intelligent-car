@@ -71,4 +71,5 @@ void motor_output(float motor_angle_control, int16 motor_turn_control)
         pwm_duty(PWM7_P22, 0);
         pwm_duty(PWM4P_P26, (int)(-motor_left));	
     }
+  
 }

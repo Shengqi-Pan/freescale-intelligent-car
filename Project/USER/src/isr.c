@@ -130,7 +130,7 @@ void TM0_Isr() interrupt 1
     omega = get_omega_from_icm();
     kalman(angle, omega.y);
     // ¿ØÖ±Á¢
-    stand_duty = angle_control(car_info.angle, car_info.omega.y, 21);
+    stand_duty = angle_control(car_info.angle, car_info.omega.y, 20);
     /*if(turn_control_cnt % 5 == 0)
     {
         turn_duty = direction_control(); 
@@ -139,7 +139,7 @@ void TM0_Isr() interrupt 1
     if(turn_control_cnt == 9)
         turn_control_cnt = 0;*/
     turn_duty = direction_control();
-    motor_output(stand_duty, turn_duty);
+    motor_output(stand_duty, 0);
     // extern float test[];
     // omega = get_omega_from_icm();
     // test[0] += 0;

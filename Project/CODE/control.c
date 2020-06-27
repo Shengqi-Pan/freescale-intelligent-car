@@ -16,7 +16,7 @@ int16 ad_test[4] = {0, 0, 0, 0};
 float angle_control(float car_angle, float car_w, float angle_set)   //控直立
 {
     float motor_angle_control, angle_control;
-    angle_control = angle_set - car_angle;  
+    angle_control = car_angle - angle_set;  
     motor_angle_control = angle_control * ANGLE_CONTROL_P + car_w * ANGLE_CONTROL_D;
     return motor_angle_control;
 }
