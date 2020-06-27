@@ -11,19 +11,20 @@
 
 #include "l_ad.h"
 #include "car_info.h"
+#include "SEEKFREE_VIRSCO.h"
+#include "SEEKFREE_WIRELESS.h"
+#include "zf_uart.h"
 
 #define ANGLE_CONTROL_P 800
 #define ANGLE_CONTROL_D 50
-#define HENG_FACTOR 300
-#define SHU_FACTOR 400
-#define DIRECTION_ON 1
-#define AMP_FACTOR 800
+#define HENG_FACTOR 50
+#define SHU_FACTOR 50
+#define AMP_FACTOR 200
 
 extern int16 ad_test[4];
-
 float angle_control(float car_angle, float car_w, float angle_set);
 void induc_test(void);
-float direction_control(void);
+int16 direction_control(void);
 float speed_control(int16 speed_real, int16 speed_set);
 void take_off(void);
 

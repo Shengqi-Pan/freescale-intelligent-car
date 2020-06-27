@@ -120,7 +120,7 @@ void INT4_Isr() interrupt 16
 
 void TM0_Isr() interrupt 1
 {
-
+    
 }
 void TM1_Isr() interrupt 3
 {
@@ -134,14 +134,17 @@ void TM1_Isr() interrupt 3
     //--------------下面存一些定时间隔---------------//
     static uint16 encoder_read_cnt = 0;  // 编码器读取间隔
     static uint16 take_off_cnt = 0;  // 起步时间
+    static uint16 turn_control_cnt = 0;
 
+    int16 turn_duty;
+    // static int16 turn_control_cnt = 0; //进转向控制标志
     // 读取角度和角速度并卡尔曼滤波
     angle = get_angle_from_icm();
     omega = get_omega_from_icm();
     kalman(angle, omega.y);
     // 控直立
     stand_duty = angle_control(car_info.angle, car_info.omega.y, angle_set + angle_bias);
-    motor_output(stand_duty);
+    motor_output(stand_duty, 0);
     // 本质就是一个状态机，根据车辆当前判到的状态进行不同的控制
     switch(car_info.state)
     {
@@ -178,6 +181,16 @@ void TM1_Isr() interrupt 3
         default:
             break;
     }
+    turn_control_cnt++;
+    if(turn_control_cnt == 9)
+        turn_control_cnt = 0;
+    turn_duty = direction_control();
+    motor_output(stand_duty, turn_duty);
+    // extern float test[];
+    // omega = get_omega_from_icm();
+    // test[0] += 0;
+    // test[1] += omega.y * 0.001;
+    // test[2] += omega.z * 0.001;
 }
 void TM2_Isr() interrupt 12
 {

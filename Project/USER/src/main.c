@@ -47,7 +47,7 @@ void main()
     seekfree_wireless_init();  // 无线串口初始化
     motor_init();  // 电机初始化
     l_init();  //ad初始化
-    encoder_init();
+    //encoder_init();
     delay_ms(10);
 
     EnableGlobalIRQ(); //  开启总中断
