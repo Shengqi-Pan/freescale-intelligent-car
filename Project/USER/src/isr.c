@@ -130,15 +130,11 @@ void TM1_Isr() interrupt 3
     int16 speed_set = 400;  // 给定速度1000mm/s
     static float angle_set = 18;  // 给定角度,车辆平衡角为23.87，要前进可以多给一些
     static float angle_bias = 0;  // 用于控直立的偏移角
-    
+    int16 turn_duty; //控转向的占空比    
     //--------------下面存一些定时间隔---------------//
     static uint16 encoder_read_cnt = 0;  // 编码器读取间隔
     static uint16 take_off_cnt = 0;  // 起步时间
     static uint16 turn_control_cnt = 0;
-
-    int16 turn_duty;
-    // static int16 turn_control_cnt = 0; //进转向控制标志
-
     // 读取角度和角速度并卡尔曼滤波
     angle = get_angle_from_icm();
     omega = get_omega_from_icm();
@@ -190,11 +186,9 @@ void TM1_Isr() interrupt 3
         default:
             break;
     }
-    // turn_control_cnt++;
-    // if(turn_control_cnt == 9)
-    //     turn_control_cnt = 0;
-    // turn_duty = direction_control();
-    // motor_output(stand_duty, turn_duty);
+    /*turn_control_cnt++;
+    if(turn_control_cnt == 9)
+        turn_control_cnt = 0;*/
     // extern float test[];
     // omega = get_omega_from_icm();
     // test[0] += 0;
