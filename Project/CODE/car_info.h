@@ -47,5 +47,6 @@ typedef struct
 }CarInfo;
 
 extern CarInfo car_info;
+extern int16 test[4];
 
 #endif

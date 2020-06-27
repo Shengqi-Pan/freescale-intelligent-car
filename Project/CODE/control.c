@@ -32,7 +32,7 @@ float angle_control(float car_angle, float car_w, float angle_set)   //控直立
  ***************************/
 float speed_control(int16 speed_real, int16 speed_set)
 {
-    static float angle_bias, angle_bias_last;
+    static float angle_bias = 0, angle_bias_last = 0;
     int16 speed_deviation = speed_real - speed_set;  // 实际速度和设定速度差值
     switch (car_info.state)
     {
@@ -81,14 +81,11 @@ float speed_control(int16 speed_real, int16 speed_set)
     }
 
     /************限制bias变化防止突变************/
-    if (angle_bias - angle_bias_last > 0.5)
-        angle_bias = angle_bias_last + 0.5;
-    else if (angle_bias - angle_bias_last < -0.5)
-        angle_bias = angle_bias_last - 0.5;
+    if (angle_bias - angle_bias_last > 0.1)
+        angle_bias = angle_bias_last + 0.1;
+    else if (angle_bias - angle_bias_last < -0.1)
+        angle_bias = angle_bias_last - 0.1;
     angle_bias_last = angle_bias;
-    // data_conversion(angle_bias, 0,
-    //                 0, 0,
-    //                 virtual_scope_data);
 
     return angle_bias;
 }

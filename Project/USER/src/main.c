@@ -62,9 +62,10 @@ void main()
         // data_conversion(ad_test[0], ad_test[1],
         //                 ad_test[2], ad_test[3],
         //                 virtual_scope_data);
-        data_conversion(car_info.speed.left, car_info.speed.right,
-                        0, 0,
-                        virtual_scope_data);
-        uart_putbuff(WIRELESS_UART, virtual_scope_data, sizeof(virtual_scope_data));
+        // data_conversion(test[0], car_info.speed.left,
+        //                 car_info.speed.right, 0,
+        //                 virtual_scope_data);
+        // uart_putbuff(WIRELESS_UART, virtual_scope_data, sizeof(virtual_scope_data));
+        uart_putchar(WIRELESS_UART, (int8) test[0]);
     }
 }
