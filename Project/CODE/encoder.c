@@ -44,9 +44,12 @@ Speed get_speed(uint16 time)
     if(1 == SPEEDR_DIR)    temp_pulse_right = -temp_pulse_right;
     else                   temp_pulse_right = temp_pulse_right;
 
-    // temp_pulse_left / 1024.0(线数) * 30(编码器的齿轮数) / 68(轮子的齿轮数) * 2 * 0.064 * 3.1415926
+    // temp_pulse_left / 1024.0(线数) * 30(编码器的齿轮数) / 68(轮子的齿轮数) * 0.064 * 3.1415926 单位m
     // 单位:mm/s
-    speed.left = (int16)(temp_pulse_left * 162.4215 / time);
-    speed.right = (int16)(temp_pulse_right * 162.4215 / time);
+    speed.left = (int16)(temp_pulse_left * 86.6248 / time);
+    speed.right = (int16)(temp_pulse_right * 86.6248 / time);
+    data_conversion(speed.left, speed.right,
+                    temp_pulse_left, temp_pulse_right,
+                    virtual_scope_data);
     return speed;
 }

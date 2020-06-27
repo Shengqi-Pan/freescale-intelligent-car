@@ -12,7 +12,7 @@
 #include "l_ad.h"
 #include "car_info.h"
 
-#define ANGLE_CONTROL_P 2000
+#define ANGLE_CONTROL_P 800
 #define ANGLE_CONTROL_D 50
 #define HENG_FACTOR 300
 #define SHU_FACTOR 400

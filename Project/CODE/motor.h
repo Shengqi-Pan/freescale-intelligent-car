@@ -10,7 +10,7 @@
 
 #include "zf_pwm.h"
 
-#define AMPLITUDE_LIMIT 2000
+#define AMPLITUDE_LIMIT 3000
 extern float Angle_Control_P;
 extern float Angle_Control_D;
 
