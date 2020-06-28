@@ -16,6 +16,8 @@ typedef struct
 {
     int16 left;
     int16 right;
+    int16 average;
+    int16 left_right_diff;  // 左右轮速度差
 }Speed;
 
 //--------------车辆当前状态---------------//
@@ -23,8 +25,8 @@ typedef enum
 {
     TAKE_OFF,  // 起步
     STRAIGHT_AHEAD,  // 走直道
-    TURN_LEFT,  // 左转
-    TURN_RIGHT,  // 右转
+    INTO_TURN,  // 开始转
+    IN_TURN,  // 弯中
     RAMP_UP,  // 上坡
     RAMP_DOWN,  // 下坡
     RING,  //圆环
@@ -45,5 +47,6 @@ typedef struct
 }CarInfo;
 
 extern CarInfo car_info;
+extern int16 test[4];
 
 #endif

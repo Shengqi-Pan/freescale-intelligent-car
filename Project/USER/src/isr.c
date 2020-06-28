@@ -127,7 +127,7 @@ void TM1_Isr() interrupt 3
     extern float angle;
     extern Omega omega;
     float stand_duty;  //控直立的占空比
-    int16 speed_set = 400;  // 给定速度1000mm/s
+    int16 speed_set = 500;  // 给定速度1000mm/s
     static float angle_set = 18;  // 给定角度,车辆平衡角为23.87，要前进可以多给一些
     static float angle_bias = 0;  // 用于控直立的偏移角
     int16 turn_duty; //控转向的占空比    
@@ -135,38 +135,56 @@ void TM1_Isr() interrupt 3
     static uint16 encoder_read_cnt = 0;  // 编码器读取间隔
     static uint16 take_off_cnt = 0;  // 起步时间
     static uint16 turn_control_cnt = 0;
+
     // 读取角度和角速度并卡尔曼滤波
     angle = get_angle_from_icm();
     omega = get_omega_from_icm();
     kalman(angle, omega.y);
+
     // 控直立
     stand_duty = angle_control(car_info.angle, car_info.omega.y, angle_set + angle_bias);
-    turn_duty = direction_control();
+	  if(++turn_control_cnt == 3)
+		{
+			  turn_control_cnt = 0;
+			  turn_duty = direction_control();  // 控转向
+		}
     motor_output(stand_duty, turn_duty);
+    // if (car_info.speed.average > 500 || car_info.speed.average < -500)
+    //     motor_output(0, 0);
+    // else
+    //     motor_output(stand_duty, 0);
+
     // 本质就是一个状态机，根据车辆当前判到的状态进行不同的控制
     switch(car_info.state)
     {
         // 起步
         case TAKE_OFF:
+            // 状态转移条件:开机500ms后自动变为直道状态
             if(++take_off_cnt >= 500)
                 car_info.state = STRAIGHT_AHEAD;
             break;
         // 直道
         case STRAIGHT_AHEAD:
+            // 状态转移条件:
+            // 轮胎差速不是非常大，入弯
+            // if (car_info.speed.left_right_diff >= 300 && car_info.speed.left_right_diff <= 600)
+            //     car_info.state = INTO_TURN;
+            // // 轮胎差速很大，弯中
+            // if (car_info.speed.left_right_diff > 600)
+            //     car_info.state = IN_TURN;
             // 控速度
-            break;
+            LED = 0;
             if (++encoder_read_cnt == 5)
             {
-                LED = 0;
                 encoder_read_cnt = 0;
+                // 读速度, 5ms一次
                 car_info.speed = get_speed(5);
-                // if (car_info.angle < 25 && car_info.angle > 15)
-                angle_bias = speed_control((car_info.speed.left + car_info.speed.right) / 2, speed_set);
+                angle_bias = speed_control(car_info.speed.average, speed_set);
             }
             break;
-        case TURN_LEFT:
+        case INTO_TURN:
             break;
-        case TURN_RIGHT:
+        case IN_TURN:
             break;
         case RAMP_UP:
             break;

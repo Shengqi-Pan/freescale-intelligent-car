@@ -47,7 +47,7 @@ void main()
     seekfree_wireless_init();  // 无线串口初始化
     motor_init();  // 电机初始化
     l_init();  //ad初始化
-    //encoder_init();
+    encoder_init();
     delay_ms(10);
 
     EnableGlobalIRQ(); //  开启总中断
@@ -62,9 +62,10 @@ void main()
         // data_conversion(ad_test[0], ad_test[1],
         //                 ad_test[2], ad_test[3],
         //                 virtual_scope_data);
-        // data_conversion(car_info.speed.left, car_info.speed.right,
-        //                 0, 0,
+        // data_conversion(test[0], car_info.speed.left,
+        //                 car_info.speed.right, 0,
         //                 virtual_scope_data);
         uart_putbuff(WIRELESS_UART, virtual_scope_data, sizeof(virtual_scope_data));
+        //uart_putchar(WIRELESS_UART, (int8) test[0]);
     }
 }
