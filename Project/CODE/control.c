@@ -156,7 +156,7 @@ int16 direction_control(void)
         deviation_h_dot = -10;
     //TODO: 模糊控制得到P和D
     direction_pd_fuzzy(deviation_h, &turn_p, &turn_d);
-    motor_turn = (int16)(turn_p * deviation_h + turn_d * deviation_h_dot* 20);
+    motor_turn = (int16)((turn_p * deviation_h  + turn_d * deviation_h_dot* 15)/ 2.7);
     return motor_turn;
 }
 
