@@ -16,9 +16,9 @@
 #include "zf_uart.h"
 
 #define ANGLE_CONTROL_P 1000
-#define ANGLE_CONTROL_D 50
-#define HENG_FACTOR 50
-#define SHU_FACTOR 50
+#define ANGLE_CONTROL_D 13
+#define HENG_FACTOR 60
+#define SHU_FACTOR 60
 #define AMP_FACTOR 400
 
 extern int16 ad_test[4];
