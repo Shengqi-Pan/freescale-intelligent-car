@@ -209,7 +209,5 @@ void direction_pd_fuzzy(int16 deviation, float *p, float *d)
                 break;
             }
         }
-    }
-
-    
+    }  
 }
