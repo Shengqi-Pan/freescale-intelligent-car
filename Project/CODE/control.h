@@ -17,8 +17,8 @@
 
 #define ANGLE_CONTROL_P 1000
 #define ANGLE_CONTROL_D 50
-#define HENG_FACTOR 50
-#define SHU_FACTOR 50
+#define HENG_FACTOR 40
+#define SHU_FACTOR 40
 #define AMP_FACTOR 200
 
 extern int16 ad_test[4];

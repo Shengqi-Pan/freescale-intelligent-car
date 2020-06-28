@@ -18,8 +18,8 @@ void motor_init(void)
 void motor_output(float motor_angle_control, int16 motor_turn_control)
 {
     float motor_left, motor_right;
-    motor_left = motor_angle_control - motor_turn_control;
-    motor_right = motor_angle_control + motor_turn_control;  
+    motor_left = motor_angle_control + motor_turn_control;
+    motor_right = motor_angle_control - motor_turn_control;  
      
     
     // if (motor_angle_control > AMPLITUDE_LIMIT)
@@ -35,14 +35,14 @@ void motor_output(float motor_angle_control, int16 motor_turn_control)
         motor_right = AMPLITUDE_LIMIT;
     else if(motor_right < -AMPLITUDE_LIMIT)
         motor_right = -AMPLITUDE_LIMIT;
-    if(motor_left < AMPLITUDE_LIMIT_MIN && motor_left >= 0)
+    /*if(motor_left < AMPLITUDE_LIMIT_MIN && motor_left >= 0)
         motor_left = AMPLITUDE_LIMIT_MIN;
     else if(motor_left > -AMPLITUDE_LIMIT_MIN && motor_left <= 0)
         motor_left = -AMPLITUDE_LIMIT_MIN;
     if(motor_right < AMPLITUDE_LIMIT_MIN && motor_right >= 0)
         motor_right = AMPLITUDE_LIMIT_MIN;
     else if(motor_right > -AMPLITUDE_LIMIT_MIN && motor_right <= 0)
-        motor_right = -AMPLITUDE_LIMIT_MIN;
+        motor_right = -AMPLITUDE_LIMIT_MIN;*/
     if(motor_left > 0)
     {
         motor_left += DEAD_TIME;

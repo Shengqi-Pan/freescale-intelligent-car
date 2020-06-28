@@ -107,7 +107,7 @@ void induc_test(void)
 */
 int16 direction_control(void)
 {
-    int16 induc_ref[4] = {200, 240, 700, 700};
+    int16 induc_ref[4] = {210, 250, 700, 700};
     int16 motor_turn;
     static int16 deviation_h_reg = 0;
     int16 deviation_h_dot = 0;
@@ -124,7 +124,7 @@ int16 direction_control(void)
     sensor[1] = (int)(ad[1]*HENG_FACTOR/induc_ref[1]);
     sensor[2] = (int)(ad[2]*SHU_FACTOR/induc_ref[2]);
     sensor[3] = (int)(ad[3]*SHU_FACTOR/induc_ref[3]);
-    //data_conversion(ad[0], ad[1], sensor[0], sensor[1],virtual_scope_data);
+    data_conversion(ad[0], ad[1], sensor[0], sensor[1],virtual_scope_data);
     deviation_h = (sensor[0] - sensor[1]) * AMP_FACTOR / (sensor[0] + sensor[1]);
     //限幅
     if (deviation_h > 100)
@@ -147,7 +147,7 @@ int16 direction_control(void)
     else if (deviation_h_dot < -10)
         deviation_h_dot = -10;
     //TODO: 模糊控制得到P和D
-    turn_p = 80;
+    turn_p = 15;
     turn_d = 20;
     motor_turn = turn_p * deviation_h + turn_d * deviation_h_dot;
     return motor_turn;

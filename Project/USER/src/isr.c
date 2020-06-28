@@ -143,7 +143,11 @@ void TM1_Isr() interrupt 3
 
     // 控直立
     stand_duty = angle_control(car_info.angle, car_info.omega.y, angle_set + angle_bias);
-    turn_duty = direction_control();  // 控转向
+	  if(++turn_control_cnt == 5)
+		{
+			  turn_control_cnt = 0;
+			  turn_duty = direction_control();  // 控转向
+		}
     motor_output(stand_duty, turn_duty);
     // if (car_info.speed.average > 500 || car_info.speed.average < -500)
     //     motor_output(0, 0);
