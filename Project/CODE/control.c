@@ -111,14 +111,11 @@ void induc_test(void)
  ***************************/
 int16 direction_control(void)
 {
-    int16 induc_ref[4] = {210, 250, 700, 700};
     int16 motor_turn;
     static int16 deviation_h_reg = 0;
     int16 deviation_h_dot = 0;
     int16 deviation_h;
-    int16 sensor[4];
     float turn_p, turn_d;
-    static int16 ad[4] = {0, 0, 0, 0};
     getl_once();
     ad[0] = (4*ad[0] + l_h_1)/5;
     ad[1] = (4*ad[1] + l_h_2)/5;

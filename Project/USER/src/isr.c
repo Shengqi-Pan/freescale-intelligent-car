@@ -173,7 +173,9 @@ void TM1_Isr() interrupt 3
             // if (car_info.speed.left_right_diff > 600)
             //     car_info.state = IN_TURN;
             // ¿ØËÙ¶È
-            LED = 0;
+            // ÅÐÔ²»·
+            if(is_ring())
+                car_info.state =  RING;
             if (++encoder_read_cnt == 5)
             {
                 encoder_read_cnt = 0;
@@ -219,6 +221,11 @@ void TM1_Isr() interrupt 3
         case RAMP_DOWN:
             break;
         case RING:
+            //LED = 0;
+            if(is_tangent())
+            {
+                LED = 0;
+            }
             break;
         case STOP:
             break;

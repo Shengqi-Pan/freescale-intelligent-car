@@ -1,9 +1,10 @@
 #ifndef _JUDGE_H
 #define _JUDGE_H
-#include "carinfo.h"
+#include "car_info.h"
 #include "STC8Hxx.h"
+#include "control.h"
 
-void is_ring(void);
-
+uint8 is_ring(void);
+uint8 is_tangent();
 
 #endif

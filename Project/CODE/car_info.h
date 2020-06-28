@@ -36,10 +36,18 @@ typedef enum
 //--------------    入环当前状态---------------//
 typedef enum
 {
-    RING_MAYBE,  //判断为左环
+    NOT_A_RING,
     RING_TRUE 
 
 }RingState;
+
+//--------------    入环当前状态---------------//
+typedef enum
+{
+    NOT_A_TING,
+    LEFT,  //判断为左环
+    RIGHT 
+}RingDir;
 
 //--------------车身相关信息的结构体---------------//
 typedef struct
@@ -61,5 +69,7 @@ extern int16 sensor[4]; //归一化后电感值，用于judge
 extern int16 ad[4];
 extern int16 induc_ref[4];
 extern int16 test[4];
+extern RingDir ring_dir;
+extern RingState ring_state;
 
 #endif

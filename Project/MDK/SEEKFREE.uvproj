@@ -149,7 +149,7 @@
             <RestoreSysVw>1</RestoreSysVw>
           </Target>
           <RunDebugAfterBuild>0</RunDebugAfterBuild>
-          <TargetSelection>12</TargetSelection>
+          <TargetSelection>10</TargetSelection>
           <SimDlls>
             <CpuDll></CpuDll>
             <CpuDllArguments></CpuDllArguments>
@@ -711,6 +711,11 @@
               <FileType>1</FileType>
               <FilePath>..\CODE\encoder.c</FilePath>
             </File>
+            <File>
+              <FileName>judge.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\CODE\judge.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -755,6 +760,11 @@
               <FileName>encoder.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\CODE\encoder.h</FilePath>
+            </File>
+            <File>
+              <FileName>judge.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\CODE\judge.h</FilePath>
             </File>
           </Files>
         </Group>
