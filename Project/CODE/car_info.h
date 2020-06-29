@@ -37,7 +37,9 @@ typedef enum
 typedef enum
 {
     NOT_A_RING,
-    RING_TRUE 
+    RING_TRUE,
+    RING_IN_READY,
+    RING_INTO
 
 }RingState;
 
@@ -60,6 +62,10 @@ typedef struct
     Speed speed;
     // 车辆状态
     CarState state;
+    // 车辆经过里程
+    float distance;
+    // 转过的倾角
+    float turn_angle;
 }CarInfo;
 
 

@@ -36,7 +36,7 @@ float speed_control(int16 speed_real, int16 speed_set)
     int16 speed_deviation = speed_real - speed_set;  // 实际速度和设定速度差值
     switch (car_info.state)
     {
-        case STRAIGHT_AHEAD:
+        case STRAIGHT_AHEAD: case RING:
         /************直道控速************/
             // 速度慢了
             if(speed_deviation < -400)        angle_bias = 6;
@@ -113,9 +113,22 @@ int16 direction_control(void)
 {
     int16 motor_turn;
     static int16 deviation_h_reg = 0;
-    int16 deviation_h_dot = 0;
+    static int16 deviation_l_reg = 0;
+    static int16 deviation_h_dot = 0;
+    static int16 deviation_l_dot = 0;
     int16 deviation_h;
+    int16 deviation_l;
     float turn_p, turn_d;
+    if(ring_state == RING_INTO && ring_dir == LEFT)
+    {
+        induc_ref[2] = 80;
+        induc_ref[3] = 45;
+    }
+    else if(ring_state == RING_INTO && ring_dir == RIGHT)
+    {
+        induc_ref[2] = 155;
+        induc_ref[3] = 260;
+    }
     getl_once();
     ad[0] = (4*ad[0] + l_h_1)/5;
     ad[1] = (4*ad[1] + l_h_2)/5;
@@ -125,36 +138,83 @@ int16 direction_control(void)
     sensor[1] = (int)(ad[1]*HENG_FACTOR/induc_ref[1]);
     sensor[2] = (int)(ad[2]*SHU_FACTOR/induc_ref[2]);
     sensor[3] = (int)(ad[3]*SHU_FACTOR/induc_ref[3]);
-    data_conversion(ad[0], ad[1], sensor[0], sensor[1],virtual_scope_data);
-    deviation_h = (sensor[0] - sensor[1]) * AMP_FACTOR / (sensor[0] + sensor[1]);
-    //限幅
-    if (deviation_h > 200)
+    if(ring_state != RING_INTO)
     {
-        deviation_h = 200;
+        deviation_h = (sensor[0] - sensor[1]) * AMP_FACTOR / (sensor[0] + sensor[1]);
+        deviation_l_reg = 0;
+        deviation_l_dot = 0;
+        //限幅
+        if (deviation_h > 200)
+        {
+            deviation_h = 200;
+        }
+        else if (deviation_h < -200)
+        {
+            deviation_h = -200;
+        }
+        if(deviation_h - deviation_h_reg > 15)
+            deviation_h = deviation_h_reg + 15;
+        else if(deviation_h - deviation_h_reg < -15)
+            deviation_h = deviation_h_reg - 15;
+        //根据不同偏移量进行不同的偏移量求解
+        if(deviation_h < 50 && deviation_h > -50)
+            deviation_h_dot = (4*deviation_h_dot + deviation_h - deviation_h_reg)/5;
+        else
+            deviation_h_dot = (9*deviation_h_dot + deviation_h - deviation_h_reg)/10;
+        deviation_h_reg = deviation_h;
+        //偏差变化率限幅
+        if (deviation_h_dot > 10)
+            deviation_h_dot = 10;
+        else if (deviation_h_dot < -10)
+            deviation_h_dot = -10;
+        //模糊控制得到P和D
+        direction_pd_fuzzy(deviation_h, &turn_p, &turn_d);
+        motor_turn = (int16)((turn_p * deviation_h  + turn_d * deviation_h_dot* 8)/ 2.7);
+        return motor_turn;
     }
-    else if (deviation_h < -200)
-    {
-        deviation_h = -200;
-    }
-    if(deviation_h - deviation_h_reg > 15)
-        deviation_h = deviation_h_reg + 15;
-    else if(deviation_h - deviation_h_reg < -15)
-        deviation_h = deviation_h_reg - 15;
-    //根据不同偏移量进行不同的偏移量求解
-    if(deviation_h < 50 && deviation_h > -50)
-        deviation_h_dot = (4*deviation_h_dot + deviation_h - deviation_h_reg)/5;
     else
-        deviation_h_dot = (9*deviation_h_dot + deviation_h - deviation_h_reg)/10;
-    deviation_h_reg = deviation_h;
-    //偏差变化率限幅
-    if (deviation_h_dot > 10)
-        deviation_h_dot = 10;
-    else if (deviation_h_dot < -10)
-        deviation_h_dot = -10;
-    //TODO: 模糊控制得到P和D
-    direction_pd_fuzzy(deviation_h, &turn_p, &turn_d);
-    motor_turn = (int16)((turn_p * deviation_h  + turn_d * deviation_h_dot* 15)/ 2.7);
-    return motor_turn;
+    {
+        deviation_h_reg = 0;
+        deviation_h_dot = 0;
+        deviation_l = (sensor[2] - sensor[3]) * AMP_FACTOR / (sensor[2] + sensor[3]);
+        test[0] = deviation_l; 
+        //限幅
+        if (deviation_l > 200)
+        {
+            deviation_l = 200;
+        }
+        else if (deviation_l < -200)
+        {
+            deviation_l = -200;
+        }
+        if(deviation_l - deviation_l_reg > 15)
+            deviation_l = deviation_l_reg + 15;
+        else if(deviation_l - deviation_l_reg < -15)
+            deviation_l = deviation_l_reg - 15;
+        //根据不同偏移量进行不同的偏移量求解
+        if(deviation_l < 50 && deviation_l > -50)
+            deviation_l_dot = (4*deviation_l_dot + deviation_l - deviation_l_reg)/5;
+        else
+            deviation_l_dot = (9*deviation_l_dot + deviation_l - deviation_l_reg)/10;
+        deviation_l_reg = deviation_l;
+        //偏差变化率限幅
+        if (deviation_l_dot > 10)
+            deviation_l_dot = 10;
+        else if (deviation_l_dot < -10)
+            deviation_l_dot = -10;
+        //模糊控制得到P和D
+        turn_p = 6;
+        turn_d = 7;
+        motor_turn = (int16)((turn_p * deviation_l  + turn_d * deviation_l_dot* 12)/ 2);
+        if(ring_dir == LEFT)
+            motor_turn = motor_turn>0 ? motor_turn : 0;
+        else if(ring_dir == RIGHT)
+            motor_turn = motor_turn<0 ? motor_turn : 0;
+        test[1] = motor_turn;
+        return motor_turn;
+    }
+    
+    
 }
 
 /***************************
