@@ -33,6 +33,24 @@ typedef enum
     STOP  //结束
 }CarState;
 
+//--------------    入环当前状态---------------//
+typedef enum
+{
+    NOT_A_RING,
+    RING_TRUE,
+    RING_IN_READY,
+    RING_INTO
+
+}RingState;
+
+//--------------    入环当前状态---------------//
+typedef enum
+{
+    NOT_A_TING,
+    LEFT,  //判断为左环
+    RIGHT 
+}RingDir;
+
 //--------------车身相关信息的结构体---------------//
 typedef struct
 {
@@ -44,9 +62,20 @@ typedef struct
     Speed speed;
     // 车辆状态
     CarState state;
+    // 车辆经过里程
+    float distance;
+    // 转过的倾角
+    float turn_angle;
 }CarInfo;
 
+
+
 extern CarInfo car_info;
+extern int16 sensor[4]; //归一化后电感值，用于judge
+extern int16 ad[4];
+extern int16 induc_ref[4];
 extern int16 test[4];
+extern RingDir ring_dir;
+extern RingState ring_state;
 
 #endif

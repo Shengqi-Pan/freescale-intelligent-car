@@ -65,6 +65,7 @@ void main()
         // data_conversion(test[0], car_info.speed.left,
         //                 car_info.speed.right, 0,
         //                 virtual_scope_data);
+        data_conversion(test[0], test[1], sensor[2], sensor[3], virtual_scope_data);
         uart_putbuff(WIRELESS_UART, virtual_scope_data, sizeof(virtual_scope_data));
         //uart_putchar(WIRELESS_UART, (int8) test[0]);
     }

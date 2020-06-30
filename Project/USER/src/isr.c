@@ -149,6 +149,13 @@ void TM1_Isr() interrupt 3
         turn_duty = direction_control();  // 控转向
     }
     motor_output(stand_duty, turn_duty);
+    if (++encoder_read_cnt == 5)
+    {
+        encoder_read_cnt = 0;
+        // 读速度, 5ms一次
+        car_info.speed = get_speed(5);
+        angle_bias = speed_control(car_info.speed.average, speed_set);
+    }
     // if (car_info.speed.average > 500 || car_info.speed.average < -500)
     //     motor_output(0, 0);
     // else
@@ -173,13 +180,12 @@ void TM1_Isr() interrupt 3
             // if (car_info.speed.left_right_diff > 600)
             //     car_info.state = IN_TURN;
             // 控速度
-            LED = 0;
-            if (++encoder_read_cnt == 5)
+            // 判圆环
+            if(is_ring())
             {
-                encoder_read_cnt = 0;
-                // 读速度, 5ms一次
-                car_info.speed = get_speed(5);
-                angle_bias = speed_control(car_info.speed.average, speed_set);
+                LED = 0;
+                car_info.state =  RING;
+                ring_state = RING_TRUE;
             }
             break;
         case INTO_TURN:
@@ -206,20 +212,48 @@ void TM1_Isr() interrupt 3
             // 轮胎差速不是非常大，入弯
             if (car_info.speed.left_right_diff >= 300 && car_info.speed.left_right_diff <= 600)
                 car_info.state = INTO_TURN;
-            if (++encoder_read_cnt == 5)
-            {
-                encoder_read_cnt = 0;
-                // 读速度, 5ms一次
-                car_info.speed = get_speed(5);
-                angle_bias = speed_control(car_info.speed.average, speed_set);
-            }
             break;
         case RAMP_UP:
             break;
         case RAMP_DOWN:
             break;
         case RING:
-            break;
+            //LED = 0;
+            switch(ring_state)
+            {
+                case RING_TRUE:
+                // 判断出是圆环，开始判断前瞻的切点
+                    if(is_tangent())
+                    {
+                        LED = 1;
+                        ring_state = RING_IN_READY;
+                    }
+                    break;
+                case RING_IN_READY:
+                // 判断出前瞻切点，通过距离来判断轮子经过切点
+                    if(is_motor_tangent())
+                    {
+                        LED = 0;
+                        ring_state = RING_INTO;
+                        car_info.distance = 0;
+                    }
+                    break;
+                case RING_INTO:
+                // 用竖电感进环并在转过90度时移交控制权给横电感
+                    if(car_info.turn_angle > 90)
+                    {
+                        LED = 1;
+                        ring_dir = NOT_A_RING;
+                        ring_state = NOT_A_RING;
+                        car_info.state = STRAIGHT_AHEAD;
+                        car_info.turn_angle = 0;
+                    }
+                    break;
+                default:
+                    break;
+
+            }
+
         case STOP:
             break;
         default:
