@@ -16,7 +16,7 @@ int16 ad_test[4] = {0, 0, 0, 0};
 */
 float angle_control(float car_angle, float car_w, float angle_set)   //控直立
 {
-    float motor_angle_control, angle_control;
+    static float motor_angle_control, angle_control;
     angle_control = car_angle - angle_set;  
     motor_angle_control = angle_control * ANGLE_CONTROL_P + car_w * ANGLE_CONTROL_D;
     return motor_angle_control;
@@ -33,7 +33,8 @@ float angle_control(float car_angle, float car_w, float angle_set)   //控直立
 float speed_control(int16 speed_real, int16 speed_set)
 {
     static float angle_bias = 0, angle_bias_last = 0;
-    int16 speed_deviation = speed_real - speed_set;  // 实际速度和设定速度差值
+    static int16 speed_deviation;
+    speed_deviation = speed_real - speed_set;  // 实际速度和设定速度差值
     switch (car_info.state)
     {
         case STRAIGHT_AHEAD: case RING:
@@ -83,8 +84,8 @@ float speed_control(int16 speed_real, int16 speed_set)
     /************限制bias变化防止突变************/
     if (angle_bias - angle_bias_last > 0.1)
         angle_bias = angle_bias_last + 0.1;
-    else if (angle_bias - angle_bias_last < -0.1)
-        angle_bias = angle_bias_last - 0.1;
+    else if (angle_bias - angle_bias_last < -0.5)
+        angle_bias = angle_bias_last - 0.5;
     angle_bias_last = angle_bias;
 
     return angle_bias;
@@ -116,9 +117,9 @@ int16 direction_control(void)
     static int16 deviation_l_reg = 0;
     static int16 deviation_h_dot = 0;
     static int16 deviation_l_dot = 0;
-    int16 deviation_h;
-    int16 deviation_l;
-    float turn_p, turn_d;
+    static int16 deviation_h;
+    static int16 deviation_l;
+    static float turn_p, turn_d;
     if(ring_state == RING_INTO && ring_dir == LEFT)
     {
         induc_ref[2] = 80;
@@ -169,7 +170,7 @@ int16 direction_control(void)
             deviation_h_dot = -10;
         //模糊控制得到P和D
         direction_pd_fuzzy(deviation_h, &turn_p, &turn_d);
-        motor_turn = (int16)((turn_p * deviation_h  + turn_d * deviation_h_dot* 8)/ 2.7);
+        motor_turn = (int16)((turn_p * deviation_h  + turn_d * deviation_h_dot* 20)/ 2.7);
         return motor_turn;
     }
     else
@@ -238,24 +239,21 @@ void take_off(void)
  ***************************/
 void direction_pd_fuzzy(int16 deviation, float *p, float *d)
 {
-    int16 deviation_table[15] = {-200, -150, -100, -75, -50, 0, 50, 75, 100, 150, 200};
-    float turn_p_table[15] = {10.5, 10.5 ,14.5, 14.5, 12, 9, 6, 4, 6, 9, 12, 14.5, 14.5, 10.5, 10.5};
-    float turn_d_table[15] = {25, 25, 24, 20, 13, 9, 7, 3, 7, 9, 13, 20, 24, 25, 25};
+    static int16 deviation_table[15] = {-200, -160, -130, -100, -80, -50, -30, 0, 30, 50, 80, 100, 130, 160, 200};
+    static float turn_p_table[15] = {10.5, 10.5 ,14.5, 14.5, 12, 9, 6, 4, 6, 9, 12, 14.5, 14.5, 10.5, 10.5};
+    static float turn_d_table[15] = {25, 25, 24, 20, 13, 9, 7, 3, 7, 9, 13, 20, 24, 25, 25};
     int8 i;
-    int8 judge_flag = 1;
     if(deviation <= deviation_table[0])
     {
         *p = turn_p_table[0];
         *d = turn_d_table[0];
-        judge_flag = 0;
     }
-    if(deviation >= deviation_table[14])
+    else if(deviation >= deviation_table[14])
     {
         *p = turn_p_table[14];
         *d = turn_p_table[14];
-        judge_flag = 0;
     }
-    if(judge_flag == 1)
+    else
     {
         for(i=0;i<14;i++)
         {

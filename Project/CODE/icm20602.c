@@ -18,7 +18,7 @@
 float get_angle_from_icm()
 {
     static float angle = 0;
-    float grav_x, grav_z;
+    static float grav_x, grav_z;
     get_icm20602_accdata_simspi();  // 得到加速度计数据16位，如icm_acc_x
     grav_x = (icm_acc_x - ACC_X_BIAS) * 1.0 / ACC_X_FACTOR;  // 根据读到的值计算加速度大小
     grav_z = (icm_acc_z - ACC_Z_BIAS) * 1.0 / ACC_Z_FACTOR;

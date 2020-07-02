@@ -9,10 +9,10 @@
 
 void motor_init(void)
 {
-    pwm_init(PWM5_P00, 15000, 0);   //初始化10kHz
-    pwm_init(PWM7_P22, 15000, 0);
-    pwm_init(PWM6_P01, 15000, 0);
-    pwm_init(PWM4P_P26, 15000, 0);
+    pwm_init(PWM5_P00,  17000, 0); //初始化PWM0  使用P00引脚  初始化频率为17Khz
+	pwm_init(PWM6_P01,  17000, 0); //初始化PWM0  使用P01引脚  初始化频率为17Khz
+	pwm_init(PWM2P_P22, 17000, 0); //初始化PWM2  使用P22引脚  初始化频率为17Khz
+	pwm_init(PWM4P_P26, 17000, 0); //初始化PWM2  使用P26引脚  初始化频率为17Khz
 }
 
 void motor_output(float motor_angle_control, int16 motor_turn_control)
@@ -71,12 +71,12 @@ void motor_output(float motor_angle_control, int16 motor_turn_control)
     }
     if(motor_left >= 0)
     {
-        pwm_duty(PWM7_P22, (int)motor_left);
+        pwm_duty(PWM2P_P22, (int)motor_left);
         pwm_duty(PWM4P_P26, 0);	
     }
     else
     {
-        pwm_duty(PWM7_P22, 0);
+        pwm_duty(PWM2P_P22, 0);
         pwm_duty(PWM4P_P26, (int)(-motor_left));	
     }
   
