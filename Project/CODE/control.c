@@ -146,7 +146,7 @@ int16 direction_control(void)
         deviation_l_reg = 0;
         deviation_l_dot = 0;
         //限幅
-        if(deviation_h >= 200 || deviation_h <= -200)
+        if(deviation_h >= 270 || deviation_h <= -270 || (ad[0]<50 && ad[1]<50))
         {
             motor_stop();
             while(1);
@@ -247,7 +247,7 @@ void direction_pd_fuzzy(int16 deviation, float *p, float *d)
 {
     static int16 deviation_table[13] = {-120, -100, -80, -50, -28, -18, 0, 18, 28, 50, 80, 100, 120};
     static float turn_p_table[13] = {11, 11 ,14, 12, 10, 8, 5 ,8, 10, 12, 14, 11, 11};
-    static float turn_d_table[13] = {580, 580, 550, 470, 380, 300, 220, 300, 380, 470, 550, 580, 580};
+    static float turn_d_table[13] = {700, 610, 560, 500, 410, 320, 220, 320, 410, 500, 560, 610, 700};
     int8 i;
     if(deviation <= deviation_table[0])
     {
