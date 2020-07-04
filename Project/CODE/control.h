@@ -14,8 +14,9 @@
 #include "SEEKFREE_VIRSCO.h"
 #include "SEEKFREE_WIRELESS.h"
 #include "zf_uart.h"
+#include "motor.h"
 
-#define ANGLE_CONTROL_P 1200
+#define ANGLE_CONTROL_P 800
 #define ANGLE_CONTROL_D 15
 #define HENG_FACTOR 32
 #define SHU_FACTOR 32

@@ -9,12 +9,13 @@
 #define _MOTOR_H
 
 #include "zf_pwm.h"
+#include "car_info.h"
 
-#define AMPLITUDE_LIMIT 4500
+#define AMPLITUDE_LIMIT 5000
 #define AMPLITUDE_LIMIT_MIN 400
 #define DEAD_TIME 100
 
 void motor_init(void);
 void motor_output(float motor_angle_control, int16 motor_turn_control);
-
+void motor_stop(void);
 #endif

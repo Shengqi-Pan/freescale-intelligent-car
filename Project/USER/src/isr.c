@@ -127,7 +127,7 @@ void TM1_Isr() interrupt 3
     extern float angle;
     extern Omega omega;
     static float stand_duty;  //控直立的占空比
-    static int16 speed_set = 1000;  // 给定速度1000mm/s
+    static int16 speed_set = 1600;  // 给定速度1000mm/s
     static float angle_set = 19;  // 给定角度,车辆平衡角为23.87，要前进可以多给一些
     static float angle_bias = 0;  // 用于控直立的偏移角
     static int16 turn_duty; //控转向的占空比    

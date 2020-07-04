@@ -146,13 +146,18 @@ int16 direction_control(void)
         deviation_l_reg = 0;
         deviation_l_dot = 0;
         //限幅
-        if (deviation_h > 200)
+        if(deviation_h >= 200 || deviation_h <= -200)
         {
-            deviation_h = 200;
+            motor_stop();
+            while(1);
         }
-        else if (deviation_h < -200)
+        if (deviation_h > 120)
         {
-            deviation_h = -200;
+            deviation_h = 120;
+        }
+        else if (deviation_h < -120)
+        {
+            deviation_h = -120;
         }
         /*if(deviation_h - deviation_h_reg > 15)
             deviation_h = deviation_h_reg + 15;
@@ -181,7 +186,6 @@ int16 direction_control(void)
         deviation_h_reg = 0;
         deviation_h_dot = 0;
         deviation_l = (sensor[2] - sensor[3]) * AMP_FACTOR / (sensor[2] + sensor[3]);
-        test[0] = deviation_l; 
         //限幅
         if (deviation_l > 200)
         {
@@ -241,23 +245,23 @@ void take_off(void)
  ***************************/
 void direction_pd_fuzzy(int16 deviation, float *p, float *d)
 {
-    static int16 deviation_table[15] = {-200, -170, -140, -110, -85, -50, -25, 0, 25, 50, 85, 110, 140, 170, 200};
-    static float turn_p_table[15] = {20, 20 ,28, 28, 25, 15, 10, 5, 10, 15, 25, 28, 28, 20, 20};
-    static float turn_d_table[15] = {500, 500, 500, 500, 450, 350, 230, 80, 230, 350, 450, 500, 500, 500, 500};
+    static int16 deviation_table[13] = {-120, -100, -80, -50, -28, -18, 0, 18, 28, 50, 80, 100, 120};
+    static float turn_p_table[13] = {13, 13 ,13, 12, 10, 8, 5 ,8, 10, 12, 13, 13, 13};
+    static float turn_d_table[13] = {500, 500, 450, 400, 350, 280, 200, 280, 350, 400, 450, 500, 500};
     int8 i;
     if(deviation <= deviation_table[0])
     {
         *p = turn_p_table[0];
         *d = turn_d_table[0];
     }
-    else if(deviation >= deviation_table[14])
+    else if(deviation >= deviation_table[12])
     {
-        *p = turn_p_table[14];
-        *d = turn_p_table[14];
+        *p = turn_p_table[12];
+        *d = turn_p_table[12];
     }
     else
     {
-        for(i=0;i<14;i++)
+        for(i=0;i<12;i++)
         {
             if(deviation >= deviation_table[i] && deviation <= deviation_table[i+1])
             {
