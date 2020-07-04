@@ -44,9 +44,10 @@ float speed_control(int16 speed_real, int16 speed_set)
             else if(speed_deviation < -200)   angle_bias = 4;  // 直道很慢 
             else if(speed_deviation < 0)      angle_bias = 2;
             // 速度快了
-            else if(speed_deviation < 100)    angle_bias = 1; // TODO:这是因为给定的平衡角小于自然平衡角
-            else if(speed_deviation < 200)    angle_bias = -1;
-            else if(speed_deviation >= 300)   angle_bias = -2;  // 若超3m  附加角+2度
+            else if(speed_deviation < 100)    angle_bias = -1; // TODO:这是因为给定的平衡角小于自然平衡角
+            else if(speed_deviation < 200)    angle_bias = -2;
+            else if(speed_deviation < 400)    angle_bias = -3;  // 若超3m  附加角+2度
+            else if(speed_deviation >= 400)   angle_bias = -6;
             break;
         case INTO_TURN:
         /************出/入弯控速************/
@@ -84,8 +85,8 @@ float speed_control(int16 speed_real, int16 speed_set)
     /************限制bias变化防止突变************/
     if (angle_bias - angle_bias_last > 0.1)
         angle_bias = angle_bias_last + 0.1;
-    else if (angle_bias - angle_bias_last < -0.5)
-        angle_bias = angle_bias_last - 0.5;
+    else if (angle_bias - angle_bias_last < -0.1)
+        angle_bias = angle_bias_last - 0.1;
     angle_bias_last = angle_bias;
 
     return angle_bias;
@@ -113,12 +114,12 @@ void induc_test(void)
 int16 direction_control(void)
 {
     int16 motor_turn;
-    static int16 deviation_h_reg = 0;
-    static int16 deviation_l_reg = 0;
-    static int16 deviation_h_dot = 0;
-    static int16 deviation_l_dot = 0;
-    static int16 deviation_h;
-    static int16 deviation_l;
+    static float deviation_h_reg = 0;
+    static float deviation_l_reg = 0;
+    static float deviation_h_dot = 0;
+    static float deviation_l_dot = 0;
+    static float deviation_h;
+    static float deviation_l;
     static float turn_p, turn_d;
     if(ring_state == RING_INTO && ring_dir == LEFT)
     {
@@ -153,24 +154,26 @@ int16 direction_control(void)
         {
             deviation_h = -200;
         }
-        if(deviation_h - deviation_h_reg > 15)
+        /*if(deviation_h - deviation_h_reg > 15)
             deviation_h = deviation_h_reg + 15;
         else if(deviation_h - deviation_h_reg < -15)
-            deviation_h = deviation_h_reg - 15;
+            deviation_h = deviation_h_reg - 15;*/
+        test[0] = deviation_h;
         //根据不同偏移量进行不同的偏移量求解
         if(deviation_h < 50 && deviation_h > -50)
-            deviation_h_dot = (4*deviation_h_dot + deviation_h - deviation_h_reg)/5;
+            deviation_h_dot = (4*deviation_h_dot + deviation_h - deviation_h_reg)/5.0;
         else
-            deviation_h_dot = (9*deviation_h_dot + deviation_h - deviation_h_reg)/10;
+            deviation_h_dot = (9*deviation_h_dot + deviation_h - deviation_h_reg)/10.0;
         deviation_h_reg = deviation_h;
         //偏差变化率限幅
         if (deviation_h_dot > 10)
             deviation_h_dot = 10;
         else if (deviation_h_dot < -10)
             deviation_h_dot = -10;
+        test[1] = deviation_h_dot;
         //模糊控制得到P和D
         direction_pd_fuzzy(deviation_h, &turn_p, &turn_d);
-        motor_turn = (int16)((turn_p * deviation_h  + turn_d * deviation_h_dot* 20)/ 2.7);
+        motor_turn = (int16)(turn_p * deviation_h  + turn_d * deviation_h_dot );
         return motor_turn;
     }
     else
@@ -211,7 +214,6 @@ int16 direction_control(void)
             motor_turn = motor_turn>0 ? motor_turn : 0;
         else if(ring_dir == RIGHT)
             motor_turn = motor_turn<0 ? motor_turn : 0;
-        test[1] = motor_turn;
         return motor_turn;
     }
     
@@ -239,9 +241,9 @@ void take_off(void)
  ***************************/
 void direction_pd_fuzzy(int16 deviation, float *p, float *d)
 {
-    static int16 deviation_table[15] = {-200, -160, -130, -100, -80, -50, -30, 0, 30, 50, 80, 100, 130, 160, 200};
-    static float turn_p_table[15] = {10.5, 10.5 ,14.5, 14.5, 12, 9, 6, 4, 6, 9, 12, 14.5, 14.5, 10.5, 10.5};
-    static float turn_d_table[15] = {25, 25, 24, 20, 13, 9, 7, 3, 7, 9, 13, 20, 24, 25, 25};
+    static int16 deviation_table[15] = {-200, -170, -140, -110, -85, -50, -25, 0, 25, 50, 85, 110, 140, 170, 200};
+    static float turn_p_table[15] = {20, 20 ,28, 28, 25, 15, 10, 5, 10, 15, 25, 28, 28, 20, 20};
+    static float turn_d_table[15] = {500, 500, 500, 500, 450, 350, 230, 80, 230, 350, 450, 500, 500, 500, 500};
     int8 i;
     if(deviation <= deviation_table[0])
     {

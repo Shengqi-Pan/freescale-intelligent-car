@@ -197,10 +197,10 @@ void ctimer_count_clean(CTIMN_enum tim_n)
 //  Sample usage:          pit_timer_ms(TIM_0, 10)
 //						   使用定时器0做周期中断，时间10ms一次。
 //-------------------------------------------------------------------------------------------------------------------
-void pit_timer_ms(TIMN_enum tim_n,uint16 time_ms)
+void pit_timer_us(TIMN_enum tim_n,uint16 time_us)
 {
 	uint16 temp;
-	temp = 65536 - (sys_clk / (12 * (1000 / time_ms)));
+	temp = 65536 - (sys_clk / (12 * (1000000 / time_us)));
 	
 	if(TIM_0 == tim_n)
 	{

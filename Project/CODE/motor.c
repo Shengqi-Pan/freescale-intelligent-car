@@ -18,10 +18,10 @@ void motor_init(void)
 void motor_output(float motor_angle_control, int16 motor_turn_control)
 {
     float motor_left, motor_right;
-    motor_left = motor_angle_control + motor_turn_control;
-    motor_right = motor_angle_control - motor_turn_control;  
-     
-    
+    motor_left = motor_angle_control - motor_turn_control;
+    motor_right = motor_angle_control + motor_turn_control;  
+    motor_left = motor_left>0 ? motor_left - 75 : motor_left + 75; //电机转差补偿，补偿4%
+    motor_right = motor_right>0 ? motor_right + 75 : motor_right - 75;
     // if (motor_angle_control > AMPLITUDE_LIMIT)
     //     motor_angle_control = AMPLITUDE_LIMIT;
     // if(motor_angle_control < -AMPLITUDE_LIMIT)
@@ -59,25 +59,25 @@ void motor_output(float motor_angle_control, int16 motor_turn_control)
     {
         motor_right -= DEAD_TIME;
     }
-    if(motor_right >= 0)
+    if(motor_left >= 0)
     {
-        pwm_duty(PWM5_P00, (int)motor_right);
+        pwm_duty(PWM5_P00, (int)motor_left); //右电机弱，补强2%的占空比
         pwm_duty(PWM6_P01, 0);	
     }
     else
     {
         pwm_duty(PWM5_P00, 0);
-        pwm_duty(PWM6_P01, (int)(-motor_right));	
+        pwm_duty(PWM6_P01, (int)(-motor_left));	
     }
-    if(motor_left >= 0)
+    if(motor_right >= 0)
     {
-        pwm_duty(PWM2P_P22, (int)motor_left);
+        pwm_duty(PWM2P_P22, (int)motor_right);
         pwm_duty(PWM4P_P26, 0);	
     }
     else
     {
         pwm_duty(PWM2P_P22, 0);
-        pwm_duty(PWM4P_P26, (int)(-motor_left));	
+        pwm_duty(PWM4P_P26, (int)(-motor_right));	
     }
   
 }

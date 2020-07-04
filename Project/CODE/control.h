@@ -15,10 +15,10 @@
 #include "SEEKFREE_WIRELESS.h"
 #include "zf_uart.h"
 
-#define ANGLE_CONTROL_P 1000
-#define ANGLE_CONTROL_D 13
-#define HENG_FACTOR 60
-#define SHU_FACTOR 60
+#define ANGLE_CONTROL_P 1200
+#define ANGLE_CONTROL_D 15
+#define HENG_FACTOR 32
+#define SHU_FACTOR 32
 #define AMP_FACTOR 400
 
 extern int16 ad_test[4];

@@ -7,6 +7,5 @@
 uint8 is_ring(void);
 uint8 is_tangent();
 uint8 is_motor_tangent();
-float get_passed_degree();
 
 #endif

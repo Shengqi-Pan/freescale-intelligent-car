@@ -127,8 +127,8 @@ void TM1_Isr() interrupt 3
     extern float angle;
     extern Omega omega;
     static float stand_duty;  //控直立的占空比
-    static int16 speed_set = 600;  // 给定速度1000mm/s
-    static float angle_set = 23.5;  // 给定角度,车辆平衡角为23.87，要前进可以多给一些
+    static int16 speed_set = 1000;  // 给定速度1000mm/s
+    static float angle_set = 19;  // 给定角度,车辆平衡角为23.87，要前进可以多给一些
     static float angle_bias = 0;  // 用于控直立的偏移角
     static int16 turn_duty; //控转向的占空比    
     //--------------下面存一些定时间隔---------------//
@@ -149,7 +149,7 @@ void TM1_Isr() interrupt 3
         turn_duty = direction_control();  // 控转向
     }
     motor_output(stand_duty, turn_duty);
-    if (++encoder_read_cnt == 5)
+    if (++encoder_read_cnt == 4)
     {
         encoder_read_cnt = 0;
         // 读速度, 5ms一次
@@ -166,8 +166,8 @@ void TM1_Isr() interrupt 3
     {
         // 起步
         case TAKE_OFF:
-            // 状态转移条件:开机500ms后自动变为直道状态
-            if(++take_off_cnt >= 500)
+            // 状态转移条件:开机200ms后自动变为直道状态
+            if(++take_off_cnt >= 160)
                 car_info.state = STRAIGHT_AHEAD;
             break;
         // 直道

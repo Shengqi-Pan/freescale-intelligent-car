@@ -10,7 +10,7 @@
 
 #include "zf_pwm.h"
 
-#define AMPLITUDE_LIMIT 3000
+#define AMPLITUDE_LIMIT 4500
 #define AMPLITUDE_LIMIT_MIN 400
 #define DEAD_TIME 100
 
