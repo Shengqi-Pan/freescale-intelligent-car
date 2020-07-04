@@ -246,8 +246,8 @@ void take_off(void)
 void direction_pd_fuzzy(int16 deviation, float *p, float *d)
 {
     static int16 deviation_table[13] = {-120, -100, -80, -50, -28, -18, 0, 18, 28, 50, 80, 100, 120};
-    static float turn_p_table[13] = {13, 13 ,13, 12, 10, 8, 5 ,8, 10, 12, 13, 13, 13};
-    static float turn_d_table[13] = {500, 500, 450, 400, 350, 280, 200, 280, 350, 400, 450, 500, 500};
+    static float turn_p_table[13] = {11, 11 ,14, 12, 10, 8, 5 ,8, 10, 12, 14, 11, 11};
+    static float turn_d_table[13] = {580, 580, 550, 470, 380, 300, 220, 300, 380, 470, 550, 580, 580};
     int8 i;
     if(deviation <= deviation_table[0])
     {
