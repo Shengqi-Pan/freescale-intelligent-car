@@ -140,6 +140,7 @@ void TM1_Isr() interrupt 3
     angle = get_angle_from_icm();
     omega = get_omega_from_icm();
     kalman(angle, omega.y);
+    angle_test += omega.y;
 
     // ¿ØÖ±Á¢
     stand_duty = angle_control(car_info.angle, car_info.omega.y, angle_set + angle_bias);

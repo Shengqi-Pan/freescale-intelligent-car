@@ -78,4 +78,6 @@ extern int16 test[4];
 extern RingDir ring_dir;
 extern RingState ring_state;
 
+extern float angle_test;
+
 #endif

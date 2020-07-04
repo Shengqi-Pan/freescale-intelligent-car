@@ -7,3 +7,4 @@ RingState ring_state = NOT_A_RING;
 RingDir ring_dir = NOT_A_RING;
 
 int16 test[4] = {0, 0, 0, 0};
+float angle_test = 0;
