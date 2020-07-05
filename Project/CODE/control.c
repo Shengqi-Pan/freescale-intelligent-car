@@ -41,13 +41,13 @@ float speed_control(int16 speed_real, int16 speed_set)
         /************直道控速************/
             // 速度慢了
             if(speed_deviation < -400)        angle_bias = 6;
-            else if(speed_deviation < -200)   angle_bias = 4;  // 直道很慢 
-            else if(speed_deviation < 0)      angle_bias = 2;
+            else if(speed_deviation < -200)   angle_bias = 3;  // 直道很慢 
+            else if(speed_deviation < 0)      angle_bias = 1;
             // 速度快了
-            else if(speed_deviation < 100)    angle_bias = -1; // TODO:这是因为给定的平衡角小于自然平衡角
-            else if(speed_deviation < 200)    angle_bias = -2;
-            else if(speed_deviation < 400)    angle_bias = -3;  // 若超3m  附加角+2度
-            else if(speed_deviation >= 400)   angle_bias = -6;
+            else if(speed_deviation < 100)    angle_bias = -3; // TODO:这是因为给定的平衡角小于自然平衡角
+            else if(speed_deviation < 200)    angle_bias = -6;
+            else if(speed_deviation < 400)    angle_bias = -9;  // 若超3m  附加角+2度
+            else if(speed_deviation >= 400)   angle_bias = -12;
             break;
         case INTO_TURN:
         /************出/入弯控速************/
