@@ -127,7 +127,7 @@ void TM1_Isr() interrupt 3
     extern float angle;
     extern Omega omega;
     static float stand_duty;  //控直立的占空比
-    static int16 speed_set = 1600;  // 给定速度1000mm/s
+    static int16 speed_set = 1800;  // 给定速度1000mm/s
     static float angle_set = 19;  // 给定角度,车辆平衡角为23.87，要前进可以多给一些
     static float angle_bias = 0;  // 用于控直立的偏移角
     static int16 turn_duty; //控转向的占空比    
@@ -168,18 +168,19 @@ void TM1_Isr() interrupt 3
         // 起步
         case TAKE_OFF:
             // 状态转移条件:开机200ms后自动变为直道状态
-            if(++take_off_cnt >= 160)
+            if(++take_off_cnt >= 1000)
                 car_info.state = STRAIGHT_AHEAD;
             break;
         // 直道
         case STRAIGHT_AHEAD:
             // 状态转移条件:
             // 轮胎差速不是非常大，入弯
-            // if (car_info.speed.left_right_diff >= 300 && car_info.speed.left_right_diff <= 600)
-            //     car_info.state = INTO_TURN;
-            // // 轮胎差速很大，弯中
-            // if (car_info.speed.left_right_diff > 600)
-            //     car_info.state = IN_TURN;
+            if (car_info.speed.left_right_diff >= 300 && car_info.speed.left_right_diff <= 600)
+                car_info.state = INTO_TURN;
+            // 轮胎差速很大，弯中
+            if (car_info.speed.left_right_diff > 600)
+                car_info.state = IN_TURN;
+            speed_set = 1800;
             // 控速度
             // 判圆环
             // if(is_ring())
@@ -190,21 +191,14 @@ void TM1_Isr() interrupt 3
             // }
             break;
         case INTO_TURN:
+            LED = 0;
             // 轮胎差速很大，弯中
             if (car_info.speed.left_right_diff > 600)
                 car_info.state = IN_TURN;
             // 轮胎差速小，直道
             if (car_info.speed.left_right_diff < 300)
                 car_info.state = STRAIGHT_AHEAD;
-            // 控速度
-            LED = 1;
-            if (++encoder_read_cnt == 5)
-            {
-                encoder_read_cnt = 0;
-                // 读速度, 5ms一次
-                car_info.speed = get_speed(5);
-                angle_bias = speed_control(car_info.speed.average, speed_set);
-            }
+            speed_set = 1400;
             break;
         case IN_TURN:
             // 轮胎差速小，直道
@@ -213,6 +207,7 @@ void TM1_Isr() interrupt 3
             // 轮胎差速不是非常大，入弯
             if (car_info.speed.left_right_diff >= 300 && car_info.speed.left_right_diff <= 600)
                 car_info.state = INTO_TURN;
+            speed_set = 1400;
             break;
         case RAMP_UP:
             break;
