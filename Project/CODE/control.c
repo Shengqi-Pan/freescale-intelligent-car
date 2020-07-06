@@ -196,6 +196,11 @@ int16 direction_control(void)
         deviation_h_dot = 0;
         deviation_l = (sensor[2] - sensor[3]) * AMP_FACTOR / (sensor[2] + sensor[3]);
         //限幅
+        if(ad[0] < 50 || ad[1] < 50)
+        {
+            motor_stop();
+            while(1);
+        }
         if (deviation_l > 200)
         {
             deviation_l = 200;
@@ -220,8 +225,8 @@ int16 direction_control(void)
         else if (deviation_l_dot < -10)
             deviation_l_dot = -10;
         //模糊控制得到P和D
-        turn_p = 6;
-        turn_d = 7;
+        turn_p = 10;
+        turn_d = 150;
         motor_turn = (int16)((turn_p * deviation_l  + turn_d * deviation_l_dot* 12)/ 2);
         if(ring_dir == LEFT)
             motor_turn = motor_turn>0 ? motor_turn : 0;

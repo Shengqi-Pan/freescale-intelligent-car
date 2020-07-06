@@ -44,6 +44,18 @@ Omega get_omega_from_icm()
     if(omega.z > 0)
         omega.y += 0.15 * omega.z;
     if(car_info.state == RING && ring_state == RING_INTO)
-        car_info.turn_angle -= omega.z / 1000;
+    {
+        if (ring_dir == LEFT)
+        {
+            car_info.turn_angle -= omega.z / 1000 * 1.25;
+        }
+        else
+        {
+            car_info.turn_angle += omega.z / 1000 * 1.25;
+        }
+        
+        
+    }
+        
     return omega;
 }

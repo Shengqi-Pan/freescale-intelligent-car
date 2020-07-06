@@ -46,7 +46,7 @@ Speed get_speed(uint16 time)
 
     // temp_pulse_left / 1024.0(线数) * 30(编码器的齿轮数) / 68(轮子的齿轮数) * 0.064 * 3.1415926 单位m
     // 单位:mm/s
-    if(car_info.state == RING && ring_state == RING_IN_READY)
+    if(car_info.state == RING && ring_state == RING_TRUE)
     {
         car_info.distance += (temp_pulse_left + temp_pulse_right) * 0.0866248 / 2;
     }

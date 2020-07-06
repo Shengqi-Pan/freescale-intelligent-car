@@ -2,15 +2,15 @@
 
 uint8 is_ring()
 {
-    int16 ad3_ad4_diff = ad[2] - ad[3];
-    if(sensor[0] > 1.1 * HENG_FACTOR && sensor[1] > 1.1 * HENG_FACTOR) //TODO: 由于电感原因，右环条件可能需要进一步调节
+    float ad3_ad4_add = ad[2] + ad[3];
+    if(((float)ad[0] / (ad[0] + ad[1]) > 0.55 && ad[0] > 550) || (((float)ad[1] / (ad[0] + ad[1]) > 0.55) && ad[1] > 550)) //TODO: 由于电感原因，右环条件可能需要进一步调节
     {
-        if(ad3_ad4_diff > 60) //两个电感差的绝对值大于90,此条件可能过分宽松
+        if(ad[2] / ad3_ad4_add > 0.65 && ad[2] > 250) //两个电感差的绝对值大于90,此条件可能过分宽松
         {
             ring_dir = LEFT;
             return 1;
         }
-        else if(ad3_ad4_diff < -60)
+        else if(ad[3] / ad3_ad4_add > 0.65 && ad[3] > 250)
         {
             ring_dir = RIGHT;
             return 1;
@@ -104,7 +104,7 @@ uint8 is_motor_tangent()
     //     diff_last = sensor1_sensor0_diff;
     // }
     // return 0;    
-    if(car_info.distance > 470)  // 移动超过40cm
+    if(car_info.distance > 370)  // 移动超过40cm
         return 1;
     else
         return 0;
