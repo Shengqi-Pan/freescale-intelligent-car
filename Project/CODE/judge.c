@@ -104,7 +104,7 @@ uint8 is_motor_tangent()
     //     diff_last = sensor1_sensor0_diff;
     // }
     // return 0;    
-    if(car_info.distance > 370)  // 移动超过40cm
+    if(car_info.distance > 340)  // 移动超过40cm
         return 1;
     else
         return 0;

@@ -132,8 +132,8 @@ int16 direction_control(void)
     static float turn_p, turn_d;
     if(ring_state == RING_INTO && ring_dir == LEFT)
     {
-        induc_ref[2] = 80;
-        induc_ref[3] = 45;
+        induc_ref[2] = 150;
+        induc_ref[3] = 100;
     }
     else if(ring_state == RING_INTO && ring_dir == RIGHT)
     {
@@ -209,10 +209,10 @@ int16 direction_control(void)
         {
             deviation_l = -200;
         }
-        if(deviation_l - deviation_l_reg > 15)
+        /*if(deviation_l - deviation_l_reg > 15)
             deviation_l = deviation_l_reg + 15;
         else if(deviation_l - deviation_l_reg < -15)
-            deviation_l = deviation_l_reg - 15;
+            deviation_l = deviation_l_reg - 15;*/
         //根据不同偏移量进行不同的偏移量求解
         if(deviation_l < 50 && deviation_l > -50)
             deviation_l_dot = (4*deviation_l_dot + deviation_l - deviation_l_reg)/5;
@@ -225,9 +225,9 @@ int16 direction_control(void)
         else if (deviation_l_dot < -10)
             deviation_l_dot = -10;
         //模糊控制得到P和D
-        turn_p = 10;
-        turn_d = 150;
-        motor_turn = (int16)((turn_p * deviation_l  + turn_d * deviation_l_dot* 12)/ 2);
+        turn_p = 23;
+        turn_d = 250;
+        motor_turn = (int16)(turn_p * deviation_l  + turn_d * deviation_l_dot);
         if(ring_dir == LEFT)
             motor_turn = motor_turn>0 ? motor_turn : 0;
         else if(ring_dir == RIGHT)

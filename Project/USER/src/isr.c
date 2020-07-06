@@ -183,22 +183,22 @@ void TM1_Isr() interrupt 3
             speed_set = 1700;
             // 控速度
             // 判圆环
-            if(is_ring())
+            /*if(is_ring())
             {
                 LED = 0;
                 car_info.state = RING;
                 ring_state = RING_TRUE;
                 car_info.distance = 0;
-            }
+            }*/
             break;
         case INTO_TURN:
-            if(is_ring())
+            /*if(is_ring())
             {
                 LED = 0;
                 car_info.state = RING;
                 ring_state = RING_TRUE;
                 car_info.distance = 0;
-            }
+            }*/
             // 轮胎差速很大，弯中
             if (car_info.speed.left_right_diff > 600)
                 car_info.state = IN_TURN;
@@ -208,13 +208,13 @@ void TM1_Isr() interrupt 3
             speed_set = 1500;
             break;
         case IN_TURN:
-            if(is_ring())
+            /*if(is_ring())
             {
                 LED = 0;
                 car_info.state = RING;
                 ring_state = RING_TRUE;
                 car_info.distance = 0;
-            }
+            }*/
             // 轮胎差速小，直道
             if (car_info.speed.left_right_diff < 300)
                 car_info.state = STRAIGHT_AHEAD;
