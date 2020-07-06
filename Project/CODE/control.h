@@ -16,10 +16,10 @@
 #include "zf_uart.h"
 #include "motor.h"
 
-#define ANGLE_CONTROL_P 800
-#define ANGLE_CONTROL_D 15
-#define HENG_FACTOR 32
-#define SHU_FACTOR 32
+#define ANGLE_CONTROL_P 850
+#define ANGLE_CONTROL_D 10
+#define HENG_FACTOR 30
+#define SHU_FACTOR 30
 #define AMP_FACTOR 400
 
 extern int16 ad_test[4];

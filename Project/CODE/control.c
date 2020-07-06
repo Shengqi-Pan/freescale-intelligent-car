@@ -33,22 +33,30 @@ float angle_control(float car_angle, float car_w, float angle_set)   //控直立
 float speed_control(int16 speed_real, int16 speed_set)
 {
     static float angle_bias = 0, angle_bias_last = 0;
-    static int16 speed_deviation;
+    static int16 speed_deviation, speed_deviation_integrate;
+    static int8 integrate_discard_cnt;
     speed_deviation = speed_real - speed_set;  // 实际速度和设定速度差值
+    if(++integrate_discard_cnt == 20)
+    {
+        integrate_discard_cnt = 0;
+        speed_deviation_integrate = 0;
+    }
+    speed_deviation_integrate += speed_deviation;
     switch (car_info.state)
     {
         case STRAIGHT_AHEAD: case RING: case INTO_TURN: case IN_TURN:
         /************直道控速************/
-            // 速度慢了
-            if(speed_deviation < -400)        angle_bias = 5;
-            else if(speed_deviation < -200)   angle_bias = 3;  // 直道很慢 
-            else if(speed_deviation < 0)      angle_bias = 1;
-            // 速度快了
-            else if(speed_deviation < 50)     angle_bias = -1;
-            else if(speed_deviation < 100)    angle_bias = -2; // TODO:这是因为给定的平衡角小于自然平衡角
-            else if(speed_deviation < 200)    angle_bias = -4;
-            else if(speed_deviation < 400)    angle_bias = -6;  // 若超3m  附加角+2度
-            else if(speed_deviation >= 400)   angle_bias = -9;
+            // // 速度慢了
+            // if(speed_deviation < -400)        angle_bias = 4;
+            // else if(speed_deviation < -200)   angle_bias = 2;  // 直道很慢 
+            // else if(speed_deviation < 0)      angle_bias = 1;
+            // // 速度快了
+            // else if(speed_deviation < 50)     angle_bias = -0.5;
+            // else if(speed_deviation < 100)    angle_bias = -1; // TODO:这是因为给定的平衡角小于自然平衡角
+            // else if(speed_deviation < 200)    angle_bias = -2;
+            // else if(speed_deviation < 400)    angle_bias = -3;  // 若超3m  附加角+2度
+            // else if(speed_deviation >= 400)   angle_bias = -5;
+            angle_bias = -(speed_deviation * 0.01 + speed_deviation_integrate * 0.0001);
             break;
         // case INTO_TURN:
         // /************出/入弯控速************/
@@ -179,7 +187,7 @@ int16 direction_control(void)
         test[1] = deviation_h_dot;
         //模糊控制得到P和D
         direction_pd_fuzzy(deviation_h, &turn_p, &turn_d);
-        motor_turn = (int16)(turn_p * deviation_h  + turn_d * deviation_h_dot );
+        motor_turn = (int16)(turn_p * deviation_h  + turn_d * deviation_h_dot * 1.5 );
         return motor_turn;
     }
     else
@@ -247,8 +255,8 @@ void take_off(void)
 void direction_pd_fuzzy(int16 deviation, float *p, float *d)
 {
     static int16 deviation_table[15] = {-150, -120, -100, -80, -50, -28, -18, 0, 18, 28, 50, 80, 100, 120, 150};
-    static float turn_p_table[15] = {10, 11, 11 ,14, 12, 10, 8, 5 ,8, 10, 12, 14, 11, 11, 10};
-    static float turn_d_table[15] = {800, 750, 700, 630, 550, 430, 320, 220, 320, 430, 550, 630, 700, 750, 800};
+    static float turn_p_table[15] = {10, 11, 11 ,14, 12, 8, 6, 5 ,6, 8, 12, 14, 11, 11, 10};
+    static float turn_d_table[15] = {800, 750, 700, 630, 550, 430, 320, 200, 320, 430, 550, 630, 700, 750, 800};
     int8 i;
     if(deviation <= deviation_table[0])
     {
