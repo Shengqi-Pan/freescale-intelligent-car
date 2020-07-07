@@ -183,22 +183,33 @@ void TM1_Isr() interrupt 3
             speed_set = 1700;
             // 控速度
             // 判圆环
-            /*if(is_ring())
+            if(is_ring())
             {
                 LED = 0;
                 car_info.state = RING;
                 ring_state = RING_TRUE;
                 car_info.distance = 0;
-            }*/
+                // motor_stop();
+                // if(ring_dir == RIGHT)
+                // {
+                //     while(1);
+                // }
+                // else if(ring_dir == LEFT)
+                // {
+                //     LED = 0;
+                //     while(1); 
+                // }
+                
+            }
             break;
         case INTO_TURN:
-            /*if(is_ring())
+            if(is_ring())
             {
                 LED = 0;
                 car_info.state = RING;
                 ring_state = RING_TRUE;
                 car_info.distance = 0;
-            }*/
+            }
             // 轮胎差速很大，弯中
             if (car_info.speed.left_right_diff > 600)
                 car_info.state = IN_TURN;
@@ -208,13 +219,13 @@ void TM1_Isr() interrupt 3
             speed_set = 1500;
             break;
         case IN_TURN:
-            /*if(is_ring())
+            if(is_ring())
             {
                 LED = 0;
                 car_info.state = RING;
                 ring_state = RING_TRUE;
                 car_info.distance = 0;
-            }*/
+            }
             // 轮胎差速小，直道
             if (car_info.speed.left_right_diff < 300)
                 car_info.state = STRAIGHT_AHEAD;
@@ -235,7 +246,6 @@ void TM1_Isr() interrupt 3
                 // 判断出前瞻切点，通过距离来判断轮子经过切点
                     if(is_motor_tangent())
                     {
-                        LED = 1;
                         ring_state = RING_INTO;
                         car_info.distance = 0;
                     }
@@ -244,7 +254,7 @@ void TM1_Isr() interrupt 3
                 // 用竖电感进环并在转过30度时移交控制权给横电感
                     if(car_info.turn_angle > 35)
                     {
-                        LED = 0;
+                        LED = 1;
                         ring_dir = NOT_A_RING;
                         ring_state = NOT_A_RING;
                         car_info.state = STRAIGHT_AHEAD;

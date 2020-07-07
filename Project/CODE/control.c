@@ -132,13 +132,13 @@ int16 direction_control(void)
     static float turn_p, turn_d;
     if(ring_state == RING_INTO && ring_dir == LEFT)
     {
-        induc_ref[2] = 150;
-        induc_ref[3] = 100;
+        induc_ref[2] = 110;
+        induc_ref[3] = 200;
     }
     else if(ring_state == RING_INTO && ring_dir == RIGHT)
     {
-        induc_ref[2] = 155;
-        induc_ref[3] = 260;
+        induc_ref[2] = 200;
+        induc_ref[3] = 110;
     }
     getl_once();
     ad[0] = (4*ad[0] + l_h_1)/5;
@@ -225,7 +225,7 @@ int16 direction_control(void)
         else if (deviation_l_dot < -10)
             deviation_l_dot = -10;
         //模糊控制得到P和D
-        turn_p = 23;
+        turn_p = 8.5;
         turn_d = 250;
         motor_turn = (int16)(turn_p * deviation_l  + turn_d * deviation_l_dot);
         if(ring_dir == LEFT)
