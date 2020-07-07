@@ -155,7 +155,7 @@ int16 direction_control(void)
         deviation_l_reg = 0;
         deviation_l_dot = 0;
         //限幅
-        if(deviation_h >= 300 || deviation_h <= -300 || (ad[0]<50 && ad[1]<50))
+        if(deviation_h >= 350 || deviation_h <= -350 || (ad[0]<50 && ad[1]<50))
         {
             motor_stop();
             while(1);
@@ -186,6 +186,8 @@ int16 direction_control(void)
             deviation_h_dot = -10;
         test[1] = deviation_h_dot;
         //模糊控制得到P和D
+        if(ring_state == RING_IN || ring_state == RING_OUT)   //使圆环更加圆滑
+            deviation_h = 0.6 * deviation_h;
         direction_pd_fuzzy(deviation_h, &turn_p, &turn_d);
         motor_turn = (int16)(turn_p * deviation_h  + turn_d * deviation_h_dot * 1.5 );
         return motor_turn;
@@ -196,7 +198,7 @@ int16 direction_control(void)
         deviation_h_dot = 0;
         deviation_l = (sensor[2] - sensor[3]) * AMP_FACTOR / (sensor[2] + sensor[3]);
         //限幅
-        if(ad[0] < 50 || ad[1] < 50)
+        if(ad[0] < 15 || ad[1] < 15)
         {
             motor_stop();
             while(1);
@@ -224,7 +226,6 @@ int16 direction_control(void)
             deviation_l_dot = 10;
         else if (deviation_l_dot < -10)
             deviation_l_dot = -10;
-        //模糊控制得到P和D
         turn_p = 8.5;
         turn_d = 250;
         motor_turn = (int16)(turn_p * deviation_l  + turn_d * deviation_l_dot);
@@ -260,8 +261,8 @@ void take_off(void)
 void direction_pd_fuzzy(int16 deviation, float *p, float *d)
 {
     static int16 deviation_table[15] = {-150, -120, -100, -80, -50, -28, -18, 0, 18, 28, 50, 80, 100, 120, 150};
-    static float turn_p_table[15] = {10, 11, 11 ,14, 12, 8, 6, 5 ,6, 8, 12, 14, 11, 11, 10};
-    static float turn_d_table[15] = {800, 750, 700, 630, 550, 430, 320, 200, 320, 430, 550, 630, 700, 750, 800};
+    static float turn_p_table[15] = {10, 11, 12 ,14, 12, 8, 6, 5 ,6, 8, 12, 14, 12, 11, 10};
+    static float turn_d_table[15] = {800, 750, 700, 630, 550, 430, 320, 180, 320, 430, 550, 630, 700, 750, 800};
     int8 i;
     if(deviation <= deviation_table[0])
     {
