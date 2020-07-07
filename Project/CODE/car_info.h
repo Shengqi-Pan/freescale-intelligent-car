@@ -39,8 +39,9 @@ typedef enum
     NOT_A_RING,
     RING_TRUE,
     RING_IN_READY,
-    RING_INTO
-
+    RING_INTO,
+    RING_IN,
+    RING_OUT
 }RingState;
 
 //--------------    入环当前状态---------------//

@@ -135,6 +135,7 @@ void TM1_Isr() interrupt 3
     static uint16 encoder_read_cnt = 0;  // 编码器读取间隔
     static uint16 take_off_cnt = 0;  // 起步时间
     static uint16 turn_control_cnt = 0;
+    static uint16 ring_out_cnt;  // 出环屏蔽时间
 
     // 读取角度和角速度并卡尔曼滤波
     angle = get_angle_from_icm();
@@ -255,16 +256,29 @@ void TM1_Isr() interrupt 3
                     if(car_info.turn_angle > 35)
                     {
                         LED = 1;
+                        ring_state = RING_IN;
+                    }
+                    break;
+                case RING_IN:
+                    if(car_info.turn_angle > 200)
+                    {
+                        ring_state = RING_OUT;
+                        car_info.turn_angle = 0;
+                    }
+                case RING_OUT:
+                    if(++ring_out_cnt > 2400)
+                    {
+                        ring_out_cnt = 0;
                         ring_dir = NOT_A_RING;
                         ring_state = NOT_A_RING;
                         car_info.state = STRAIGHT_AHEAD;
-                        car_info.turn_angle = 0;
+                        motor_stop();
+                        while(1);
                     }
-                    break;
                 default:
                     break;
-
             }
+            speed_set = 1500;
             break;
 
         case STOP:
