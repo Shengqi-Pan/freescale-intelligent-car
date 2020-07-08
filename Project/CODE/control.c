@@ -133,7 +133,7 @@ int16 direction_control(void)
     if(ring_state == RING_INTO && ring_dir == LEFT)
     {
         induc_ref[2] = 110;
-        induc_ref[3] = 200;
+        induc_ref[3] = 150;
     }
     else if(ring_state == RING_INTO && ring_dir == RIGHT)
     {
@@ -155,7 +155,7 @@ int16 direction_control(void)
         deviation_l_reg = 0;
         deviation_l_dot = 0;
         //限幅
-        if(deviation_h >= 350 || deviation_h <= -350 || (ad[0]<50 && ad[1]<50))
+        if(deviation_h >= 350 || deviation_h <= -350 || ad[0]<50 || ad[1]<50)
         {
             motor_stop();
             while(1);
