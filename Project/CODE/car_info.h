@@ -41,6 +41,7 @@ typedef enum
     RING_IN_READY,
     RING_INTO,
     RING_IN,
+    RING_OUT_READY,
     RING_OUT
 }RingState;
 

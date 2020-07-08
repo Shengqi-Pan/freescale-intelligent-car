@@ -188,8 +188,10 @@ int16 direction_control(void)
         //模糊控制得到P和D
         if(ring_state == RING_IN)   //使圆环更加圆滑
             deviation_h = 0.6 * deviation_h;
+        else if(ring_state == RING_OUT_READY)
+            deviation_h = 0.27 * deviation_h;
         else if(ring_state == RING_OUT)
-            deviation_h = 0.2 * deviation_h;
+            deviation_h = 0.27 * deviation_h; 
         direction_pd_fuzzy(deviation_h, &turn_p, &turn_d);
         motor_turn = (int16)(turn_p * deviation_h  + turn_d * deviation_h_dot * 1.5 );
         return motor_turn;
@@ -326,4 +328,6 @@ void direction_pd_fuzzy(int16 deviation, float *p, float *d)
             }
         }
     }
+    if(ring_state == RING_OUT || ring_state == RING_OUT_READY)
+        *d = *d * 3;
 }

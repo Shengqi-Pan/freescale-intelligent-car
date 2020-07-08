@@ -128,14 +128,14 @@ void TM1_Isr() interrupt 3
     extern Omega omega;
     static float stand_duty;  //控直立的占空比
     static int16 speed_set = 1800;  // 给定速度1000mm/s
-    static float angle_set = 18.5;  // 给定角度,车辆平衡角为23.87，要前进可以多给一些
+    static float angle_set = 18.1;  // 给定角度,车辆平衡角为23.87，要前进可以多给一些
     static float angle_bias = 0;  // 用于控直立的偏移角
     static int16 turn_duty; //控转向的占空比    
     //--------------下面存一些定时间隔---------------//
     static uint16 encoder_read_cnt = 0;  // 编码器读取间隔
     static uint16 take_off_cnt = 0;  // 起步时间
     static uint16 turn_control_cnt = 0;
-    static uint16 ring_out_cnt;  // 出环屏蔽时间
+    static uint16 ring_out_cnt = 0;  // 出环屏蔽时间
 
     // 读取角度和角速度并卡尔曼滤波
     angle = get_angle_from_icm();
@@ -260,26 +260,33 @@ void TM1_Isr() interrupt 3
                     }
                     break;
                 case RING_IN:
-                    if(car_info.turn_angle > 310)
+                // 用横电感过环，等到270度削弱deviation至30%
+                    if(car_info.turn_angle > 270)
                     {
                         LED = 0;
+                        ring_state = RING_OUT_READY;
+                    }
+                    break;
+                case RING_OUT_READY:
+                // 用横电感过环，等到290度削弱deviation至15%
+                    if(car_info.turn_angle > 300)
+                    {
                         ring_state = RING_OUT;
                         car_info.turn_angle = 0;
                     }
-                    break;
                 case RING_OUT:
-                    if(++ring_out_cnt > 1600)
+                    if(++ring_out_cnt > 600)
                     {
                         ring_out_cnt = 0;
                         ring_dir = NOT_A_RING;
                         ring_state = NOT_A_RING;
                         car_info.state = STRAIGHT_AHEAD;
-                        motor_stop();
-                        while(1)
-                        {
-                            P52 = !P52;
-                            delay_ms(100);
-                        }
+                        // motor_stop();
+                        // while(1)
+                        // {
+                        //     P52 = !P52;
+                        //     delay_ms(100);
+                        // }
                     }
                     break;
                 default:
