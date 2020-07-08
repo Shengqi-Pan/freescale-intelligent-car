@@ -47,11 +47,11 @@ Omega get_omega_from_icm()
     {
         if (ring_dir == LEFT)
         {
-            car_info.turn_angle -= omega.z / 1000 * 1.25;
+            car_info.turn_angle -= omega.z / 1000 * 1.25 / cos(car_info.angle / 180 * 3.14);
         }
         else
         {
-            car_info.turn_angle += omega.z / 1000 * 1.25;
+            car_info.turn_angle += omega.z / 1000 * 1.25 / cos(car_info.angle / 180 * 3.14);
         }
     }
     return omega;
