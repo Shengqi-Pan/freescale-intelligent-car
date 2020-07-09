@@ -41,7 +41,7 @@ void main()
 {
     DisableGlobalIRQ(); //  关闭总中断
     board_init(); //  初始化寄存器
-    pit_timer_us(TIM_1, 1250); // 使用TIMER作为周期中断，时间1.25ms一次
+    pit_timer_us(TIM_1, 1500); // 使用TIMER作为周期中断，时间1.25ms一次
     icm20602_init_simspi(); // icm20602初始化, 引脚查看宏定义
     // uart_init(UART_1, UART1_RX_P30, UART1_TX_P31, 115200, TIM_1);  // 串口1初始化，波特率115200，发送引脚TX P31 接收引脚RX P30
     seekfree_wireless_init();  // 无线串口初始化
@@ -65,7 +65,7 @@ void main()
         // data_conversion(test[0], car_info.speed.left,
         //                 car_info.speed.right, 0,
         //                 virtual_scope_data);
-        data_conversion(ad[0], ad[1], ad[2], ad[3], virtual_scope_data);
+        data_conversion(car_info.angle, car_info.speed.average, ad[2], ad[3], virtual_scope_data);
         uart_putbuff(WIRELESS_UART, virtual_scope_data, sizeof(virtual_scope_data));
         //uart_putchar(WIRELESS_UART, (int8) test[0]);
     }

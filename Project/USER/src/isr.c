@@ -128,12 +128,11 @@ void TM1_Isr() interrupt 3
     extern Omega omega;
     static float stand_duty;  //控直立的占空比
     static int16 speed_set = 1800;  // 给定速度1000mm/s
-    static float angle_set = 18.1;  // 给定角度,车辆平衡角为23.87，要前进可以多给一些
+    static float angle_set = 17.5;  // 给定角度,车辆平衡角为23.87，要前进可以多给一些
     static float angle_bias = 0;  // 用于控直立的偏移角
     static int16 turn_duty; //控转向的占空比    
     //--------------下面存一些定时间隔---------------//
     static uint16 encoder_read_cnt = 0;  // 编码器读取间隔
-    static uint16 take_off_cnt = 0;  // 起步时间
     static uint16 turn_control_cnt = 0;
     static uint16 ring_out_cnt = 0;  // 出环屏蔽时间
 
@@ -154,8 +153,8 @@ void TM1_Isr() interrupt 3
     if (++encoder_read_cnt == 4)
     {
         encoder_read_cnt = 0;
-        // 读速度, 5ms一次
-        car_info.speed = get_speed(5);
+        // 读速度, 6ms一次
+        car_info.speed = get_speed(6);
         angle_bias = speed_control(car_info.speed.average, speed_set);
     }
     // if (car_info.speed.average > 500 || car_info.speed.average < -500)
@@ -169,7 +168,7 @@ void TM1_Isr() interrupt 3
         // 起步
         case TAKE_OFF:
             // 状态转移条件:开机200ms后自动变为直道状态
-            if(++take_off_cnt >= 1000)
+            if(car_info.angle >= 20)          //大于20度自动提交
                 car_info.state = STRAIGHT_AHEAD;
             break;
         // 直道
@@ -225,7 +224,7 @@ void TM1_Isr() interrupt 3
                 LED = 0;
                 car_info.state = RING;
                 ring_state = RING_TRUE;
-                car_info.distance = 0;
+                car_info.distance = 1600;
             }
             // 轮胎差速小，直道
             if (car_info.speed.left_right_diff < 300)
@@ -247,6 +246,7 @@ void TM1_Isr() interrupt 3
                 // 判断出前瞻切点，通过距离来判断轮子经过切点
                     if(is_motor_tangent())
                     {
+                        LED = 1;
                         ring_state = RING_INTO;
                         car_info.distance = 0;
                     }
@@ -255,7 +255,7 @@ void TM1_Isr() interrupt 3
                 // 用竖电感进环并在转过30度时移交控制权给横电感
                     if(car_info.turn_angle > 35)
                     {
-                        LED = 1;
+                        LED = 0;
                         ring_state = RING_IN;
                     }
                     break;

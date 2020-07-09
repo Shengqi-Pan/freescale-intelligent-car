@@ -18,7 +18,10 @@ float angle_control(float car_angle, float car_w, float angle_set)   //控直立
 {
     static float motor_angle_control, angle_control;
     angle_control = car_angle - angle_set;  
-    motor_angle_control = angle_control * ANGLE_CONTROL_P + car_w * ANGLE_CONTROL_D;
+    if(car_info.state == TAKE_OFF)
+        motor_angle_control = angle_control * ANGLE_CONTROL_P_BEGIN + car_w * ANGLE_CONTROL_D_BEGIN;
+    else
+        motor_angle_control = angle_control * ANGLE_CONTROL_P + car_w * ANGLE_CONTROL_D;
     return motor_angle_control;
 }
 
@@ -56,7 +59,14 @@ float speed_control(int16 speed_real, int16 speed_set)
             // else if(speed_deviation < 200)    angle_bias = -2;
             // else if(speed_deviation < 400)    angle_bias = -3;  // 若超3m  附加角+2度
             // else if(speed_deviation >= 400)   angle_bias = -5;
-            angle_bias = -(speed_deviation * 0.01 + speed_deviation_integrate * 0.0001);
+            if(speed_real < 1200)
+            {
+                angle_bias = -speed_deviation * SPEED_CONTROL_P;
+            }
+            else
+            {
+                angle_bias = -(speed_deviation * SPEED_CONTROL_P + speed_deviation_integrate * SPEED_CONTROL_I);
+            }
             break;
         // case INTO_TURN:
         // /************出/入弯控速************/
@@ -132,8 +142,8 @@ int16 direction_control(void)
     static float turn_p, turn_d;
     if(ring_state == RING_INTO && ring_dir == LEFT)
     {
-        induc_ref[2] = 110;
-        induc_ref[3] = 150;
+        induc_ref[2] = 100;
+        induc_ref[3] = 35;
     }
     else if(ring_state == RING_INTO && ring_dir == RIGHT)
     {
@@ -155,7 +165,7 @@ int16 direction_control(void)
         deviation_l_reg = 0;
         deviation_l_dot = 0;
         //限幅
-        if(deviation_h >= 350 || deviation_h <= -350 || ad[0]<50 || ad[1]<50)
+        if((deviation_h >= 350 || deviation_h <= -350 || ad[0]<50 || ad[1]<50) && car_info.state != TAKE_OFF)
         {
             motor_stop();
             while(1);
@@ -233,7 +243,7 @@ int16 direction_control(void)
         turn_p = 8.5;
         turn_d = 250;
         if(ring_dir == LEFT)
-            turn_p -= 3;
+            turn_p += 2.5;
         motor_turn = (int16)(turn_p * deviation_l  + turn_d * deviation_l_dot);
         if(ring_dir == LEFT)
             motor_turn = motor_turn>0 ? motor_turn : 0;
@@ -328,6 +338,6 @@ void direction_pd_fuzzy(int16 deviation, float *p, float *d)
             }
         }
     }
-    if(ring_state == RING_OUT || ring_state == RING_OUT_READY)
+    if(ring_state == RING_OUT || ring_state == RING_OUT_READY)  //防止出环过调
         *d = *d * 3;
 }
