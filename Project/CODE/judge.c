@@ -130,3 +130,28 @@ uint8 is_motor_tangent()
     }
         
 }
+
+uint8 is_ramp()
+{
+    static int16 speed_reg[3] = {0,0,0};
+    uint8 i;
+    static uint8 ramp_flag = 0;
+    if(car_info.speed.average > 1500)
+        ramp_flag = 1;
+    for(i=0;i<2;++i)
+    {
+        speed_reg[i] = speed_reg[i+1];
+    }
+    speed_reg[2] = car_info.speed.average;
+    for(i=0;i<2;++i)
+    {
+        if(speed_reg[i] > 1000)
+            return 0;
+    }
+    if(ramp_flag == 1)
+    {
+        ramp_flag = 0;
+        return 1;
+    }
+    return 0; 
+}

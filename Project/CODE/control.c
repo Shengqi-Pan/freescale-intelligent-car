@@ -20,6 +20,8 @@ float angle_control(float car_angle, float car_w, float angle_set)   //控直立
     angle_control = car_angle - angle_set;  
     if(car_info.state == TAKE_OFF)
         motor_angle_control = angle_control * ANGLE_CONTROL_P_BEGIN + car_w * ANGLE_CONTROL_D_BEGIN;
+    else if(car_info.state == RAMP_UP || car_info.state == RAMP_DOWN)
+        motor_angle_control = angle_control * (ANGLE_CONTROL_P - 300) + car_w * (ANGLE_CONTROL_D + 8);
     else
         motor_angle_control = angle_control * ANGLE_CONTROL_P + car_w * ANGLE_CONTROL_D;
     return motor_angle_control;
@@ -86,16 +88,27 @@ float speed_control(int16 speed_real, int16 speed_set)
         //     break;
         case RAMP_UP:
         /************上坡************/
-            // TODO:不知道wwt这里这么调节的目的
-            if(car_info.speed.average < 500)
-                angle_bias = 1;
-            else
-                angle_bias = 3;
+            // if(speed_real < 1200)
+            // {
+            //     angle_bias = -speed_deviation * SPEED_CONTROL_P;
+            // }
+            // else
+            // {
+            //     angle_bias = -(speed_deviation * SPEED_CONTROL_P + speed_deviation_integrate * SPEED_CONTROL_I);
+            // }
+            return -8;
             break;
         case RAMP_DOWN:
         /************下坡************/
-            // TODO:不知道wwt这里这么调节的目的
-            angle_bias = 5;
+            // if(speed_real < 1200)
+            // {
+            //     angle_bias = -speed_deviation * SPEED_CONTROL_P;
+            // }
+            // else
+            // {
+            //     angle_bias = -(speed_deviation * SPEED_CONTROL_P + speed_deviation_integrate * SPEED_CONTROL_I);
+            // }
+            return -20;
             break;
         default:
             break;
@@ -106,8 +119,12 @@ float speed_control(int16 speed_real, int16 speed_set)
         angle_bias = angle_bias_last + 0.1;
     else if (angle_bias - angle_bias_last < -0.1)
         angle_bias = angle_bias_last - 0.1;
+    /*if(car_info.state == TAKE_OFF)
+    {
+        angle_bias = angle_bias>12 ? 12 : angle_bias;
+        angle_bias = angle_bias<-12 ? -12 : angle_bias;
+    }*/
     angle_bias_last = angle_bias;
-
     return angle_bias;
 }
 
@@ -201,9 +218,11 @@ int16 direction_control(void)
         else if(ring_state == RING_OUT_READY)
             deviation_h = 0.27 * deviation_h;
         else if(ring_state == RING_OUT)
-            deviation_h = 0.27 * deviation_h; 
+            deviation_h = 0.27 * deviation_h;
+        if(car_info.state == RAMP_UP)
+            deviation_h = 0.3 * deviation_h;
         direction_pd_fuzzy(deviation_h, &turn_p, &turn_d);
-        motor_turn = (int16)(turn_p * deviation_h  + turn_d * deviation_h_dot * 1.5 );
+        motor_turn = (int16)(turn_p * deviation_h  + turn_d * deviation_h_dot);
         return motor_turn;
     }
     else
