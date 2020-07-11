@@ -8,6 +8,7 @@
 
 #include"icm20602.h"
 
+static uint8 turn_angle_calc_flag = 0;
 
 /***************************
  * @breif   从icm读取角度值
@@ -43,16 +44,33 @@ Omega get_omega_from_icm()
     omega.z = (float)(-(icm_gyro_z - GYRO_Z_BIAS) / GYRO_Z_FACTOR);
     if(omega.z > 0)
         omega.y += 0.15 * omega.z;
-    if(car_info.state == RING && ring_state == RING_INTO || ring_state == RING_IN || ring_state == RING_OUT_READY)
+    if(turn_angle_calc_flag)
     {
-        if (ring_dir == LEFT)
-        {
-            car_info.turn_angle -= omega.z / 1000 * 1.5 / cos(car_info.angle / 180 * 3.14);
-        }
-        else
-        {
-            car_info.turn_angle += omega.z / 1000 * 1.5 / cos(car_info.angle / 180 * 3.14);
-        }
+        // 对转向角速度进行积分，左转为负值，右转为正值
+        car_info.turn_angle += omega.z / 1000 * 1.5 / cos(car_info.angle / 180 * 3.14);
     }
     return omega;
+}
+
+/***************************
+ * @breif   开始对z轴角速度积分
+ * @param   void
+ * @return  void
+ * @note    
+ ***************************/
+void start_turn_angle_calc()
+{
+    car_info.turn_angle = 0;
+    turn_angle_calc_flag = 1;
+}
+
+/***************************
+ * @breif   结束对z轴角速度积分
+ * @param   void
+ * @return  void
+ * @note    
+ ***************************/
+void stop_turn_angle_calc()
+{
+    turn_angle_calc_flag = 0;
 }

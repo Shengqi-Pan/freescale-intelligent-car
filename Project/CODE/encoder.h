@@ -21,5 +21,7 @@
 
 void encoder_init(void);
 Speed get_speed(uint16 time);
+void start_distance_calc();
+void stop_distance_calc();
 
 #endif

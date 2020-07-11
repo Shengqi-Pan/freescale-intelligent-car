@@ -1,11 +1,24 @@
+/*******************************************
+ * @file            judge.c
+ * @note            判圆环，判坡等函数
+ * @author          psq & btk
+ * @software        MDK
+ * @target core     STC8H8K64S4
+ *******************************************/
+
 #include "judge.h"
 
+/***************************
+ * @breif   判断圆环
+ * @param   void
+ * @return  判出圆环返回1，否则返回0
+ * @note    
+ ***************************/
 uint8 is_ring()
 {
     static int16 ad3_ad4_diff;
     static int16 ad3_ad4_diff_reg[4];
     uint8 i;
-    return 0;
     ad3_ad4_diff = ad[2] - ad[3];
     ad3_ad4_diff_reg[3] = ad3_ad4_diff;
     if(ad[1] > (500 + (car_info.angle - 20) * (car_info.angle<20 ? 8 : 2)) && ad[0] > (530 + (car_info.angle - 20) * (car_info.angle<20 ? 8 : 2))) //TODO: 由于电感原因，右环条件可能需要进一步调节
@@ -29,7 +42,12 @@ uint8 is_ring()
     return 0;
 }
 
-
+/***************************
+ * @breif   判断前瞻是否到达圆环切点
+ * @param   void
+ * @return  判出切点返回1，否则返回0
+ * @note    圆环1.0中使用了此函数，现在圆环2.0暂时用不到
+ ***************************/
 uint8 is_tangent()
 {
     static int8 cnt = 0;
@@ -91,32 +109,17 @@ uint8 is_tangent()
     return 0;
 }
 
+/***************************
+ * @breif   在判出圆环后通过编码器得到一段延迟距离
+ * @param   void
+ * @return  延迟结束返回1，否则返回0
+ * @note    
+ ***************************/
 uint8 is_motor_tangent()
-{   
-    // int16 sensor0_sensor1_diff = sensor[0] - sensor[1];
-    // int16 sensor1_sensor0_diff;
-    // static int16 diff_last = 0;
-    // sensor1_sensor0_diff = -sensor0_sensor1_diff;
-    // if(ring_dir == LEFT)
-    // {
-    //     if(sensor0_sensor1_diff <= 2 && diff_last > 2)
-    //     {
-    //         return 1;
-    //     }
-    //     diff_last = sensor0_sensor1_diff;
-    // }
-    // else if(ring_dir == RIGHT)
-    // {
-    //     if(sensor1_sensor0_diff <= 2 && diff_last > 2)
-    //     {
-    //         return 1;
-    //     }
-    //     diff_last = sensor1_sensor0_diff;
-    // }
-    // return 0;    
+{
     if(ring_dir == RIGHT)
     {
-        if(car_info.distance > 250)  // 移动超过1cm
+        if(car_info.distance > 250)  // 移动超过25cm
             return 1;
         else
             return 0;
@@ -131,6 +134,12 @@ uint8 is_motor_tangent()
         
 }
 
+/***************************
+ * @breif   判断坡道
+ * @param   void
+ * @return  判出坡道返回1，否则返回0
+ * @note    
+ ***************************/
 uint8 is_ramp()
 {
     static int16 speed_reg[3] = {0,0,0};

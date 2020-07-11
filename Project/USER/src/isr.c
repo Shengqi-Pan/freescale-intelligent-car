@@ -22,7 +22,7 @@
 void UART1_Isr() interrupt 4
 {
     uint8 res;
-	static uint8 dwon_count;
+    static uint8 dwon_count;
     if(UART1_GET_TX_FLAG)
     {
         UART1_CLEAR_TX_FLAG;
@@ -49,16 +49,16 @@ void UART1_Isr() interrupt 4
 void UART2_Isr() interrupt 8
 {
     if(UART2_GET_TX_FLAG)
-	{
+    {
         UART2_CLEAR_TX_FLAG;
-		busy[2] = 0;
-	}
+        busy[2] = 0;
+    }
     if(UART2_GET_RX_FLAG)
-	{
+    {
         UART2_CLEAR_RX_FLAG;
-		//接收数据寄存器为：S2BUF
+        //接收数据寄存器为：S2BUF
 
-	}
+    }
 }
 
 
@@ -66,16 +66,16 @@ void UART2_Isr() interrupt 8
 void UART3_Isr() interrupt 17
 {
     if(UART3_GET_TX_FLAG)
-	{
+    {
         UART3_CLEAR_TX_FLAG;
-		busy[3] = 0;
-	}
+        busy[3] = 0;
+    }
     if(UART3_GET_RX_FLAG)
-	{
+    {
         UART3_CLEAR_RX_FLAG;
-		//接收数据寄存器为：S3BUF
+        //接收数据寄存器为：S3BUF
 
-	}
+    }
 }
 
 
@@ -133,9 +133,9 @@ void TM1_Isr() interrupt 3
     static int16 turn_duty; //控转向的占空比    
     //--------------下面存一些定时间隔---------------//
     static uint16 encoder_read_cnt = 0;  // 编码器读取间隔
-    static uint16 turn_control_cnt = 0;
+    static uint16 turn_control_cnt = 0;  // 转向控制间隔
     static uint16 ring_out_cnt = 0;  // 出环屏蔽时间
-    static uint16 ramp_trans_cnt = 0;  //用于上坡后状态转移延时
+    static uint16 ramp_trans_cnt = 0;  // 用于上坡后状态转移延时
     // 读取角度和角速度并卡尔曼滤波
     angle = get_angle_from_icm();
     omega = get_omega_from_icm();
@@ -156,10 +156,6 @@ void TM1_Isr() interrupt 3
         car_info.speed = get_speed(6);
         angle_bias = speed_control(car_info.speed.average, speed_set);
     }
-    // if (car_info.speed.average > 500 || car_info.speed.average < -500)
-    //     motor_output(0, 0);
-    // else
-    //     motor_output(stand_duty, 0);
 
     // 本质就是一个状态机，根据车辆当前判到的状态进行不同的控制
     switch(car_info.state)
@@ -167,7 +163,7 @@ void TM1_Isr() interrupt 3
         // 起步
         case TAKE_OFF:
             // 状态转移条件:开机200ms后自动变为直道状态
-            if(car_info.angle >= 20)          //大于20度自动提交
+            if(car_info.angle >= 20)  // 大于20度自动提交
                 car_info.state = STRAIGHT_AHEAD;
             break;
         // 直道
@@ -180,14 +176,13 @@ void TM1_Isr() interrupt 3
             if (car_info.speed.left_right_diff > 600)
                 car_info.state = IN_TURN;
             speed_set = 1800;
-            // 控速度
             // 判圆环
             if(is_ring())
             {
                 LED = 0;
                 car_info.state = RING;
                 ring_state = RING_TRUE;
-                car_info.distance = 0;
+                start_distance_calc();
                 // motor_stop();
                 // if(ring_dir == RIGHT)
                 // {
@@ -198,7 +193,6 @@ void TM1_Isr() interrupt 3
                 //     LED = 0;
                 //     while(1); 
                 // }
-                
             }
             // if(is_ramp())
             // {
@@ -212,16 +206,14 @@ void TM1_Isr() interrupt 3
                 LED = 0;
                 car_info.state = RING;
                 ring_state = RING_TRUE;
-                car_info.distance = 0;
+                start_distance_calc();
             }
             // 轮胎差速很大，弯中
             if (car_info.speed.left_right_diff > 600)
                 car_info.state = IN_TURN;
             // 轮胎差速小，直道
             if (car_info.speed.left_right_diff < 300)
-            {
                 car_info.state = STRAIGHT_AHEAD;
-            }
             speed_set = 1600;
             break;
         case IN_TURN:
@@ -230,7 +222,7 @@ void TM1_Isr() interrupt 3
                 LED = 0;
                 car_info.state = RING;
                 ring_state = RING_TRUE;
-                car_info.distance = 1600;
+                start_distance_calc();
             }
             // 轮胎差速小，直道
             if (car_info.speed.left_right_diff < 300)
@@ -266,12 +258,13 @@ void TM1_Isr() interrupt 3
                     {
                         LED = 1;
                         ring_state = RING_INTO;
-                        car_info.distance = 0;
+                        stop_distance_calc();
+                        start_turn_angle_calc();
                     }
                     break;
                 case RING_INTO:
                 // 用竖电感进环并在转过30度时移交控制权给横电感
-                    if(car_info.turn_angle > 35)
+                    if(car_info.turn_angle > 35 || car_info.turn_angle < -35)
                     {
                         LED = 0;
                         ring_state = RING_IN;
@@ -279,10 +272,11 @@ void TM1_Isr() interrupt 3
                     break;
                 case RING_IN:
                 // 用横电感过环，等到270度削弱deviation至30%
-                    if(car_info.turn_angle > 270)
+                    if(car_info.turn_angle > 270 || car_info.turn_angle < -270)
                     {
                         LED = 0;
                         ring_state = RING_OUT_READY;
+                        stop_turn_angle_calc();
                     }
                     break;
                 case RING_OUT_READY:
@@ -318,24 +312,16 @@ void TM1_Isr() interrupt 3
         default:
             break;
     }
-    /*turn_control_cnt++;
-    if(turn_control_cnt == 9)
-        turn_control_cnt = 0;*/
-    // extern float test[];
-    // omega = get_omega_from_icm();
-    // test[0] += 0;
-    // test[1] += omega.y * 0.001;
-    // test[2] += omega.z * 0.001;
 }
 void TM2_Isr() interrupt 12
 {
-	TIM2_CLEAR_FLAG;  //清除中断标志
-	
+    TIM2_CLEAR_FLAG;  //清除中断标志
+    
 }
 void TM3_Isr() interrupt 19
 {
-	TIM3_CLEAR_FLAG; //清除中断标志
-	
+    TIM3_CLEAR_FLAG; //清除中断标志
+
 }
 
 void TM4_Isr() interrupt 20

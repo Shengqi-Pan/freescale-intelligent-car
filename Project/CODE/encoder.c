@@ -7,6 +7,8 @@
  *******************************************/
 #include "encoder.h"
 
+static uint8 distance_calc_flag = 0;
+
 /***************************
  * @breif   两个编码器初始化
  * @param   void
@@ -46,8 +48,9 @@ Speed get_speed(uint16 time)
 
     // temp_pulse_left / 1024.0(线数) * 30(编码器的齿轮数) / 68(轮子的齿轮数) * 0.064 * 3.1415926 单位m
     // 单位:mm/s
-    if(car_info.state == RING && ring_state == RING_TRUE)
+    if(distance_calc_flag)
     {
+        // 对里程计数
         car_info.distance += (temp_pulse_left + temp_pulse_right) * 0.0866248 / 2;
     }
     speed.left = (int16)(temp_pulse_left * 86.6248 / time);
@@ -55,8 +58,15 @@ Speed get_speed(uint16 time)
     speed.average = (speed.left + speed.right) / 2;
     speed.left_right_diff = speed.left - speed.right;
     speed.left_right_diff = speed.left_right_diff > 0 ? speed.left_right_diff : -speed.left_right_diff;  // 取abs
-    // data_conversion(speed.left, speed.right,
-    //                 temp_pulse_left, temp_pulse_right,
-    //                 virtual_scope_data);
     return speed;
+}
+
+void start_distance_calc()
+{
+    car_info.distance = 0;
+    distance_calc_flag = 1;
+}
+void stop_distance_calc()
+{
+    distance_calc_flag = 0;
 }

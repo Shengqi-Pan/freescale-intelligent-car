@@ -26,5 +26,7 @@
 
 float get_angle_from_icm();
 Omega get_omega_from_icm();
+void start_turn_angle_calc();
+void stop_turn_angle_calc();
 
 #endif
