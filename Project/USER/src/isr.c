@@ -200,11 +200,11 @@ void TM1_Isr() interrupt 3
                 // }
                 
             }
-            if(is_ramp())
-            {
-                LED = 0;
-                car_info.state = RAMP_UP; 
-            }
+            // if(is_ramp())
+            // {
+            //     LED = 0;
+            //     car_info.state = RAMP_UP; 
+            // }
             break;
         case INTO_TURN:
             if(is_ring())
