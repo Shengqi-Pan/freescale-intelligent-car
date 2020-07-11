@@ -124,8 +124,8 @@ void TM0_Isr() interrupt 1
 }
 void TM1_Isr() interrupt 3
 {
-    extern float angle;
-    extern Omega omega;
+    static float angle;
+    static Omega omega;
     static float stand_duty;  //控直立的占空比
     static int16 speed_set = 1800;  // 给定速度1000mm/s
     static float angle_set = 19;  // 给定角度,车辆平衡角为23.87，要前进可以多给一些
@@ -282,16 +282,10 @@ void TM1_Isr() interrupt 3
                     if(car_info.turn_angle > 270)
                     {
                         LED = 0;
-                        ring_state = RING_OUT_READY;
-                    }
-                    break;
-                case RING_OUT_READY:
-                // 用横电感过环，等到290度削弱deviation至15%
-                    if(car_info.turn_angle > 300)
-                    {
                         ring_state = RING_OUT;
                         car_info.turn_angle = 0;
                     }
+                    break;
                 case RING_OUT:
                     if(++ring_out_cnt > 600)
                     {

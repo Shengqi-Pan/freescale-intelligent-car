@@ -43,7 +43,7 @@ Omega get_omega_from_icm()
     omega.z = (float)(-(icm_gyro_z - GYRO_Z_BIAS) / GYRO_Z_FACTOR);
     if(omega.z > 0)
         omega.y += 0.15 * omega.z;
-    if(car_info.state == RING && ring_state == RING_INTO || ring_state == RING_IN || ring_state == RING_OUT_READY)
+    if(car_info.state == RING && ring_state == RING_INTO || ring_state == RING_IN)
     {
         if (ring_dir == LEFT)
         {

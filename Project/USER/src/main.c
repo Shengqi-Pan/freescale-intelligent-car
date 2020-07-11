@@ -33,40 +33,23 @@
 /*在board_init中,已经将P54引脚设置为复位，
 如果需要使用P54引脚,可以在board.c文件中的board_init()函数中删除SET_P54_RESRT即可*/
 
-// 保存车辆当前的原始信息(尚未经过卡尔曼滤波的)
-float angle = 0;
-Omega omega = {0, 0};
-
 void main()
 {
     DisableGlobalIRQ(); //  关闭总中断
     board_init(); //  初始化寄存器
     pit_timer_us(TIM_1, 1500); // 使用TIMER作为周期中断，时间1.25ms一次
     icm20602_init_simspi(); // icm20602初始化, 引脚查看宏定义
-    // uart_init(UART_1, UART1_RX_P30, UART1_TX_P31, 115200, TIM_1);  // 串口1初始化，波特率115200，发送引脚TX P31 接收引脚RX P30
     seekfree_wireless_init();  // 无线串口初始化
     motor_init();  // 电机初始化
     l_init();  //ad初始化
-    encoder_init();
+    encoder_init(); //编码器初始化
     delay_ms(10);
-
     EnableGlobalIRQ(); //  开启总中断
 
     while(1)
     {
-        // 上位机查看角度和角速度等
-        // data_conversion((int16)angle, (int16)omega.y,
-        //                 (int16)car_info.angle, (int16)car_info.omega.y,
-        //                 virtual_scope_data);
-        // 上位机查看四个电感的值
-        // data_conversion(ad_test[0], ad_test[1],
-        //                 ad_test[2], ad_test[3],
-        //                 virtual_scope_data);
-        // data_conversion(test[0], car_info.speed.left,
-        //                 car_info.speed.right, 0,
-        //                 virtual_scope_data);
+        // 上位机示波器查看
         data_conversion(ad[0], ad[1], ad[2], ad[3], virtual_scope_data);
         uart_putbuff(WIRELESS_UART, virtual_scope_data, sizeof(virtual_scope_data));
-        //uart_putchar(WIRELESS_UART, (int8) test[0]);
     }
 }
