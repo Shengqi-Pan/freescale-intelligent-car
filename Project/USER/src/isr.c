@@ -127,15 +127,17 @@ void TM1_Isr() interrupt 3
     static float angle;
     static Omega omega;
     static float stand_duty;  //控直立的占空比
-    static int16 speed_set = 1800;  // 给定速度1000mm/s
-    static float angle_set = 19;  // 给定角度,车辆平衡角为23.87，要前进可以多给一些
+    static int16 speed_set = 1500;  // 给定速度1000mm/s
+    static float angle_set = 22.5;  // 给定角度,车辆平衡角为23.87，要前进可以多给一些 23
     static float angle_bias = 0;  // 用于控直立的偏移角
-    static int16 turn_duty; //控转向的占空比    
+    static int16 turn_duty = 0; //控转向的占空比    
     //--------------下面存一些定时间隔---------------//
     static uint16 encoder_read_cnt = 0;  // 编码器读取间隔
     static uint16 turn_control_cnt = 0;  // 转向控制间隔
     static uint16 ring_out_cnt = 0;  // 出环屏蔽时间
     static uint16 ramp_trans_cnt = 0;  // 用于上坡后状态转移延时
+    static uint8 proceed_dir = 0;   //用于指示方向
+    static uint8 start_distance_flag = 0;
     // 读取角度和角速度并卡尔曼滤波
     angle = get_angle_from_icm();
     omega = get_omega_from_icm();
@@ -162,9 +164,57 @@ void TM1_Isr() interrupt 3
     {
         // 起步
         case TAKE_OFF:
-            // 状态转移条件:开机200ms后自动变为直道状态
-            if(car_info.angle >= 20)  // 大于20度自动提交
-                car_info.state = STRAIGHT_AHEAD;
+            /*if(car_info.angle > 20)
+                    {
+                        car_info.state = STRAIGHT_AHEAD;
+                    }
+            break;*/
+            switch(take_off_state)
+            {
+                case STAND_UP:
+                    if(start_distance_flag == 0)
+                    {
+                        start_distance_calc();
+                        start_distance_flag = 1;
+                    }
+                    if(car_info.angle > 20)
+                    {
+                        take_off_state = GO_STRAIGHT;
+                        speed_set = 300;
+                    }
+                    break;
+                case GO_STRAIGHT:
+                    if(car_info.distance > 50)
+                    {
+                        stop_distance_calc();
+                        if(proceed_dir == 0)
+                        {
+                            take_off_state = TURN_LEFT;
+                            start_turn_angle_calc();
+                        }
+                        else
+                        {
+                            take_off_state = TURN_RIGHT;
+                            start_turn_angle_calc();
+                        }        
+                    }
+                    break;
+                case TURN_LEFT:
+                    if(car_info.turn_angle < -70)
+                    {
+                        car_info.state = STRAIGHT_AHEAD;
+                        stop_turn_angle_calc();
+                    }
+                    break;
+                case TURN_RIGHT:
+                    if(car_info.turn_angle > 70)
+                    {
+                        car_info.state = STRAIGHT_AHEAD;
+                        stop_turn_angle_calc();
+                    }
+                    break;
+                default: break;             
+            }
             break;
         // 直道
         case STRAIGHT_AHEAD:
@@ -175,7 +225,7 @@ void TM1_Isr() interrupt 3
             // 轮胎差速很大，弯中
             if (car_info.speed.left_right_diff > 600)
                 car_info.state = IN_TURN;
-            speed_set = 1800;
+            speed_set = 1500;
             // 判圆环
             if(is_ring())
             {
@@ -214,7 +264,7 @@ void TM1_Isr() interrupt 3
             // 轮胎差速小，直道
             if (car_info.speed.left_right_diff < 300)
                 car_info.state = STRAIGHT_AHEAD;
-            speed_set = 1600;
+            speed_set = 1500;
             break;
         case IN_TURN:
             if(is_ring())
@@ -232,7 +282,7 @@ void TM1_Isr() interrupt 3
             // 轮胎差速不是非常大，入弯
             if (car_info.speed.left_right_diff >= 300 && car_info.speed.left_right_diff <= 600)
                 car_info.state = INTO_TURN;
-            speed_set = 1600;
+            speed_set = 1500;
             break;
         case RAMP_UP:
             if(++ramp_trans_cnt >= 300)

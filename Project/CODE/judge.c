@@ -19,6 +19,7 @@ uint8 is_ring()
     static int16 ad3_ad4_diff;
     static int16 ad3_ad4_diff_reg[4];
     uint8 i;
+    return 0;
     ad3_ad4_diff = ad[2] - ad[3];
     ad3_ad4_diff_reg[3] = ad3_ad4_diff;
     if(ad[1] > (500 + (car_info.angle - 20) * (car_info.angle<20 ? 8 : 2)) && ad[0] > (530 + (car_info.angle - 20) * (car_info.angle<20 ? 8 : 2))) //TODO: 由于电感原因，右环条件可能需要进一步调节

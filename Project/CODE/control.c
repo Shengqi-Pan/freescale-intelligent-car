@@ -21,7 +21,7 @@ float angle_control(float car_angle, float car_w, float angle_set)   //控直立
 {
     static float motor_angle_control, angle_control;
     angle_control = car_angle - angle_set;  
-    if(car_info.state == TAKE_OFF)         //起步时p，d应用独立参数
+    if(car_info.state == TAKE_OFF && take_off_state == STAND_UP)         //起步时p，d应用独立参数
         motor_angle_control = angle_control * ANGLE_CONTROL_P_BEGIN + car_w * ANGLE_CONTROL_D_BEGIN;
     else if(car_info.state == RAMP_UP || car_info.state == RAMP_DOWN)       //过坡时减p加d
         motor_angle_control = angle_control * (ANGLE_CONTROL_P - 300) + car_w * (ANGLE_CONTROL_D + 8);
@@ -52,8 +52,10 @@ float speed_control(int16 speed_real, int16 speed_set)
     speed_deviation_integrate += speed_deviation;   //积分项累加
     switch (car_info.state)
     {
-        case STRAIGHT_AHEAD: case RING: case INTO_TURN: case IN_TURN:
+        case TAKE_OFF: case STRAIGHT_AHEAD: case RING: case INTO_TURN: case IN_TURN:
         /************直道控速************/
+            if(take_off_state == STAND_UP && car_info.state == TAKE_OFF)
+                return 0;
             if(speed_real < 1200)
             {
                 angle_bias = -speed_deviation * SPEED_CONTROL_P;
@@ -104,6 +106,7 @@ float speed_control(int16 speed_real, int16 speed_set)
             return -20;
             break;
         default:
+            return 0;
             break;
     }
 
@@ -165,6 +168,12 @@ int16 direction_control(void)
     ad[1] = (4*ad[1] + l_h_2)/5;
     ad[2] = (4*ad[2] + l_s_1)/5;
     ad[3] = (4*ad[3] + l_s_2)/5;
+    if(car_info.state == TAKE_OFF && take_off_state == TURN_LEFT)
+        return 1300;
+    else if(car_info.state == TAKE_OFF && take_off_state == TURN_RIGHT)
+        return -1300;
+    else if(car_info.state == TAKE_OFF)
+        return 0;
     sensor[0] = (int)(ad[0]*HENG_FACTOR/induc_ref[0]); // -angle_additional*低头ad变化/偏差度数 进行补偿 //归一化，小心溢出，factor取值不溢出越大越好
     sensor[1] = (int)(ad[1]*HENG_FACTOR/induc_ref[1]);
     sensor[2] = (int)(ad[2]*SHU_FACTOR/induc_ref[2]);
@@ -175,7 +184,7 @@ int16 direction_control(void)
         deviation_l_reg = 0;
         deviation_l_dot = 0;
         //限幅
-        if((deviation_h >= 350 || deviation_h <= -350 || ad[0]<50 || ad[1]<50) && car_info.state != TAKE_OFF) //意外情况电机抱死
+        if((deviation_h >= 350 || deviation_h <= -350 || ad[0]<30 || ad[1]<30) && car_info.state != TAKE_OFF) //意外情况电机抱死
         {
             motor_stop();
             while(1);
@@ -287,7 +296,7 @@ void take_off(void)
 void direction_pd_fuzzy(int16 deviation, float *p, float *d)
 {
     static int16 deviation_table[15] = {-150, -120, -100, -80, -50, -28, -18, 0, 18, 28, 50, 80, 100, 120, 150};    //注意分割，转弯时尽量控制在80以内
-    static float turn_p_table[15] = {10, 11, 12 ,14, 12, 8, 6, 5 ,6, 8, 12, 14, 12, 11, 10};
+    static float turn_p_table[15] = {10, 11, 12 ,14, 12, 10, 8, 6 ,8, 10, 12, 14, 12, 11, 10};
     static float turn_d_table[15] = {800, 750, 700, 630, 550, 430, 320, 180, 320, 430, 550, 630, 700, 750, 800};
     int8 i;
     if(deviation <= deviation_table[0])

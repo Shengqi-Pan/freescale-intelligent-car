@@ -33,6 +33,15 @@ typedef enum
     STOP  //结束
 }CarState;
 
+//--------------    起步当前状态---------------//
+typedef enum
+{
+    STAND_UP,
+    GO_STRAIGHT,
+    TURN_LEFT,
+    TURN_RIGHT
+}TakeOffState;
+
 //--------------    入环当前状态---------------//
 typedef enum
 {
@@ -78,7 +87,7 @@ extern int16 induc_ref[4];
 extern int16 test[4];
 extern RingDir ring_dir;
 extern RingState ring_state;
-
+extern TakeOffState take_off_state;
 extern float angle_test;
 
 #endif
