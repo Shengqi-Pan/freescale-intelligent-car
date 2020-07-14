@@ -37,7 +37,7 @@ void main()
 {
     DisableGlobalIRQ(); //  关闭总中断
     board_init(); //  初始化寄存器
-    pit_timer_us(TIM_1, 1500); // 使用TIMER作为周期中断，时间1.25ms一次
+    pit_timer_us(TIM_1, 1500); // 使用TIMER作为周期中断，时间1.5ms一次
     icm20602_init_simspi(); // icm20602初始化, 引脚查看宏定义
     seekfree_wireless_init();  // 无线串口初始化
     motor_init();  // 电机初始化
@@ -49,7 +49,7 @@ void main()
     while(1)
     {
         // 上位机示波器查看
-        data_conversion(ad[0], ad[1], car_info.speed.average, test[0], virtual_scope_data);
+        data_conversion(test[2], car_info.angle * 100, car_info.speed.average, 10 * test[0], virtual_scope_data);
         uart_putbuff(WIRELESS_UART, virtual_scope_data, sizeof(virtual_scope_data));
     }
 }

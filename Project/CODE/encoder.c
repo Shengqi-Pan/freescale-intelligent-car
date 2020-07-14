@@ -31,7 +31,7 @@ void encoder_init(void)
 Speed get_speed(uint16 time)
 {
     int16 temp_pulse_left = 0, temp_pulse_right = 0;
-    Speed speed;
+    static Speed speed;
     //读取采集到的编码器脉冲数
     temp_pulse_left = ctimer_count_read(SPEEDL_PLUSE);
     temp_pulse_right = ctimer_count_read(SPEEDR_PLUSE);
@@ -55,8 +55,8 @@ Speed get_speed(uint16 time)
     }
     speed.left = (int16)(temp_pulse_left * 86.6248 / time);
     speed.right = (int16)(temp_pulse_right * 86.6248 / time);
-    speed.average = (speed.left + speed.right) / 2;
-    speed.left_right_diff = speed.left - speed.right;
+    speed.average = (4 * speed.average + (speed.left + speed.right) / 2) / 5;
+    speed.left_right_diff = (speed.left - speed.right);
     speed.left_right_diff = speed.left_right_diff > 0 ? speed.left_right_diff : -speed.left_right_diff;  // 取abs
     return speed;
 }

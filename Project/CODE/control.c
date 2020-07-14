@@ -120,6 +120,8 @@ float speed_control(int16 speed_real, int16 speed_set)
         angle_bias = angle_bias>12 ? 12 : angle_bias;
         angle_bias = angle_bias<-12 ? -12 : angle_bias;
     }*/
+    if(angle_bias > 8)
+        angle_bias = 8;
     angle_bias_last = angle_bias;
     return angle_bias;
 }
@@ -189,6 +191,7 @@ int16 direction_control(void)
             motor_stop();
             while(1);
         }
+        deviation_h = deviation_h / (1.5 * car_info.angle / 32 - 0.27);
         if (deviation_h > 150)      //限幅
         {
             deviation_h = 150;
@@ -213,7 +216,6 @@ int16 direction_control(void)
             deviation_h_dot = 10;
         else if (deviation_h_dot < -10)
             deviation_h_dot = -10;
-        test[1] = deviation_h_dot;
         //模糊控制得到P和D
         if(ring_state == RING_IN)   //使圆环更加圆滑
             deviation_h = 0.6 * deviation_h;
@@ -222,7 +224,7 @@ int16 direction_control(void)
         if(car_info.state == RAMP_UP)
             deviation_h = 0.3 * deviation_h;
         direction_pd_fuzzy(deviation_h, &turn_p, &turn_d);  //模糊控制得到p，d
-        motor_turn = (int16)(turn_p * deviation_h  + turn_d * deviation_h_dot);
+        motor_turn = (int16)(turn_p * deviation_h  + turn_d * deviation_h_dot * 1.2);
         return motor_turn;
     }
     else        //竖电感入环
@@ -295,8 +297,11 @@ void take_off(void)
  ***************************/
 void direction_pd_fuzzy(int16 deviation, float *p, float *d)
 {
-    static int16 deviation_table[15] = {-150, -120, -100, -80, -50, -28, -18, 0, 18, 28, 50, 80, 100, 120, 150};    //注意分割，转弯时尽量控制在80以内
+    /*static int16 deviation_table[15] = {-150, -120, -100, -80, -50, -28, -18, 0, 18, 28, 50, 80, 100, 120, 150};    //注意分割，转弯时尽量控制在80以内
     static float turn_p_table[15] = {10, 11, 12 ,14, 12, 10, 8, 6 ,8, 10, 12, 14, 12, 11, 10};
+    static float turn_d_table[15] = {800, 750, 700, 630, 550, 430, 320, 180, 320, 430, 550, 630, 700, 750, 800};*/
+    static int16 deviation_table[15] = {-150, -120, -100, -80, -50, -28, -18, 0, 18, 28, 50, 80, 100, 120, 150};    //注意分割，转弯时尽量控制在80以内
+    static float turn_p_table[15] = {10, 11, 15 ,16, 13, 11, 8, 6 ,8, 11, 13, 16, 15, 11, 10};
     static float turn_d_table[15] = {800, 750, 700, 630, 550, 430, 320, 180, 320, 430, 550, 630, 700, 750, 800};
     int8 i;
     if(deviation <= deviation_table[0])

@@ -127,8 +127,8 @@ void TM1_Isr() interrupt 3
     static float angle;
     static Omega omega;
     static float stand_duty;  //控直立的占空比
-    static int16 speed_set = 1500;  // 给定速度1000mm/s
-    static float angle_set = 22.5;  // 给定角度,车辆平衡角为23.87，要前进可以多给一些 23
+    static int16 speed_set = 1800;  // 给定速度1000mm/s
+    static float angle_set = 21;  // 给定角度,车辆平衡角为23.87，要前进可以多给一些 23
     static float angle_bias = 0;  // 用于控直立的偏移角
     static int16 turn_duty = 0; //控转向的占空比    
     //--------------下面存一些定时间隔---------------//
@@ -141,8 +141,17 @@ void TM1_Isr() interrupt 3
     // 读取角度和角速度并卡尔曼滤波
     angle = get_angle_from_icm();
     omega = get_omega_from_icm();
+    if(angle - car_info.angle > 13)
+    {
+        angle = car_info.angle + 13;
+    }
+    else if(angle - car_info.angle < -13)
+    {
+        angle = car_info.angle - 13;
+    }
+    test[2] = (int16)(100 * angle); 
     kalman(angle, omega.y);
-    angle_test += omega.y;
+    // 测试 angle_test += omega.y;
     // 控直立
     stand_duty = angle_control(car_info.angle, car_info.omega.y, angle_set + angle_bias);
     if(++turn_control_cnt == 2)
@@ -164,11 +173,11 @@ void TM1_Isr() interrupt 3
     {
         // 起步
         case TAKE_OFF:
-            /*if(car_info.angle > 20)
+            if(car_info.angle > 20)
                     {
                         car_info.state = STRAIGHT_AHEAD;
                     }
-            break;*/
+            break;
             switch(take_off_state)
             {
                 case STAND_UP:
@@ -225,7 +234,7 @@ void TM1_Isr() interrupt 3
             // 轮胎差速很大，弯中
             if (car_info.speed.left_right_diff > 600)
                 car_info.state = IN_TURN;
-            speed_set = 1500;
+            speed_set = 1800;
             // 判圆环
             if(is_ring())
             {
@@ -264,7 +273,7 @@ void TM1_Isr() interrupt 3
             // 轮胎差速小，直道
             if (car_info.speed.left_right_diff < 300)
                 car_info.state = STRAIGHT_AHEAD;
-            speed_set = 1500;
+            speed_set = 1600;
             break;
         case IN_TURN:
             if(is_ring())
@@ -282,7 +291,7 @@ void TM1_Isr() interrupt 3
             // 轮胎差速不是非常大，入弯
             if (car_info.speed.left_right_diff >= 300 && car_info.speed.left_right_diff <= 600)
                 car_info.state = INTO_TURN;
-            speed_set = 1500;
+            speed_set = 1600;
             break;
         case RAMP_UP:
             if(++ramp_trans_cnt >= 300)
@@ -292,7 +301,7 @@ void TM1_Isr() interrupt 3
             }
             break;
         case RAMP_DOWN:
-            if(++ramp_trans_cnt >= 2000)
+            if(++ramp_trans_cnt >= 1800)
             {
                 ramp_trans_cnt = 0;
                 car_info.state = STRAIGHT_AHEAD;
@@ -355,6 +364,7 @@ void TM1_Isr() interrupt 3
         default:
             break;
     }
+    test[1] = speed_set;
 }
 void TM2_Isr() interrupt 12
 {
