@@ -21,8 +21,8 @@ void motor_output(float motor_angle_control, int16 motor_turn_control)
     // static float motor_left_old = 0, motor_right_old = 0;
     motor_left = motor_angle_control - motor_turn_control;
     motor_right = motor_angle_control + motor_turn_control;  
-    motor_left = motor_left>0 ? motor_left - 42 : motor_left + 42; //电机转差补偿，补偿1.5%
-    motor_right = motor_right>0 ? motor_right + 42 : motor_right - 42;
+    motor_left = motor_left>0 ? motor_left - 170 : motor_left + 170; //电机转差补偿，补偿1.5%
+    motor_right = motor_right>0 ? motor_right + 170 : motor_right - 170;
     /*if(motor_left - motor_left_old >= 300)
         motor_left = motor_left_old + 300;
     else if(motor_left - motor_left_old <= -300)

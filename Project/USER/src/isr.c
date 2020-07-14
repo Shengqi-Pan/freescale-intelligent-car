@@ -127,7 +127,7 @@ void TM1_Isr() interrupt 3
     static float angle;
     static Omega omega;
     static float stand_duty;  //控直立的占空比
-    static int16 speed_set = 1800;  // 给定速度1000mm/s
+    static int16 speed_set = 1900;  // 给定速度1000mm/s
     static float angle_set = 21;  // 给定角度,车辆平衡角为23.87，要前进可以多给一些 23
     static float angle_bias = 0;  // 用于控直立的偏移角
     static int16 turn_duty = 0; //控转向的占空比    
@@ -234,7 +234,7 @@ void TM1_Isr() interrupt 3
             // 轮胎差速很大，弯中
             if (car_info.speed.left_right_diff > 600)
                 car_info.state = IN_TURN;
-            speed_set = 1800;
+            speed_set = 1900;
             // 判圆环
             if(is_ring())
             {
@@ -273,7 +273,7 @@ void TM1_Isr() interrupt 3
             // 轮胎差速小，直道
             if (car_info.speed.left_right_diff < 300)
                 car_info.state = STRAIGHT_AHEAD;
-            speed_set = 1600;
+            speed_set = 1700;
             break;
         case IN_TURN:
             if(is_ring())
@@ -291,7 +291,7 @@ void TM1_Isr() interrupt 3
             // 轮胎差速不是非常大，入弯
             if (car_info.speed.left_right_diff >= 300 && car_info.speed.left_right_diff <= 600)
                 car_info.state = INTO_TURN;
-            speed_set = 1600;
+            speed_set = 1700;
             break;
         case RAMP_UP:
             if(++ramp_trans_cnt >= 300)
@@ -322,8 +322,8 @@ void TM1_Isr() interrupt 3
                     }
                     break;
                 case RING_INTO:
-                // 用竖电感进环并在转过30度时移交控制权给横电感
-                    if(car_info.turn_angle > 35 || car_info.turn_angle < -35)
+                // 用竖电感进环并在转过50度时移交控制权给横电感
+                    if(car_info.turn_angle > 50 || car_info.turn_angle < -50)
                     {
                         LED = 0;
                         ring_state = RING_IN;

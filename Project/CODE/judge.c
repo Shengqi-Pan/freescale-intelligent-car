@@ -19,26 +19,25 @@ uint8 is_ring()
     static int16 ad3_ad4_diff;
     static int16 ad3_ad4_diff_reg[4];
     uint8 i;
-    return 0;
     ad3_ad4_diff = ad[2] - ad[3];
     ad3_ad4_diff_reg[3] = ad3_ad4_diff;
-    if(ad[1] > (500 + (car_info.angle - 20) * (car_info.angle<20 ? 8 : 2)) && ad[0] > (530 + (car_info.angle - 20) * (car_info.angle<20 ? 8 : 2))) //TODO: 由于电感原因，右环条件可能需要进一步调节
+    if(ad[0] > (480 + (car_info.angle - 27) * (car_info.angle<27 ? 6 : 3)) && ad[1] > (460 + (car_info.angle - 27) * (car_info.angle<27 ? 6 : 3))) //TODO: 由于电感原因，右环条件可能需要进一步调节
     {
-        if(ad3_ad4_diff_reg[2] <= 45 && ad3_ad4_diff_reg[3] < 45 && ad3_ad4_diff_reg[0] > 45 && ad3_ad4_diff_reg[1] >= 45)
+        if(ad3_ad4_diff_reg[2] <= 25 && ad3_ad4_diff_reg[3] < 25 && ad3_ad4_diff_reg[0] > 25 && ad3_ad4_diff_reg[1] >= 25)
         {
             ring_dir = LEFT;
             return 1;
         }
     }
-    if(ad[0] > (500 + (car_info.angle - 20) * (car_info.angle<20 ? 10 : 3)) && ad[1] > (530 + (car_info.angle - 20) * (car_info.angle<20 ? 10 : 3)))
+    if(ad[1] > (480 + (car_info.angle - 27) * (car_info.angle<27 ? 6 : 3)) && ad[0] > (460 + (car_info.angle - 27) * (car_info.angle<27 ? 6 : 3)))
     {
-        if(ad3_ad4_diff_reg[2] >= 70 && ad3_ad4_diff_reg[3] > 70 && ad3_ad4_diff_reg[0] < 70 && ad3_ad4_diff_reg[1] <= 70)
+        if(ad3_ad4_diff_reg[2] >= 25 && ad3_ad4_diff_reg[3] > 25 && ad3_ad4_diff_reg[0] < 25 && ad3_ad4_diff_reg[1] <= 25)
         {
             ring_dir = RIGHT;
             return 1;
         }
     }
-    for(i=0;i<3;i++)
+    for(i=0;i<4;i++)
         ad3_ad4_diff_reg[i] = ad3_ad4_diff_reg[i+1];
     return 0;
 }
@@ -120,14 +119,14 @@ uint8 is_motor_tangent()
 {
     if(ring_dir == RIGHT)
     {
-        if(car_info.distance > 250)  // 移动超过25cm
+        if(car_info.distance > 170)  // 移动超过25cm
             return 1;
         else
             return 0;
     }
     else
     {
-        if(car_info.distance > 50 + (25 - car_info.angle) * 16)  // 移动超过10cm
+        if(car_info.distance > 170)  // 移动超过10cm
             return 1;
         else
             return 0;
