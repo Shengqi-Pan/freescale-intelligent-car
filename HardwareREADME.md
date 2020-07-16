@@ -78,9 +78,17 @@
 
 ### 无线充电方案
 
-TODO LIST...
+- 恒功率充电 or 简单的全桥整流？
 
-- 恒功率充电 or 全桥整流？
+---------------------------;
+
+**7.17：目前的想法是，接收端640KHZ LC谐振，然后四个肖特基二极管全桥整流，再稳压到12V，再接入SuperCap组，在线路上做电压电流的采样，送入单片机做乘积得到实时功率，然后PID控制MOS通断（BUCK）来控制平均充电电流（或者电压），做到稳定充电功率的效果**
+
+**References：**
+
+> [飞思卡尔恒功率无线充电（上）](https://cloud.tencent.com/developer/article/1651860) \
+> [飞思卡尔恒功率无线充电（中）](https://cloud.tencent.com/developer/article/1651861) \
+> [飞思卡尔恒功率无线充电（下）](https://cloud.tencent.com/developer/article/1651862)
 
 ### 元器件
 
