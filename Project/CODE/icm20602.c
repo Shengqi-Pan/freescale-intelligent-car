@@ -42,8 +42,8 @@ Omega get_omega_from_icm()
     get_icm20602_gyro_simspi();  // 得到陀螺仪数据16位，如icm_gyro_x
     omega.y = (float)(-(icm_gyro_y - GYRO_Y_BIAS) / GYRO_Y_FACTOR);
     omega.z = (float)(-(icm_gyro_z - GYRO_Z_BIAS) / GYRO_Z_FACTOR);
-    if(omega.z > 0)
-        omega.y += 0.15 * omega.z;
+    //if(omega.z > 0)
+        //omega.y += 0.15 * omega.z;
     if(turn_angle_calc_flag)
     {
         // 对转向角速度进行积分，左转为负值，右转为正值
