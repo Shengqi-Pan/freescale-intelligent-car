@@ -333,13 +333,13 @@ void TM1_Isr() interrupt 3
                 // 用横电感过环，等到270度削弱deviation至30%
                     if(car_info.turn_angle > 270 || car_info.turn_angle < -270)
                     {
-                        LED = 0;
+                        LED = 1;
                         ring_state = RING_OUT;
                         car_info.turn_angle = 0;
                     }
                     break;
                 case RING_OUT:
-                    if(++ring_out_cnt > 600)
+                    if(++ring_out_cnt > 800)
                     {
                         ring_out_cnt = 0;
                         ring_dir = NOT_A_RING;

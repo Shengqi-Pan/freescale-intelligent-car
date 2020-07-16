@@ -160,8 +160,8 @@ int16 direction_control(void)
     }
     else if(ring_state == RING_INTO && ring_dir == RIGHT)
     {
-        induc_ref[2] = 90;
-        induc_ref[3] = 150;
+        induc_ref[2] = 350;
+        induc_ref[3] = 500;
     }
     getl_once();     //读一次电感值
     ad[0] = (4*ad[0] + l_h_1)/5;        //读取滤波
@@ -259,10 +259,7 @@ int16 direction_control(void)
             deviation_l_dot = 10;
         else if (deviation_l_dot < -10)
             deviation_l_dot = -10;
-        turn_p = 8.5;
-        turn_d = 250;
-        if(ring_dir == LEFT)
-            turn_p += 2.5;
+        direction_pd_fuzzy(deviation_l * 0.4, &turn_p, &turn_d);  //模糊控制得到p，d
         motor_turn = (int16)(turn_p * deviation_l  + turn_d * deviation_l_dot);
         if(ring_dir == LEFT)        //左环不向右转，右环同理
             motor_turn = motor_turn>0 ? motor_turn : 0;
@@ -361,5 +358,8 @@ void direction_pd_fuzzy(int16 deviation, float *p, float *d)
         }
     }
     if(ring_state == RING_OUT)  //防止出环过调
-        *d = *d * 3;
+    {
+        *d = *d * 6;
+        *p = *p * 2;
+    }
 }

@@ -22,17 +22,17 @@ uint8 is_ring()
     return 0;
     ad3_ad4_diff = ad[2] - ad[3];
     ad3_ad4_diff_reg[3] = ad3_ad4_diff;
-    if(ad[0] > (550 + (car_info.angle - 27) * (car_info.angle<27 ? 4 : 3)) && ad[1] > (530 + (car_info.angle - 27) * (car_info.angle<27 ? 4 : 3))) //TODO: 由于电感原因，右环条件可能需要进一步调节
+    if(ad[0] > (510 + (car_info.angle - 27) * (car_info.angle<27 ? 4 : 3)) && ad[1] > (490 + (car_info.angle - 27) * (car_info.angle<27 ? 4 : 3))) //TODO: 由于电感原因，右环条件可能需要进一步调节
     {
-        if(ad3_ad4_diff_reg[2] <= 30 && ad3_ad4_diff_reg[3] < 30 && ad3_ad4_diff_reg[0] > 30 && ad3_ad4_diff_reg[1] >= 30)
+        if(ad3_ad4_diff_reg[2] >= 60 && ad3_ad4_diff_reg[3] > 60 && ad3_ad4_diff_reg[0] < 60 && ad3_ad4_diff_reg[1] <= 60)
         {
             ring_dir = LEFT;
             return 1;
         }
     }
-    if(ad[1] > (550 + (car_info.angle - 27) * (car_info.angle<27 ? 4 : 3)) && ad[0] > (530 + (car_info.angle - 27) * (car_info.angle<27 ? 4 : 3)))
+    if(ad[1] > (510 + (car_info.angle - 27) * (car_info.angle<27 ? 4 : 3)) && ad[0] > (490 + (car_info.angle - 27) * (car_info.angle<27 ? 4 : 3)))
     {
-        if(ad3_ad4_diff_reg[2] >= -50 && ad3_ad4_diff_reg[3] > -50 && ad3_ad4_diff_reg[0] < -50 && ad3_ad4_diff_reg[1] <= -50 && ad[3] > 250)
+        if(ad3_ad4_diff_reg[2] <= -60 && ad3_ad4_diff_reg[3] < -60 && ad3_ad4_diff_reg[0] > -60 && ad3_ad4_diff_reg[1] >= -60 && ad[3] > 270)
         {
             ring_dir = RIGHT;
             return 1;
@@ -120,7 +120,7 @@ uint8 is_motor_tangent()
 {
     if(ring_dir == RIGHT)
     {
-        if(car_info.distance > 270)  // 移动超过25cm
+        if(car_info.distance > 460)  // 移动超过25cm
             return 1;
         else
             return 0;
