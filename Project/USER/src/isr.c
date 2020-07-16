@@ -127,7 +127,7 @@ void TM1_Isr() interrupt 3
     static float angle;
     static Omega omega;
     static float stand_duty;  //控直立的占空比
-    static int16 speed_set = 1900;  // 给定速度1000mm/s
+    static int16 speed_set = 2100;  // 给定速度1000mm/s
     static float angle_set = 25;  // 给定角度,车辆平衡角为23.87，要前进可以多给一些 23
     static float angle_bias = 0;  // 用于控直立的偏移角
     static int16 turn_duty = 0; //控转向的占空比    
@@ -154,6 +154,7 @@ void TM1_Isr() interrupt 3
     // 测试 angle_test += omega.y;
     // 控直立
     stand_duty = angle_control(car_info.angle, car_info.omega.y, angle_set + angle_bias);
+    test[3] = angle_bias;
     if(++turn_control_cnt == 2)
     {
         turn_control_cnt = 0;
@@ -234,7 +235,7 @@ void TM1_Isr() interrupt 3
             // 轮胎差速很大，弯中
             if (car_info.speed.left_right_diff > 600)
                 car_info.state = IN_TURN;
-            speed_set = 1900;
+            speed_set = 2100;
             // 判圆环
             if(is_ring())
             {
@@ -273,7 +274,7 @@ void TM1_Isr() interrupt 3
             // 轮胎差速小，直道
             if (car_info.speed.left_right_diff < 300)
                 car_info.state = STRAIGHT_AHEAD;
-            speed_set = 1900;
+            speed_set = 2100;
             break;
         case IN_TURN:
             if(is_ring())
@@ -291,7 +292,7 @@ void TM1_Isr() interrupt 3
             // 轮胎差速不是非常大，入弯
             if (car_info.speed.left_right_diff >= 300 && car_info.speed.left_right_diff <= 600)
                 car_info.state = INTO_TURN;
-            speed_set = 1700;
+            speed_set = 2100;
             break;
         case RAMP_UP:
             if(++ramp_trans_cnt >= 300)
@@ -356,7 +357,7 @@ void TM1_Isr() interrupt 3
                 default:
                     break;
             }
-            speed_set = 1900;
+            speed_set = 2100;
             break;
 
         case STOP:
