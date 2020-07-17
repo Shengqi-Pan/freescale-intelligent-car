@@ -16,30 +16,27 @@
  ***************************/
 uint8 is_ring()
 {
-    static int16 ad3_ad4_diff;
-    static int16 ad3_ad4_diff_reg[4];
-    uint8 i;
-    return 0;
-    ad3_ad4_diff = ad[2] - ad[3];
-    ad3_ad4_diff_reg[3] = ad3_ad4_diff;
-    if(ad[0] > (510 + (car_info.angle - 27) * (car_info.angle<27 ? 4 : 3)) && ad[1] > (490 + (car_info.angle - 27) * (car_info.angle<27 ? 4 : 3))) //TODO: 由于电感原因，右环条件可能需要进一步调节
+    // static int16 ad3_ad4_diff;
+    // static int16 ad3_ad4_diff_reg[4];
+    // uint8 i;
+    // ad3_ad4_diff = ad[2] - ad[3];
+    // ad3_ad4_diff_reg[3] = ad3_ad4_diff;
+    if(ad[0] > (500 + (car_info.angle - 27) * (car_info.angle<27 ? 4 : 3)) && ad[1] > (400 + (car_info.angle - 27) * (car_info.angle<27 ? 4 : 3))) //TODO: 由于电感原因，右环条件可能需要进一步调节
     {
-        if(ad3_ad4_diff_reg[2] >= 60 && ad3_ad4_diff_reg[3] > 60 && ad3_ad4_diff_reg[0] < 60 && ad3_ad4_diff_reg[1] <= 60)
+        if(ad[2] > 2.5 * ad[3])
         {
             ring_dir = LEFT;
             return 1;
         }
     }
-    if(ad[1] > (510 + (car_info.angle - 27) * (car_info.angle<27 ? 4 : 3)) && ad[0] > (490 + (car_info.angle - 27) * (car_info.angle<27 ? 4 : 3)))
+    if(ad[1] > (500 + (car_info.angle - 27) * (car_info.angle<27 ? 4 : 3)) && ad[0] > (400 + (car_info.angle - 27) * (car_info.angle<27 ? 4 : 3)))
     {
-        if(ad3_ad4_diff_reg[2] <= -60 && ad3_ad4_diff_reg[3] < -60 && ad3_ad4_diff_reg[0] > -60 && ad3_ad4_diff_reg[1] >= -60 && ad[3] > 270)
+        if(ad[3] > 2.5 * ad[2])
         {
             ring_dir = RIGHT;
             return 1;
         }
     }
-    for(i=0;i<3;i++)
-        ad3_ad4_diff_reg[i] = ad3_ad4_diff_reg[i+1];
     return 0;
 }
 
@@ -120,14 +117,14 @@ uint8 is_motor_tangent()
 {
     if(ring_dir == RIGHT)
     {
-        if(car_info.distance > 460)  // 移动超过25cm
+        if(car_info.distance > 520 - (car_info.speed.average - 1700) / 5)  // 移动超过25cm
             return 1;
         else
             return 0;
     }
     else
     {
-        if(car_info.distance > 170)  // 移动超过10cm
+        if(car_info.distance > 520 - (car_info.speed.average - 1700) / 5)  // 移动超过10cm
             return 1;
         else
             return 0;

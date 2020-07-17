@@ -155,13 +155,13 @@ int16 direction_control(void)
     static float turn_p, turn_d;
     if(ring_state == RING_INTO && ring_dir == LEFT) //左环右环进行不同的归一化
     {
-        induc_ref[2] = 100;
-        induc_ref[3] = 150;
+        induc_ref[2] = 65;
+        induc_ref[3] = 15;
     }
     else if(ring_state == RING_INTO && ring_dir == RIGHT)
     {
-        induc_ref[2] = 350;
-        induc_ref[3] = 500;
+        induc_ref[2] = 100;
+        induc_ref[3] = 120;
     }
     getl_once();     //读一次电感值
     ad[0] = (4*ad[0] + l_h_1)/5;        //读取滤波
@@ -184,7 +184,7 @@ int16 direction_control(void)
         deviation_l_reg = 0;
         deviation_l_dot = 0;
         //限幅
-        if((deviation_h >= 350 || deviation_h <= -350 || ad[0]<30 || ad[1]<30) && car_info.state != TAKE_OFF) //意外情况电机抱死
+        if(ad[0]<20 || ad[1]<20 && car_info.state != TAKE_OFF) //意外情况电机抱死
         {
             motor_stop();
             while(1);
@@ -215,14 +215,14 @@ int16 direction_control(void)
         else if (deviation_h_dot < -20)
             deviation_h_dot = -20;
         //模糊控制得到P和D
-        if(ring_state == RING_IN)   //使圆环更加圆滑
-            deviation_h = 0.6 * deviation_h;
+        // if(ring_state == RING_IN)   //使圆环更加圆滑
+        //     deviation_h = 0.6 * deviation_h;
         // else if(ring_state == RING_OUT)
         //     deviation_h = 0.8 * deviation_h;
         if(car_info.state == RAMP_UP)
             deviation_h = 0.3 * deviation_h;
         direction_pd_fuzzy(deviation_h, &turn_p, &turn_d);  //模糊控制得到p，d
-        motor_turn = (int16)(turn_p * deviation_h  + turn_d * deviation_h_dot * 1.7);
+        motor_turn = (int16)(turn_p * deviation_h  + turn_d * deviation_h_dot * 1.6);
         return motor_turn;
     }
     else        //竖电感入环
@@ -359,7 +359,6 @@ void direction_pd_fuzzy(int16 deviation, float *p, float *d)
     }
     if(ring_state == RING_OUT)  //防止出环过调
     {
-        *d = *d * 6;
-        *p = *p * 2;
+        *d = *d * 3;
     }
 }
