@@ -69,23 +69,23 @@ void motor_output(float motor_angle_control, int16 motor_turn_control)
     // test[3] = motor_right;
     if(motor_left >= 0)
     {
-        pwm_duty(PWM5_P00, (int)motor_left); //右电机弱，补强2%的占空比
-        pwm_duty(PWM6_P01, 0);	
+        pwm_duty(PWM5_P00, (int)motor_left + 1000); //右电机弱，补强2%的占空比
+        pwm_duty(PWM6_P01, 1000);	
     }
     else
     {
-        pwm_duty(PWM5_P00, 0);
-        pwm_duty(PWM6_P01, (int)(-motor_left));	
+        pwm_duty(PWM5_P00, 1000);
+        pwm_duty(PWM6_P01, (int)(-motor_left) + 1000);	
     }
     if(motor_right >= 0)
     {
-        pwm_duty(PWM2P_P22, (int)motor_right);
-        pwm_duty(PWM4P_P26, 0);	
+        pwm_duty(PWM2P_P22, (int)motor_right + 1000);
+        pwm_duty(PWM4P_P26, 1000);	
     }
     else
     {
-        pwm_duty(PWM2P_P22, 0);
-        pwm_duty(PWM4P_P26, (int)(-motor_right));	
+        pwm_duty(PWM2P_P22, 1000);
+        pwm_duty(PWM4P_P26, (int)(-motor_right) + 1000);	
     }
   
 }
