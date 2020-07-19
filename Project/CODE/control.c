@@ -23,8 +23,8 @@ float angle_control(float car_angle, float car_w, float angle_set)   //控直立
     angle_control = car_angle - angle_set;  
     if(car_info.state == TAKE_OFF && take_off_state == STAND_UP)         //起步时p，d应用独立参数
         motor_angle_control = angle_control * ANGLE_CONTROL_P_BEGIN + car_w * ANGLE_CONTROL_D_BEGIN;
-    else if(car_info.state == RAMP_UP || car_info.state == RAMP_DOWN)       //过坡时减p加d
-        motor_angle_control = angle_control * (ANGLE_CONTROL_P - 300) + car_w * (ANGLE_CONTROL_D + 8);
+    // else if(car_info.state == RAMP_UP || car_info.state == RAMP_DOWN)       //过坡时减p加d
+    //     motor_angle_control = angle_control * (ANGLE_CONTROL_P - 300) + car_w * (ANGLE_CONTROL_D + 8);
     else
         motor_angle_control = angle_control * ANGLE_CONTROL_P + car_w * ANGLE_CONTROL_D;
     return motor_angle_control;
@@ -168,6 +168,7 @@ int16 direction_control(void)
     ad[1] = (4*ad[1] + l_h_2)/5;
     ad[2] = (4*ad[2] + l_s_1)/5;
     ad[3] = (4*ad[3] + l_s_2)/5;
+    ad[4] = (4*ad[4] + l_h_m)/5;
     if(car_info.state == TAKE_OFF && take_off_state == TURN_LEFT)
         return 1300;
     else if(car_info.state == TAKE_OFF && take_off_state == TURN_RIGHT)
@@ -184,7 +185,7 @@ int16 direction_control(void)
         deviation_l_reg = 0;
         deviation_l_dot = 0;
         //限幅
-        if(ad[0]<20 || ad[1]<20 && car_info.state != TAKE_OFF) //意外情况电机抱死
+        if(ad[0]<25 || ad[1]<25 && car_info.state != TAKE_OFF) //意外情况电机抱死
         {
             motor_stop();
             while(1);
@@ -219,10 +220,10 @@ int16 direction_control(void)
         //     deviation_h = 0.6 * deviation_h;
         // else if(ring_state == RING_OUT)
         //     deviation_h = 0.8 * deviation_h;
-        if(car_info.state == RAMP_UP)
-            deviation_h = 0.3 * deviation_h;
+        // if(car_info.state == RAMP_UP)
+        //     deviation_h = 0.3 * deviation_h;
         direction_pd_fuzzy(deviation_h, &turn_p, &turn_d);  //模糊控制得到p，d
-        motor_turn = (int16)(turn_p * deviation_h  + turn_d * deviation_h_dot * 1.6);
+        motor_turn = (int16)(turn_p * deviation_h  + turn_d * deviation_h_dot * 1.8);
         return motor_turn;
     }
     else        //竖电感入环
@@ -266,9 +267,7 @@ int16 direction_control(void)
         else if(ring_dir == RIGHT)
             motor_turn = motor_turn<0 ? motor_turn : 0;
         return motor_turn;
-    }
-    
-    
+    }   
 }
 
 /***************************
@@ -321,43 +320,43 @@ void direction_pd_fuzzy(int16 deviation, float *p, float *d)
             }
         }
     }
-    if(car_info.speed.average > 2000) //速度大时过弯拉大d
+    if(car_info.speed.average > 2200) //速度大时过弯拉大d
     {
         if(car_info.speed.left_right_diff >= 800)  //高偏差
         {
-            if(car_info.speed.average - 2000 <= 400)
+            if(car_info.speed.average - 2200 <= 200)
             {
-                *d *= 1.5 + (car_info.speed.average - 2000) / 400; 
+                *d *= 1.5 + (car_info.speed.average - 2200) / 200; 
             }
-            else if(car_info.speed.average - 2000 > 400)
+            else if(car_info.speed.average - 2200 > 200)
             {
                 *d *= 2; 
             }
         }
         else if(car_info.speed.left_right_diff >= 500)  //中偏差
         {
-            if(car_info.speed.average - 2000 <= 400)
+            if(car_info.speed.average - 2200 <= 200)
             {
-                *d *= 1.3 + (car_info.speed.average - 2000) / 400; 
+                *d *= 1.3 + (car_info.speed.average - 2200) / 200; 
             }
-            else if(car_info.speed.average - 2000 > 400)
+            else if(car_info.speed.average - 2200 > 200)
             {
                 *d *= 1.8; 
             }
         }
         else if(car_info.speed.left_right_diff >= 300) //低偏差
         {
-            if(car_info.speed.average - 2000 <= 400)
+            if(car_info.speed.average - 2200 <= 200)
             {
-                *d *= 1.1 + (car_info.speed.average - 2000) / 400; 
+                *d *= 1.1 + (car_info.speed.average - 2200) / 200; 
             }
-            else if(car_info.speed.average - 2000 > 400)
+            else if(car_info.speed.average - 2200 > 200)
             {
                 *d *= 1.6; 
             }
         }
     }
-    if(ring_state == RING_OUT)  //防止出环过调
+    if(ring_state == RING_OUT && car_info.state == RING)  //防止出环过调
     {
         *d = *d * 3;
     }

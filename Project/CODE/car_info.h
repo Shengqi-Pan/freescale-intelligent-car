@@ -82,8 +82,8 @@ typedef struct
 
 extern CarInfo car_info;
 extern int16 sensor[4]; //归一化后电感值，用于judge
-extern int16 ad[4];
-extern int16 induc_ref[4];
+extern int16 ad[5];
+extern int16 induc_ref[5];
 extern int16 test[4];
 extern RingDir ring_dir;
 extern RingState ring_state;

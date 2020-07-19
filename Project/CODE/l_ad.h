@@ -3,7 +3,7 @@
 
 #include "zf_adc.h"
 
-extern int16 l_h_1,l_h_2,l_s_1,l_s_2;
+extern int16 l_h_1,l_h_2,l_s_1,l_s_2,l_h_m;
 
 void l_init(void);
 void getl_once(void);

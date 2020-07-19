@@ -23,7 +23,7 @@ uint8 is_ring()
     // ad3_ad4_diff_reg[3] = ad3_ad4_diff;
     if(ad[0] > (500 + (car_info.angle - 27) * (car_info.angle<27 ? 4 : 3)) && ad[1] > (400 + (car_info.angle - 27) * (car_info.angle<27 ? 4 : 3))) //TODO: 由于电感原因，右环条件可能需要进一步调节
     {
-        if(ad[2] > 2.5 * ad[3])
+        if(ad[2] > 1.5 * ad[3] && ad[2] > 50)
         {
             ring_dir = LEFT;
             return 1;
@@ -31,7 +31,7 @@ uint8 is_ring()
     }
     if(ad[1] > (500 + (car_info.angle - 27) * (car_info.angle<27 ? 4 : 3)) && ad[0] > (400 + (car_info.angle - 27) * (car_info.angle<27 ? 4 : 3)))
     {
-        if(ad[3] > 2.5 * ad[2])
+        if(ad[3] > 2.5 * ad[2] && ad[3] > 90)
         {
             ring_dir = RIGHT;
             return 1;
@@ -140,25 +140,15 @@ uint8 is_motor_tangent()
  ***************************/
 uint8 is_ramp()
 {
-    static int16 speed_reg[3] = {0,0,0};
-    uint8 i;
-    static uint8 ramp_flag = 0;
-    if(car_info.speed.average > 1500)
-        ramp_flag = 1;
-    for(i=0;i<2;++i)
+    return 0;
+    if(car_info.angle > 40)
+        return 0;
+    if(ad[4] > (induc_ref[4] + (0.37 * car_info.angle - 14) * car_info.angle) * 3 ) //已经乘了1.5
     {
-        speed_reg[i] = speed_reg[i+1];
-    }
-    speed_reg[2] = car_info.speed.average;
-    for(i=0;i<2;++i)
-    {
-        if(speed_reg[i] > 1000)
-            return 0;
-    }
-    if(ramp_flag == 1)
-    {
-        ramp_flag = 0;
         return 1;
     }
-    return 0; 
+    else
+    {
+        return 0;
+    } 
 }
