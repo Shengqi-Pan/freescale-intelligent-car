@@ -52,7 +52,7 @@ float speed_control(int16 speed_real, int16 speed_set)
     speed_deviation_integrate += speed_deviation;   //积分项累加
     switch (car_info.state)
     {
-        case TAKE_OFF: case STRAIGHT_AHEAD: case RING: case INTO_TURN: case IN_TURN:
+        case TAKE_OFF: case STRAIGHT_AHEAD: case RING:
         /************直道控速************/
             if(speed_real < 1200)
             {
@@ -63,22 +63,18 @@ float speed_control(int16 speed_real, int16 speed_set)
                 angle_bias = -(speed_deviation * SPEED_CONTROL_P + speed_deviation_integrate * SPEED_CONTROL_I);
             }
             break;
-        // case INTO_TURN:
-        // /************出/入弯控速************/
-        //     // TODO:参数待调
-        //     if(car_info.speed.average > 400)    // 连续小弯加速
-        //         angle_bias = 2;
-        //     else
-        //         angle_bias = 8;
-        //     break;
-        // case IN_TURN:
-        // /************弯中控速************/
-        //     // TODO:参数待调
-        //     if(car_info.speed.average > 400)    // 连续小弯加速
-        //         angle_bias = 3;
-        //     else
-        //         angle_bias = 10;
-        //     break;
+        case INTO_TURN:
+        /************出/入弯控速************/
+            // TODO:参数待调
+            angle_bias = -(speed_deviation * SPEED_CONTROL_P + speed_deviation_integrate * SPEED_CONTROL_I);
+            angle_bias -= 4;
+            break;
+        case IN_TURN:
+        /************弯中控速************/
+            // TODO:参数待调
+            angle_bias = -(speed_deviation * SPEED_CONTROL_P + speed_deviation_integrate * SPEED_CONTROL_I);
+            angle_bias -= 7;
+            break;
         case RAMP_UP:
         /************上坡************/
             // if(speed_real < 1200)
@@ -118,7 +114,7 @@ float speed_control(int16 speed_real, int16 speed_set)
         angle_bias = angle_bias>12 ? 12 : angle_bias;
         angle_bias = angle_bias<-12 ? -12 : angle_bias;
     }*/
-    if(angle_bias > 8)
+    if(angle_bias > 8 && speed_real < 1500)
         angle_bias = 8;
     angle_bias_last = angle_bias;
     return angle_bias;
@@ -320,42 +316,42 @@ void direction_pd_fuzzy(int16 deviation, float *p, float *d)
             }
         }
     }
-    if(car_info.speed.average > 2200) //速度大时过弯拉大d
+    /*if(car_info.speed.average > 2400) //速度大时过弯拉大d
     {
         if(car_info.speed.left_right_diff >= 800)  //高偏差
         {
-            if(car_info.speed.average - 2200 <= 200)
+            if(car_info.speed.average - 2400 <= 200)
             {
-                *d *= 1.5 + (car_info.speed.average - 2200) / 200; 
+                *d *= 1.5 + (car_info.speed.average - 2400) / 200; 
             }
-            else if(car_info.speed.average - 2200 > 200)
+            else if(car_info.speed.average - 2400 > 200)
             {
                 *d *= 2; 
             }
         }
         else if(car_info.speed.left_right_diff >= 500)  //中偏差
         {
-            if(car_info.speed.average - 2200 <= 200)
+            if(car_info.speed.average - 2400 <= 200)
             {
-                *d *= 1.3 + (car_info.speed.average - 2200) / 200; 
+                *d *= 1.3 + (car_info.speed.average - 2400) / 200; 
             }
-            else if(car_info.speed.average - 2200 > 200)
+            else if(car_info.speed.average - 2400 > 200)
             {
                 *d *= 1.8; 
             }
         }
         else if(car_info.speed.left_right_diff >= 300) //低偏差
         {
-            if(car_info.speed.average - 2200 <= 200)
+            if(car_info.speed.average - 2400 <= 200)
             {
-                *d *= 1.1 + (car_info.speed.average - 2200) / 200; 
+                *d *= 1.1 + (car_info.speed.average - 2400) / 200; 
             }
-            else if(car_info.speed.average - 2200 > 200)
+            else if(car_info.speed.average - 2400 > 200)
             {
                 *d *= 1.6; 
             }
         }
-    }
+    }*/
     if(ring_state == RING_OUT && car_info.state == RING)  //防止出环过调
     {
         *d = *d * 3;

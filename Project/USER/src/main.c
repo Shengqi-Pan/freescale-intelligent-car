@@ -49,7 +49,7 @@ void main()
     while(1)
     {
         // 上位机示波器查看
-        data_conversion(ad[0], ad[1], car_info.speed.average, car_info.angle * 10, virtual_scope_data);
+        data_conversion(test[2], car_info.angle * 100, car_info.speed.average, test[0], virtual_scope_data);
         uart_putbuff(WIRELESS_UART, virtual_scope_data, sizeof(virtual_scope_data));
     }
 }
