@@ -153,3 +153,28 @@ uint8 is_ramp()
         return 0;
     } 
 }
+
+/***************************
+ * @breif   判断终点
+ * @param   void
+ * @return  判出终点返回1，否则返回0
+ * @note    
+ ***************************/
+uint8 is_terminal()
+{
+    uint8 i = 0;
+    uint16 sum = 0;
+    if (!tsl1401_finish_flag)
+    {
+        return 0;
+    }
+    else
+    {
+        for (i = 0; i < 128; ++i)
+        {
+            sum += ccd_data[i] > BIN_THRESH;  // 二值化阈值
+        }
+        tsl1401_finish_flag = 0;  // 清除标志位
+        return sum > TERMINAL_THRESH;  // 判终点条件
+    }
+}

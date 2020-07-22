@@ -136,16 +136,18 @@ void TM1_Isr() interrupt 3
     static uint16 turn_control_cnt = 0;  // 转向控制间隔
     static uint16 ring_out_cnt = 0;  // 出环屏蔽时间
     static uint16 ramp_trans_cnt = 0;  // 用于上坡后状态转移延时
+    static uint16 ccd_collect_cnt = 0;  // ccd采集间隔
+
     static uint8 proceed_dir = 0;   //用于指示方向
     static uint8 start_distance_flag = 0;
     // 读取角度和角速度并卡尔曼滤波
     angle = get_angle_from_icm();
     omega = get_omega_from_icm();
-    if(angle - car_info.angle > 13)
+    if (angle - car_info.angle > 13)
     {
         angle = car_info.angle + 13;
     }
-    else if(angle - car_info.angle < -13)
+    else if (angle - car_info.angle < -13)
     {
         angle = car_info.angle - 13;
     }
@@ -153,7 +155,7 @@ void TM1_Isr() interrupt 3
     // 测试 angle_test += omega.y;
     // 控直立
     stand_duty = angle_control(car_info.angle, car_info.omega.y, angle_set + angle_bias);
-    if(++turn_control_cnt == 2)
+    if (++turn_control_cnt == 2)
     {
         turn_control_cnt = 0;
         turn_duty = direction_control();  // 控转向
@@ -167,15 +169,20 @@ void TM1_Isr() interrupt 3
         angle_bias = speed_control(car_info.speed.average, speed_set);
     }
 
+    if (++ccd_collect_cnt == 20)  // 30ms采集一次ccd
+    {
+        ccd_collect();
+    }
+
     // 本质就是一个状态机，根据车辆当前判到的状态进行不同的控制
     switch(car_info.state)
     {
         // 起步
         case TAKE_OFF:
             if(car_info.angle > 20)
-                    {
-                        car_info.state = STRAIGHT_AHEAD;
-                    }
+            {
+                car_info.state = STRAIGHT_AHEAD;
+            }
             break;
             switch(take_off_state)
             {

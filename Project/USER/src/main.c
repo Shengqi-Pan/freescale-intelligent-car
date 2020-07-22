@@ -35,14 +35,15 @@
 
 void main()
 {
-    DisableGlobalIRQ(); //  关闭总中断
-    board_init(); //  初始化寄存器
-    pit_timer_us(TIM_1, 1500); // 使用TIMER作为周期中断，时间1.5ms一次
-    icm20602_init_simspi(); // icm20602初始化, 引脚查看宏定义
+    DisableGlobalIRQ();  //  关闭总中断
+    board_init();  // 初始化寄存器
+    pit_timer_us(TIM_1, 1500);  // 使用TIMER作为周期中断，时间1.5ms一次
+    icm20602_init_simspi();  // icm20602初始化, 引脚查看宏定义
     seekfree_wireless_init();  // 无线串口初始化
     motor_init();  // 电机初始化
-    l_init();  //ad初始化
-    encoder_init(); //编码器初始化
+    l_init();  // ad初始化
+    encoder_init();  // 编码器初始化
+    ccd_init();  // 线性ccd初始化
     delay_ms(10);
     EnableGlobalIRQ(); //  开启总中断
 

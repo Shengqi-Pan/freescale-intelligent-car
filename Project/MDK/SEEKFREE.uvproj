@@ -149,7 +149,7 @@
             <RestoreSysVw>1</RestoreSysVw>
           </Target>
           <RunDebugAfterBuild>0</RunDebugAfterBuild>
-          <TargetSelection>10</TargetSelection>
+          <TargetSelection>12</TargetSelection>
           <SimDlls>
             <CpuDll></CpuDll>
             <CpuDllArguments></CpuDllArguments>
@@ -716,6 +716,11 @@
               <FileType>1</FileType>
               <FilePath>..\CODE\judge.c</FilePath>
             </File>
+            <File>
+              <FileName>ccd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\CODE\ccd.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -765,6 +770,11 @@
               <FileName>judge.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\CODE\judge.h</FilePath>
+            </File>
+            <File>
+              <FileName>ccd.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\CODE\ccd.h</FilePath>
             </File>
           </Files>
         </Group>
