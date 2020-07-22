@@ -21,6 +21,7 @@ uint8 is_ring()
     // uint8 i;
     // ad3_ad4_diff = ad[2] - ad[3];
     // ad3_ad4_diff_reg[3] = ad3_ad4_diff;
+    return 0;
     if(ad[0] > (500 + (car_info.angle - 27) * (car_info.angle<27 ? 4 : 3)) && ad[1] > (400 + (car_info.angle - 27) * (car_info.angle<27 ? 4 : 3))) //TODO: 由于电感原因，右环条件可能需要进一步调节
     {
         if(ad[2] > 1.5 * ad[3] && ad[2] > 50)

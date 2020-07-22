@@ -181,7 +181,7 @@ int16 direction_control(void)
         deviation_l_reg = 0;
         deviation_l_dot = 0;
         //限幅
-        if(ad[0]<25 || ad[1]<25 && car_info.state != TAKE_OFF) //意外情况电机抱死
+        if((ad[0]<25 || ad[1]<25 && car_info.state != TAKE_OFF)) //意外情况电机抱死
         {
             motor_stop();
             while(1);
@@ -219,7 +219,7 @@ int16 direction_control(void)
         // if(car_info.state == RAMP_UP)
         //     deviation_h = 0.3 * deviation_h;
         direction_pd_fuzzy(deviation_h, &turn_p, &turn_d);  //模糊控制得到p，d
-        motor_turn = (int16)(turn_p * deviation_h  + turn_d * deviation_h_dot * 1.8);
+        motor_turn = (int16)(turn_p * deviation_h  + turn_d * deviation_h_dot * 1);
         return motor_turn;
     }
     else        //竖电感入环
