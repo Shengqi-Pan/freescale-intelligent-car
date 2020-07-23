@@ -13,8 +13,7 @@
 #include "control.h"
 #include "SEEKFREE_TSL1401.h"
 
-#define BIN_THRESH 100
-#define TERMINAL_THRESH 40
+#define TERMINAL_THRESH 5
 
 uint8 is_ring();
 uint8 is_tangent();
