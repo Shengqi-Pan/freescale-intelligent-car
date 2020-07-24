@@ -46,11 +46,10 @@ void main()
     ccd_init();  // 线性ccd初始化
     delay_ms(10);
     EnableGlobalIRQ(); //  开启总中断
-
     while(1)
     {
         // 上位机示波器查看
-        data_conversion(ad[0], ad[1], ad[2], ad[3], virtual_scope_data);
+        data_conversion(test[2], test[3], car_info.speed.left, car_info.speed.right, virtual_scope_data);
         uart_putbuff(WIRELESS_UART, virtual_scope_data, sizeof(virtual_scope_data));
     }
 }

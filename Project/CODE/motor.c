@@ -18,21 +18,21 @@ void motor_init(void)
 void motor_output(float motor_angle_control, int16 motor_turn_control)
 {
     float motor_left, motor_right;
-    // static float motor_left_old = 0, motor_right_old = 0;
+    static float motor_left_old = 0, motor_right_old = 0;
     motor_left = motor_angle_control - motor_turn_control;
     motor_right = motor_angle_control + motor_turn_control;  
     // motor_left = motor_left>0 ? motor_left + 75 : motor_left - 75; //电机转差补偿，补偿1.5%
     // motor_right = motor_right>0 ? motor_right - 75 : motor_right + 75;
-    /*if(motor_left - motor_left_old >= 300)
-        motor_left = motor_left_old + 300;
-    else if(motor_left - motor_left_old <= -300)
-        motor_left = motor_left_old - 300;
-    if(motor_right - motor_right_old >= 300)
-        motor_right = motor_right_old + 300;
-    else if(motor_right - motor_right_old <= -300)
-        motor_right = motor_right_old - 300;
+    if(motor_left - motor_left_old >= 2000)
+        motor_left = motor_left_old + 2000;
+    else if(motor_left - motor_left_old <= -2000)
+        motor_left = motor_left_old - 2000;
+    if(motor_right - motor_right_old >= 2000)
+        motor_right = motor_right_old + 2000;
+    else if(motor_right - motor_right_old <= -2000)
+        motor_right = motor_right_old - 2000;
     motor_left_old = motor_left;
-    motor_right_old = motor_right;*/
+    motor_right_old = motor_right;
     if(motor_left > AMPLITUDE_LIMIT)
         motor_left = AMPLITUDE_LIMIT;
     else if(motor_left < -AMPLITUDE_LIMIT)
@@ -49,6 +49,8 @@ void motor_output(float motor_angle_control, int16 motor_turn_control)
         motor_right = AMPLITUDE_LIMIT_MIN;
     else if(motor_right > -AMPLITUDE_LIMIT_MIN && motor_right <= 0)
         motor_right = -AMPLITUDE_LIMIT_MIN;*/
+    test[2] = motor_left;
+    test[3] = motor_right;
     if(motor_left > 0)
     {
         motor_left += DEAD_TIME;
