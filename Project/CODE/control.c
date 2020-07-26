@@ -67,13 +67,13 @@ float speed_control(int16 speed_real, int16 speed_set)
         /************出/入弯控速************/
             // TODO:参数待调
             angle_bias = -(speed_deviation * SPEED_CONTROL_P + speed_deviation_integrate * SPEED_CONTROL_I);
-            angle_bias -= 4;
+            angle_bias -= 3;
             break;
         case IN_TURN:
         /************弯中控速************/
             // TODO:参数待调
             angle_bias = -(speed_deviation * SPEED_CONTROL_P + speed_deviation_integrate * SPEED_CONTROL_I);
-            angle_bias -= 7;
+            angle_bias -= 6;
             break;
         case RAMP_UP:
         /************上坡************/
@@ -181,24 +181,24 @@ int16 direction_control(void)
         deviation_l_reg = 0;
         deviation_l_dot = 0;
         //限幅
-        if((ad[0]<25 || ad[1]<25 && car_info.state != TAKE_OFF || car_info.angle < -15)) //意外情况电机抱死
+        if((ad[0]<25 && ad[1]<25 && car_info.state != TAKE_OFF || car_info.angle < -15)) //意外情况电机抱死
         {
             motor_stop();
             while(1);
         }
         test[0] = deviation_h;          //test为全局数组，定义在car_info.h中，用于示波器调试
-        if (deviation_h > 135)      //限幅
+        if (deviation_h > 145)      //限幅
         {
-            deviation_h = 135;
+            deviation_h = 145;
         }
-        else if (deviation_h < -135)
+        else if (deviation_h < -145)
         {
-            deviation_h = -135;
+            deviation_h = -145;
         }
-        if(deviation_h - deviation_h_reg > 20)        //变化率限幅
+        /*if(deviation_h - deviation_h_reg > 20)        //变化率限幅
             deviation_h = deviation_h_reg + 20;
         else if(deviation_h - deviation_h_reg < -20)
-            deviation_h = deviation_h_reg - 20;
+            deviation_h = deviation_h_reg - 20;*/
         //根据不同偏移量进行不同的偏移量求解
         if(deviation_h < 50 && deviation_h > -50)       //偏差大时滤波重一些
             deviation_h_dot = (4*deviation_h_dot + deviation_h - deviation_h_reg)/5.0;
@@ -218,7 +218,7 @@ int16 direction_control(void)
         // if(car_info.state == RAMP_UP)
         //     deviation_h = 0.3 * deviation_h;
         direction_pd_fuzzy(deviation_h, &turn_p, &turn_d);  //模糊控制得到p，d
-        motor_turn = (int16)(turn_p * deviation_h  + turn_d * deviation_h_dot * 2.5);
+        motor_turn = (int16)(turn_p * deviation_h  + turn_d * deviation_h_dot * 2);
         return motor_turn;
     }
     else        //竖电感入环
@@ -232,13 +232,13 @@ int16 direction_control(void)
             motor_stop();
             while(1);
         }
-        if (deviation_l > 135)
+        if (deviation_l > 145)
         {
-            deviation_l = 135;
+            deviation_l = 145;
         }
-        else if (deviation_l < -135)
+        else if (deviation_l < -145)
         {
-            deviation_l = -135;
+            deviation_l = -145;
         }
         /*if(deviation_l - deviation_l_reg > 15)
             deviation_l = deviation_l_reg + 15;
@@ -289,9 +289,9 @@ void direction_pd_fuzzy(int16 deviation, float *p, float *d)
     /*static int16 deviation_table[13] = {-120, -105, -90, -65, -45, -20, 0, 20, 45, 65, 90, 105, 120};    //注意分割，转弯时尽量控制在70以内
     static float turn_p_table[13] =     { 18,   21,  24,  28,  26,  18, 15, 18, 26, 28, 24, 21,  18};
     static float turn_d_table[13] =     {800,  750, 700, 600, 480, 350, 260, 350, 480, 600, 700, 750, 800};*/
-    static int16 deviation_table[15] = {-135, -120, -100, -80, -55, -40, -20, 0, 20, 40, 55, 80, 100, 120, 135};    //注意分割，转弯时尽量控制在70以内
-    static float turn_p_table[15] =     { 12,   18,   21,  24,  28,  24,  25,20, 25, 24, 28, 24, 21,  18,  12 };
-    static float turn_d_table[15] =     {1100, 1000,  950, 880, 820, 700, 570, 450, 570, 700, 820, 880, 950, 1000, 1100};
+    static int16 deviation_table[15] = {-145, -120, -85, -65, -45, -30, -10, 0, 10, 30, 45, 65, 85, 120, 145};    //注意分割，转弯时尽量控制在70以内
+    static float turn_p_table[15] =     { 8,   11,   14,  16,  23,  25,  25, 18, 25, 25, 23, 16, 14,  11,  8 };
+    static float turn_d_table[15] =     {1000, 1000,  850, 700, 660, 600, 500, 400, 500, 600, 660, 700, 850, 1000, 1000};
     int8 i;
     if(deviation <= deviation_table[0])
     {

@@ -20,7 +20,7 @@
 #ifndef __ISR_H_
 #define __ISR_H_
 #define SPEED_STRAIGHT 1800
-#define SPEED_CURL 1800
+#define SPEED_CURL 1700
 
 #include "encoder.h"
 #include "icm20602.h"

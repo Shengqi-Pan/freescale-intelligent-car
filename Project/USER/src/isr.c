@@ -128,7 +128,7 @@ void TM1_Isr() interrupt 3
     static Omega omega;
     static float stand_duty;  //控直立的占空比
     static int16 speed_set = SPEED_STRAIGHT;  // 给定速度1000mm/s
-    static float angle_set = 16;  // 给定角度,要前进可以多给一些
+    static float angle_set = 17;  // 给定角度,要前进可以多给一些
     static float angle_bias = 0;  // 用于控直立的偏移角
     static int16 turn_duty = 0; //控转向的占空比    
     //--------------下面存一些定时间隔---------------//
@@ -169,10 +169,13 @@ void TM1_Isr() interrupt 3
         angle_bias = speed_control(car_info.speed.average, speed_set);
     }
 
-    // if (++ccd_collect_cnt == 20)  // 30ms采集一次ccd
-    // {
-    //     ccd_collect();
-    // }
+    if (++ccd_collect_cnt == 20)  // 30ms采集一次ccd
+    {
+        ccd_collect_cnt = 0;
+        ccd_collect();
+        if(is_terminal() == 1)
+            LED = 0;
+    }
 
     // 本质就是一个状态机，根据车辆当前判到的状态进行不同的控制
     switch(car_info.state)

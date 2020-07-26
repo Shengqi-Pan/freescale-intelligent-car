@@ -170,12 +170,12 @@ uint8 is_terminal()
     }
     else
     {
-        for (i = 0; i < 127; ++i)
+        for (i = 0; i < 125; ++i)
         {
-            if(ccd_data[i] - ccd_data[i+1] >= 50)
+            if((int16)(ccd_data[i+2] - ccd_data[i]) >= 65)
                 sum += 1;
         }
         tsl1401_finish_flag = 0;  // 清除标志位
-        return sum > TERMINAL_THRESH;  // 判终点条件
+        return sum >= TERMINAL_THRESH;  // 判终点条件
     }
 }

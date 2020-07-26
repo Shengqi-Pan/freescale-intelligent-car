@@ -16,10 +16,10 @@
 #include "zf_uart.h"
 #include "motor.h"
 
-#define ANGLE_CONTROL_P 1500
-#define ANGLE_CONTROL_P_BEGIN 1500
-#define ANGLE_CONTROL_D 21
-#define ANGLE_CONTROL_D_BEGIN 21
+#define ANGLE_CONTROL_P 1000
+#define ANGLE_CONTROL_P_BEGIN 1000
+#define ANGLE_CONTROL_D 13
+#define ANGLE_CONTROL_D_BEGIN 13
 #define HENG_FACTOR 30
 #define SHU_FACTOR 30
 #define AMP_FACTOR 400

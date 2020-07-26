@@ -23,14 +23,14 @@ void motor_output(float motor_angle_control, int16 motor_turn_control)
     motor_right = motor_angle_control + motor_turn_control;  
     // motor_left = motor_left>0 ? motor_left + 75 : motor_left - 75; //电机转差补偿，补偿1.5%
     // motor_right = motor_right>0 ? motor_right - 75 : motor_right + 75;
-    if(motor_left - motor_left_old >= 2000)
-        motor_left = motor_left_old + 2000;
-    else if(motor_left - motor_left_old <= -2000)
-        motor_left = motor_left_old - 2000;
-    if(motor_right - motor_right_old >= 2000)
-        motor_right = motor_right_old + 2000;
-    else if(motor_right - motor_right_old <= -2000)
-        motor_right = motor_right_old - 2000;
+    /*if(motor_left - motor_left_old >= 1000)
+        motor_left = motor_left_old + 1000;
+    else if(motor_left - motor_left_old <= -1000)
+        motor_left = motor_left_old - 1000;
+    if(motor_right - motor_right_old >= 1000)
+        motor_right = motor_right_old + 1000;
+    else if(motor_right - motor_right_old <= -1000)
+        motor_right = motor_right_old - 1000;*/
     motor_left_old = motor_left;
     motor_right_old = motor_right;
     if(motor_left > AMPLITUDE_LIMIT)
