@@ -113,7 +113,9 @@ void motor_stop()
 {
     while (1)
     {
-        P00 = 1;
-        P22 = 1;
+        pwm_duty(PWM2P_P22, 10000);
+        pwm_duty(PWM5_P00, 10000);
+        // P00 = 1;
+        // P22 = 1;
     }
 }

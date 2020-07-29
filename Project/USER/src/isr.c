@@ -156,11 +156,11 @@ void TM1_Isr() interrupt 3
     // 测试 angle_test += omega.y;
     // 控直立
     stand_duty = angle_control(car_info.angle, car_info.omega.y, angle_set + angle_bias);
-    if (++turn_control_cnt == 2)
-    {
-        turn_control_cnt = 0;
-        turn_duty = direction_control();  // 控转向
-    }
+    // if (++turn_control_cnt == 2)
+    // {
+    //     turn_control_cnt = 0;
+    //     turn_duty = direction_control();  // 控转向
+    // }
     if(begin_flag == 1)
     {
         motor_output(0, 0);
@@ -168,8 +168,8 @@ void TM1_Isr() interrupt 3
             begin_flag = 0;
     }
     else
-        motor_output(stand_duty, turn_duty);
-    if (++encoder_read_cnt == 4)
+        motor_output(stand_duty, 0);
+    /*if (++encoder_read_cnt == 4)
     {
         encoder_read_cnt = 0;
         // 读速度, 6ms一次
@@ -449,7 +449,7 @@ void TM1_Isr() interrupt 3
             break;
         default:
             break;
-    }
+    }*/
 }
 void TM2_Isr() interrupt 12
 {

@@ -164,6 +164,7 @@ uint8 is_terminal()
 {
     uint8 i = 0;
     uint16 sum = 0;
+    return 0;
     if (!tsl1401_finish_flag)
     {
         return 0;
