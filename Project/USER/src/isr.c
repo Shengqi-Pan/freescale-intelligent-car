@@ -137,7 +137,8 @@ void TM1_Isr() interrupt 3
     static uint16 ring_out_cnt = 0;  // 出环屏蔽时间
     static uint16 ramp_trans_cnt = 0;  // 用于上坡后状态转移延时
     static uint16 ccd_collect_cnt = 0;  // ccd采集间隔
-
+    static uint16 begin_cnt = 0;        // 开始的计时
+    static uint8 begin_flag = 1;        // 开始标志
     static uint8 proceed_dir = 0;   //用于指示方向
     static uint8 start_distance_flag = 0;
     // 读取角度和角速度并卡尔曼滤波
@@ -160,21 +161,20 @@ void TM1_Isr() interrupt 3
         turn_control_cnt = 0;
         turn_duty = direction_control();  // 控转向
     }
-    motor_output(stand_duty, turn_duty);
+    if(begin_flag == 1)
+    {
+        motor_output(0, 0);
+        if(++begin_cnt == 200)
+            begin_flag = 0;
+    }
+    else
+        motor_output(stand_duty, turn_duty);
     if (++encoder_read_cnt == 4)
     {
         encoder_read_cnt = 0;
         // 读速度, 6ms一次
         car_info.speed = get_speed(6);
         angle_bias = speed_control(car_info.speed.average, speed_set);
-    }
-
-    if (++ccd_collect_cnt == 20)  // 30ms采集一次ccd
-    {
-        ccd_collect_cnt = 0;
-        ccd_collect();
-        if(is_terminal() == 1)
-            LED = 0;
     }
 
     // 本质就是一个状态机，根据车辆当前判到的状态进行不同的控制
@@ -198,7 +198,7 @@ void TM1_Isr() interrupt 3
                     if(car_info.angle > 20)
                     {
                         take_off_state = GO_STRAIGHT;
-                        speed_set = 300;
+                        speed_set = 800;
                     }
                     break;
                 case GO_STRAIGHT:
@@ -252,22 +252,24 @@ void TM1_Isr() interrupt 3
                 ring_state = RING_TRUE;
                 start_distance_calc();
                 // motor_stop();
-                // if(ring_dir == RIGHT)
-                // {
-                //     while(1);
-                // }
-                // else if(ring_dir == LEFT)
-                // {
-                //     LED = 0;
-                //     while(1); 
-                // }
             }
             if(is_ramp())
             {
                 LED = 0;
                 motor_stop();
-                while(1);
                 car_info.state = RAMP_UP; 
+            }
+            if (++ccd_collect_cnt == 20)  // 30ms采集一次ccd
+            {
+                ccd_collect_cnt = 0;
+                ccd_collect();
+                if(is_terminal() == 1)
+                {
+                    LED = 0;
+                    // motor_stop();
+                    car_info.state = STOP;
+                    start_distance_calc();
+                }
             }
             break;
         case INTO_TURN:
@@ -289,8 +291,20 @@ void TM1_Isr() interrupt 3
             {
                 LED = 0;
                 motor_stop();
-                while(1);
                 car_info.state = RAMP_UP; 
+            }
+            if (++ccd_collect_cnt == 20)  // 30ms采集一次ccd
+            {
+                ccd_collect_cnt = 0;
+                ccd_collect();
+                if(is_terminal() == 1)
+                {
+                    LED = 0;
+                    // motor_stop();
+                    car_info.state = STOP;
+                    start_distance_calc();
+                }
+                
             }
             break;
         case IN_TURN:
@@ -314,8 +328,19 @@ void TM1_Isr() interrupt 3
             {
                 LED = 0;
                 motor_stop();
-                while(1);
                 car_info.state = RAMP_UP; 
+            }
+            if (++ccd_collect_cnt == 20)  // 30ms采集一次ccd
+            {
+                ccd_collect_cnt = 0;
+                ccd_collect();
+                if(is_terminal() == 1)
+                {
+                    LED = 0;
+                    // motor_stop();
+                    car_info.state = STOP;
+                    start_distance_calc();
+                }
             }
             break;
         case RAMP_UP:
@@ -385,6 +410,42 @@ void TM1_Isr() interrupt 3
             break;
 
         case STOP:
+            switch(stop_state)
+            {
+                case TURN_READY:
+                    if(car_info.distance > 10)
+                    {
+                        stop_distance_calc();
+                        if(proceed_dir == 0)
+                        {
+                            stop_state = TURN_LEFT;
+                        }
+                        else if(process_dir == 1)
+                        {
+                            stop_state = TURN_RIGHT;
+                        }
+                        start_turn_angle_calc();
+                    }
+                    break;
+                case STOP_LEFT:
+                    if(car_info.turn_angle < -75)
+                    {
+                        stop_turn_angle_calc();
+                        stop_state = STOP_BRAKE;
+                    }
+                    break;
+                case STOP_RIGHT:
+                    if(car_info.turn_angle > 75)
+                    {
+                        stop_turn_angle_calc();
+                        stop_state = STOP_BRAKE;
+                    }
+                    break;
+                case STOP_BRAKE:
+                    motor_stop();
+                    break;
+                default: break;
+            }
             break;
         default:
             break;
@@ -403,7 +464,6 @@ void TM3_Isr() interrupt 19
 
 void TM4_Isr() interrupt 20
 {
-    // ccd_collect();
     TIM4_CLEAR_FLAG; //清除中断标志
 }
 

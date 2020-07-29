@@ -8,5 +8,6 @@
 #define CHARGE_P 0
 #define CHARGE_I 0
 #define CHARGE_D 0
-
+void charge_init(void);
+void charge_control(void);
 #endif

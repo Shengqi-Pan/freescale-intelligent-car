@@ -172,7 +172,7 @@ uint8 is_terminal()
     {
         for (i = 0; i < 125; ++i)
         {
-            if((int16)(ccd_data[i+2] - ccd_data[i]) >= 65)
+            if((int16)(ccd_data[i+2] - ccd_data[i]) >= 200)
                 sum += 1;
         }
         tsl1401_finish_flag = 0;  // 清除标志位

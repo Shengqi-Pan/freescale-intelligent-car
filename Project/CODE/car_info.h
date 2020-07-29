@@ -42,6 +42,15 @@ typedef enum
     TURN_RIGHT
 }TakeOffState;
 
+//--------------    结束当前状态---------------//
+typedef enum
+{
+    TURN_READY,
+    STOP_LEFT,
+    STOP_RIGHT,
+    STOP_BRAKE
+}StopState;
+
 //--------------    入环当前状态---------------//
 typedef enum
 {

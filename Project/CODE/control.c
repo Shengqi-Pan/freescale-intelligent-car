@@ -184,7 +184,6 @@ int16 direction_control(void)
         if((ad[0]<25 && ad[1]<25 && car_info.state != TAKE_OFF || car_info.angle < -15)) //意外情况电机抱死
         {
             motor_stop();
-            while(1);
         }
         test[0] = deviation_h;          //test为全局数组，定义在car_info.h中，用于示波器调试
         if (deviation_h > 145)      //限幅
@@ -230,7 +229,6 @@ int16 direction_control(void)
         if(ad[0] < 20 && ad[1] < 20)
         {
             motor_stop();
-            while(1);
         }
         if (deviation_l > 145)
         {
