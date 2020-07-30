@@ -44,6 +44,7 @@ void main()
     l_init();  // ad初始化
     encoder_init();  // 编码器初始化
     // ccd_init();  // 线性ccd初始化
+    motor_output(0, 0);
     delay_ms(10);
     EnableGlobalIRQ(); //  开启总中断
     while(1)

@@ -128,7 +128,7 @@ void TM1_Isr() interrupt 3
     static Omega omega;
     static float stand_duty;  //控直立的占空比
     static int16 speed_set = SPEED_STRAIGHT;  // 给定速度1000mm/s
-    static float angle_set = 17;  // 给定角度,要前进可以多给一些
+    static float angle_set = 2;  // 给定角度,要前进可以多给一些
     static float angle_bias = 0;  // 用于控直立的偏移角
     static int16 turn_duty = 0; //控转向的占空比    
     //--------------下面存一些定时间隔---------------//
