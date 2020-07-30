@@ -16,8 +16,8 @@
 #define SPEEDL_PLUSE   CTIM3_P04
 #define SPEEDR_PLUSE   CTIM0_P34
 // 定义方向引脚
-#define SPEEDL_DIR     P51
-#define SPEEDR_DIR     P50
+#define SPEEDL_DIR     P01
+#define SPEEDR_DIR     P26
 
 void encoder_init(void);
 Speed get_speed(uint16 time);

@@ -41,21 +41,27 @@ Speed get_speed(uint16 time)
     ctimer_count_clean(SPEEDR_PLUSE);
 
     //采集方向信息
-    if(1 == SPEEDL_DIR)    temp_pulse_left = temp_pulse_left;
+    if(0 == SPEEDL_DIR)    temp_pulse_left = temp_pulse_left;
     else                   temp_pulse_left = -temp_pulse_left;
-    if(1 == SPEEDR_DIR)    temp_pulse_right = -temp_pulse_right;
+    if(0 == SPEEDR_DIR)    temp_pulse_right = -temp_pulse_right;
     else                   temp_pulse_right = temp_pulse_right;
 
+    // 逐飞编码器里程:
     // temp_pulse_left / 1024.0(线数) * 30(编码器的齿轮数) / 68(轮子的齿轮数) * 0.064 * 3.1415926 单位m
-    // 单位:mm/s
+    // = temp_pulse_left * 8.662224264705883e-05
+    // r2430电机自带霍尔里程:
+    // temp_pulse_left / 9(线数) * 16(电机齿轮数) / 68(轮子的齿轮数) * 0.064 * 3.1415926 单位m
+    // = temp_pulse_left * 0.005913411764705883
     if(distance_calc_flag)
     {
-        // 对里程计数
-        car_info.distance += (temp_pulse_left + temp_pulse_right) * 0.0866248 / 2;
+        // 对里程计数 里程单位mm
+        car_info.distance += (temp_pulse_left + temp_pulse_right) * 5.913411764705883 / 2;
     }
-    speed.left = (int16)(temp_pulse_left * 86.6248 / time);
-    speed.right = (int16)(temp_pulse_right * 86.6248 / time);
+    // 计算速度 速度单位:mm/s
+    speed.left = (int16)(temp_pulse_left * 5913.411764705883 / time);
+    speed.right = (int16)(temp_pulse_right * 5913.411764705883 / time);
     speed.average = (4 * speed.average + (speed.left + speed.right) / 2) / 5;
+    // 计算两轮差速
     speed.left_right_diff = (speed.left - speed.right);
     speed.left_right_diff = speed.left_right_diff > 0 ? speed.left_right_diff : -speed.left_right_diff;  // 取abs
     return speed;
