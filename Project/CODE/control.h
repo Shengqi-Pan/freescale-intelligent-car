@@ -25,7 +25,7 @@
 #define AMP_FACTOR 400.0
 
 #define SPEED_CONTROL_P 0.01
-#define SPEED_CONTROL_I 0.00025
+#define SPEED_CONTROL_I 0.0001
 
 
 extern int16 ad_test[4];

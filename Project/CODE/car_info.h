@@ -98,5 +98,5 @@ extern RingDir ring_dir;
 extern RingState ring_state;
 extern TakeOffState take_off_state;
 extern float angle_test;
-
+extern StopState stop_state;
 #endif

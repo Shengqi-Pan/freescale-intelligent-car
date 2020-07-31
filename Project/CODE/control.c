@@ -141,7 +141,7 @@ void induc_test(void)
  ***************************/
 int16 direction_control(void)
 {
-    int16 motor_turn;
+    static int16 motor_turn, motor_turn_last = 0;
     static float deviation_h_reg = 0;   //存储上一次的电感偏差值，便于计算差值即deviation_h_dot
     static float deviation_l_reg = 0;
     static float deviation_h_dot = 0;   //横电感偏差变化率，应用在pd控制中消除振荡快速稳定
@@ -186,29 +186,29 @@ int16 direction_control(void)
             motor_stop();
         }
         test[0] = deviation_h;          //test为全局数组，定义在car_info.h中，用于示波器调试
-        if (deviation_h > 145)      //限幅
+        if (deviation_h > 210)      //限幅
         {
-            deviation_h = 145;
+            deviation_h = 210;
         }
-        else if (deviation_h < -145)
+        else if (deviation_h < -210)
         {
-            deviation_h = -145;
+            deviation_h = -210;
         }
-        /*if(deviation_h - deviation_h_reg > 20)        //变化率限幅
-            deviation_h = deviation_h_reg + 20;
-        else if(deviation_h - deviation_h_reg < -20)
-            deviation_h = deviation_h_reg - 20;*/
+        /*if(deviation_h - deviation_h_reg > 15)        //变化率限幅
+            deviation_h = deviation_h_reg + 15;
+        else if(deviation_h - deviation_h_reg < -15)
+            deviation_h = deviation_h_reg - 15;*/
         //根据不同偏移量进行不同的偏移量求解
-        if(deviation_h < 50 && deviation_h > -50)       //偏差大时滤波重一些
-            deviation_h_dot = (4*deviation_h_dot + deviation_h - deviation_h_reg)/5.0;
-        else
+        if(deviation_h < 70 && deviation_h > -70)       //偏差大时滤波重一些
             deviation_h_dot = (9*deviation_h_dot + deviation_h - deviation_h_reg)/10.0;
+        else
+            deviation_h_dot = (14*deviation_h_dot + deviation_h - deviation_h_reg)/15.0;
         deviation_h_reg = deviation_h;
         //偏差变化率限幅
-        if (deviation_h_dot > 10)
-            deviation_h_dot = 10;
-        else if (deviation_h_dot < -10)
-            deviation_h_dot = -10;
+        if (deviation_h_dot > 12)
+            deviation_h_dot = 12;
+        else if (deviation_h_dot < -12)
+            deviation_h_dot = -12;
         //模糊控制得到P和D
         // if(ring_state == RING_IN)   //使圆环更加圆滑
         //     deviation_h = 0.6 * deviation_h;
@@ -217,7 +217,15 @@ int16 direction_control(void)
         // if(car_info.state == RAMP_UP)
         //     deviation_h = 0.3 * deviation_h;
         direction_pd_fuzzy(deviation_h, &turn_p, &turn_d);  //模糊控制得到p，d
-        motor_turn = (int16)(turn_p * deviation_h  + turn_d * deviation_h_dot * 2);
+        // turn_p = 8;
+        // turn_d = 0;
+        motor_turn = (int16)(turn_p * deviation_h * 0.86 + turn_d * deviation_h_dot * 2.5);
+        /*if(motor_turn - motor_turn_last > 100)
+            motor_turn = motor_turn_last + 100;
+        else if(motor_turn - motor_turn_last < -100)
+            motor_turn = motor_turn_last - 100;*/
+        // motor_turn = (19 * motor_turn_last + motor_turn) / 20;
+        motor_turn_last = motor_turn;
         return motor_turn;
     }
     else        //竖电感入环
@@ -230,31 +238,36 @@ int16 direction_control(void)
         {
             motor_stop();
         }
-        if (deviation_l > 145)
+        if (deviation_l > 210)
         {
-            deviation_l = 145;
+            deviation_l = 210;
         }
-        else if (deviation_l < -145)
+        else if (deviation_l < -210)
         {
-            deviation_l = -145;
+            deviation_l = -210;
         }
-        /*if(deviation_l - deviation_l_reg > 15)
+        if(deviation_l - deviation_l_reg > 15)
             deviation_l = deviation_l_reg + 15;
         else if(deviation_l - deviation_l_reg < -15)
-            deviation_l = deviation_l_reg - 15;*/
+            deviation_l = deviation_l_reg - 15;
         //根据不同偏移量进行不同的偏移量求解
-        if(deviation_l < 50 && deviation_l > -50)
+        if(deviation_l < 100 && deviation_l > -100)
             deviation_l_dot = (4*deviation_l_dot + deviation_l - deviation_l_reg)/5;
         else
             deviation_l_dot = (9*deviation_l_dot + deviation_l - deviation_l_reg)/10;
         deviation_l_reg = deviation_l;
         //偏差变化率限幅
-        if (deviation_l_dot > 10)
-            deviation_l_dot = 10;
-        else if (deviation_l_dot < -10)
-            deviation_l_dot = -10;
+        if (deviation_l_dot > 12)
+            deviation_l_dot = 12;
+        else if (deviation_l_dot < -12)
+            deviation_l_dot = -12;
         direction_pd_fuzzy(deviation_l * 0.4, &turn_p, &turn_d);  //模糊控制得到p，d
         motor_turn = (int16)(turn_p * deviation_l  + turn_d * deviation_l_dot);
+        /*if(motor_turn - motor_turn_last > 300)
+            motor_turn = motor_turn_last + 300;
+        else if(motor_turn - motor_turn_last < -300)
+            motor_turn = motor_turn_last - 300;*/
+        motor_turn_last = motor_turn;
         if(ring_dir == LEFT)        //左环不向右转，右环同理
             motor_turn = motor_turn>0 ? motor_turn : 0;
         else if(ring_dir == RIGHT)
@@ -284,12 +297,12 @@ void take_off(void)
  ***************************/
 void direction_pd_fuzzy(int16 deviation, float *p, float *d)
 {
-    /*static int16 deviation_table[13] = {-120, -105, -90, -65, -45, -20, 0, 20, 45, 65, 90, 105, 120};    //注意分割，转弯时尽量控制在70以内
-    static float turn_p_table[13] =     { 18,   21,  24,  28,  26,  18, 15, 18, 26, 28, 24, 21,  18};
-    static float turn_d_table[13] =     {800,  750, 700, 600, 480, 350, 260, 350, 480, 600, 700, 750, 800};*/
-    static int16 deviation_table[15] = {-145, -120, -85, -65, -45, -30, -10, 0, 10, 30, 45, 65, 85, 120, 145};    //注意分割，转弯时尽量控制在70以内
-    static float turn_p_table[15] =     { 8,   11,   14,  16,  23,  25,  25, 18, 25, 25, 23, 16, 14,  11,  8 };
-    static float turn_d_table[15] =     {1000, 1000,  850, 700, 660, 600, 500, 400, 500, 600, 660, 700, 850, 1000, 1000};
+    // static int16 deviation_table[15] = {-150, -120, -100, -80, -60, -45, -20, 0, 20, 45, 60, 80, 100, 120, 150};    //注意分割，转弯时尽量控制在70以内
+    // static float turn_p_table[15] =     { 10,   12,   14,  13,  12,  11,    9, 7,  9, 11, 12, 13, 14,  12,  10 };
+    // static float turn_d_table[15] =     {750, 700,  620, 500, 400, 320, 200,150, 200, 320, 400, 500, 620, 700, 750};
+    static int16 deviation_table[15] = {-195, -160, -125, -90, -75, -45, -15, 0, 15, 45, 75, 90, 125, 160, 195};    //注意分割，转弯时尽量控制在70以内
+    static float turn_p_table[15] =     { 5.5, 6.5,   8,  9.5,  9,   8,    6, 4,  6,  8,  9, 9.5,  8, 6.5,  5.5 };
+    static float turn_d_table[15] =     {440, 380,  320, 280, 240, 210,  180,  120, 180, 210, 240, 280, 320, 380, 440};
     int8 i;
     if(deviation <= deviation_table[0])
     {

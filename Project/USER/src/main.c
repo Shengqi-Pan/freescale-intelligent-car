@@ -44,14 +44,14 @@ void main()
     l_init();  // ad初始化
     encoder_init();  // 编码器初始化
     // ccd_init();  // 线性ccd初始化
-    motor_output(0, 0);
     delay_ms(10);
     EnableGlobalIRQ(); //  开启总中断
     while(1)
     {
         // 上位机示波器查看
-        data_conversion(ad[0], ad[1], ad[2], ad[3], virtual_scope_data);
-        uart_putbuff(WIRELESS_UART, virtual_scope_data, sizeof(virtual_scope_data));
+        data_conversion(ad[0], ad[1], test[0], test[1], virtual_scope_data);
+        // uart_putbuff(WIRELESS_UART, virtual_scope_data, sizeof(virtual_scope_data));
+        seekfree_wireless_send_buff(virtual_scope_data, sizeof(virtual_scope_data));
         //  ccd_send_data(WIRELESS_UART, ccd_data);
     }
 }
