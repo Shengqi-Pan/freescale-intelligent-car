@@ -44,7 +44,7 @@ float speed_control(int16 speed_real, int16 speed_set)
     static int16 speed_deviation, speed_deviation_integrate;
     static int8 integrate_discard_cnt;          //积分项定时清0
     speed_deviation = speed_real - speed_set;  // 实际速度和设定速度差值
-    if(++integrate_discard_cnt == 20)           //3ms清一次0
+    if(++integrate_discard_cnt == 20)           //30ms清一次0
     {
         integrate_discard_cnt = 0;
         speed_deviation_integrate = 0;
@@ -186,13 +186,13 @@ int16 direction_control(void)
             motor_stop();
         }
         test[0] = deviation_h;          //test为全局数组，定义在car_info.h中，用于示波器调试
-        if (deviation_h > 210)      //限幅
+        if (deviation_h > 195)      //限幅
         {
-            deviation_h = 210;
+            deviation_h = 195;
         }
-        else if (deviation_h < -210)
+        else if (deviation_h < -195)
         {
-            deviation_h = -210;
+            deviation_h = -195;
         }
         /*if(deviation_h - deviation_h_reg > 15)        //变化率限幅
             deviation_h = deviation_h_reg + 15;
@@ -238,13 +238,13 @@ int16 direction_control(void)
         {
             motor_stop();
         }
-        if (deviation_l > 210)
+        if (deviation_l > 195)
         {
-            deviation_l = 210;
+            deviation_l = 195;
         }
-        else if (deviation_l < -210)
+        else if (deviation_l < -195)
         {
-            deviation_l = -210;
+            deviation_l = -195;
         }
         if(deviation_l - deviation_l_reg > 15)
             deviation_l = deviation_l_reg + 15;
@@ -300,9 +300,9 @@ void direction_pd_fuzzy(int16 deviation, float *p, float *d)
     // static int16 deviation_table[15] = {-150, -120, -100, -80, -60, -45, -20, 0, 20, 45, 60, 80, 100, 120, 150};    //注意分割，转弯时尽量控制在70以内
     // static float turn_p_table[15] =     { 10,   12,   14,  13,  12,  11,    9, 7,  9, 11, 12, 13, 14,  12,  10 };
     // static float turn_d_table[15] =     {750, 700,  620, 500, 400, 320, 200,150, 200, 320, 400, 500, 620, 700, 750};
-    static int16 deviation_table[15] = {-195, -160, -125, -90, -75, -45, -15, 0, 15, 45, 75, 90, 125, 160, 195};    //注意分割，转弯时尽量控制在70以内
-    static float turn_p_table[15] =     { 5.5, 6.5,   8,  9.5,  9,   8,    6, 4,  6,  8,  9, 9.5,  8, 6.5,  5.5 };
-    static float turn_d_table[15] =     {440, 380,  320, 280, 240, 210,  180,  120, 180, 210, 240, 280, 320, 380, 440};
+    static int16 deviation_table[15] = {-195, -160, -125, -90, -75, -45, -25, 0, 25, 45, 75, 90, 125, 160, 195};    //注意分割，转弯时尽量控制在70以内
+    static float turn_p_table[15] =     { 5,  5.7,   7,     8,  7.5,  7,    6, 2,  6,  7,  7.5,   8,  7, 5.7,  5 };
+    static float turn_d_table[15] =     {560, 520,  470, 430, 370, 330,  260,  180, 260, 330, 370, 430, 470, 520, 560};
     int8 i;
     if(deviation <= deviation_table[0])
     {

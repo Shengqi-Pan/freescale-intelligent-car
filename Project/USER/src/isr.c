@@ -172,7 +172,7 @@ void TM1_Isr() interrupt 3
     if (++encoder_read_cnt == 60)
     {
         encoder_read_cnt = 0;
-        // 读速度, 6ms一次
+        // 读速度, 90ms一次
         car_info.speed = get_speed(90);
     }
     if(encoder_read_cnt % 4 == 0)
