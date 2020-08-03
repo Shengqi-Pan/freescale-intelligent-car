@@ -11,7 +11,7 @@
 #include "zf_pwm.h"
 #include "car_info.h"
 
-#define AMPLITUDE_LIMIT 6000
+#define AMPLITUDE_LIMIT 8000
 #define AMPLITUDE_LIMIT_MIN 1000
 #define DEAD_TIME 40
 #define TURN_LIMIT 2500

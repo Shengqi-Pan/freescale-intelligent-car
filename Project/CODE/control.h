@@ -24,8 +24,8 @@
 #define SHU_FACTOR 30
 #define AMP_FACTOR 400.0
 
-#define SPEED_CONTROL_P 0.01
-#define SPEED_CONTROL_I 0.0001
+#define SPEED_CONTROL_P 0.03
+#define SPEED_CONTROL_I 0.0002
 
 
 extern int16 ad_test[4];
@@ -34,6 +34,6 @@ void induc_test(void);
 int16 direction_control(void);
 float speed_control(int16 speed_real, int16 speed_set);
 void take_off(void);
-void direction_pd_fuzzy(int16 deviation, float *p, float *d);
+void direction_pd_fuzzy(float deviation, float *p, float *d);
 
 #endif

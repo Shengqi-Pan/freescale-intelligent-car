@@ -145,7 +145,6 @@ void TM1_Isr() interrupt 3
     // ad12_test = adc_once(ADC_P15,ADC_10BIT);
     angle = get_angle_from_icm();
     omega = get_omega_from_icm();
-    test[1] = angle * 10;
     if (angle - car_info.angle > 13)
     {
         angle = car_info.angle + 13;
@@ -179,11 +178,11 @@ void TM1_Isr() interrupt 3
     }
     else
         motor_output(stand_duty, turn_duty);
-    if (++encoder_read_cnt == 60)
+    if (++encoder_read_cnt == 40)
     {
         encoder_read_cnt = 0;
         // 读速度, 90ms一次
-        car_info.speed = get_speed(90);
+        car_info.speed = get_speed(60);
     }
     if(encoder_read_cnt % 4 == 0)
     {
@@ -215,7 +214,7 @@ void TM1_Isr() interrupt 3
                     }
                     break;
                 case GO_STRAIGHT:
-                    if(car_info.distance > 50)
+                    if(car_info.distance > 200)
                     {
                         stop_distance_calc();
                         if(proceed_dir == 0)

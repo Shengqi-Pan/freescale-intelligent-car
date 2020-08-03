@@ -67,13 +67,13 @@ float speed_control(int16 speed_real, int16 speed_set)
         /************出/入弯控速************/
             // TODO:参数待调
             angle_bias = -(speed_deviation * SPEED_CONTROL_P + speed_deviation_integrate * SPEED_CONTROL_I);
-            angle_bias -= 2;
+            // angle_bias -= 2;
             break;
         case IN_TURN:
         /************弯中控速************/
             // TODO:参数待调
             angle_bias = -(speed_deviation * SPEED_CONTROL_P + speed_deviation_integrate * SPEED_CONTROL_I);
-            angle_bias -= 4;
+            // angle_bias -= 4;
             break;
         case RAMP_UP:
         /************上坡************/
@@ -117,6 +117,7 @@ float speed_control(int16 speed_real, int16 speed_set)
     if(angle_bias > 7 && speed_real < 1500)
         angle_bias = 7;
     angle_bias_last = angle_bias;
+    test[3] = angle_bias;
     return angle_bias;
 }
 
@@ -205,7 +206,6 @@ int16 direction_control(void)
         {
             motor_stop();
         }
-        test[0] = deviation_h;          //test为全局数组，定义在car_info.h中，用于示波器调试
         if (deviation_h > 195)      //限幅
         {
             deviation_h = 195;
@@ -214,6 +214,7 @@ int16 direction_control(void)
         {
             deviation_h = -195;
         }
+        test[0] = deviation_h;          //test为全局数组，定义在car_info.h中，用于示波器调试
         /*if(deviation_h - deviation_h_reg > 15)        //变化率限幅
             deviation_h = deviation_h_reg + 15;
         else if(deviation_h - deviation_h_reg < -15)
@@ -239,7 +240,7 @@ int16 direction_control(void)
         direction_pd_fuzzy(deviation_h, &turn_p, &turn_d);  //模糊控制得到p，d
         // turn_p = 8;
         // turn_d = 0;
-        motor_turn = (int16)(turn_p * deviation_h * 0.9 + turn_d * deviation_h_dot * 2.5);
+        motor_turn = (int16)(turn_p * deviation_h * 1.05 + turn_d * deviation_h_dot * 2.8);
         /*if(motor_turn - motor_turn_last > 100)
             motor_turn = motor_turn_last + 100;
         else if(motor_turn - motor_turn_last < -100)
@@ -310,19 +311,19 @@ void take_off(void)
 
 /***************************
  * @breif   模糊pd控制函数
- * @param   int16 deviation, float *turn_p, float *turn_d
+ * @param   deviation, float *turn_p, float *turn_d
  * @return  void
  * @note    返回转向时用的p、d参数
  * @author  btk
  ***************************/
-void direction_pd_fuzzy(int16 deviation, float *p, float *d)
+void direction_pd_fuzzy(float deviation, float *p, float *d)
 {
     // static int16 deviation_table[15] = {-150, -120, -100, -80, -60, -45, -20, 0, 20, 45, 60, 80, 100, 120, 150};    //注意分割，转弯时尽量控制在70以内
     // static float turn_p_table[15] =     { 10,   12,   14,  13,  12,  11,    9, 7,  9, 11, 12, 13, 14,  12,  10 };
     // static float turn_d_table[15] =     {750, 700,  620, 500, 400, 320, 200,150, 200, 320, 400, 500, 620, 700, 750};
-    static int16 deviation_table[15] = {-195, -160, -125, -90, -75, -45, -25, 0, 25, 45, 75, 90, 125, 160, 195};    //注意分割，转弯时尽量控制在70以内
-    static float turn_p_table[15] =     { 5,  5.7,   7,     8,  7.5,  8,    7, 6,  7,  8,  7.5,   8,  7, 5.7,  5 };
-    static float turn_d_table[15] =     {620, 550,  500, 430, 370, 230,  180,  120, 180, 230, 370, 430, 500, 550, 620};
+    static float deviation_table[15] = {-195, -160, -125, -90, -75, -45, -25, 0, 25, 45, 75, 90, 125, 160, 195};    //注意分割，转弯时尽量控制在70以内
+    static float turn_p_table[15] =     { 5,  6,   8,   8.5,  9,  9,    8, 6,  8,  9,  9,  8.5,  8, 6,  5 };
+    static float turn_d_table[15] =     {620, 550,  500, 430, 370, 280,  220,  180,220, 280, 370, 430, 500, 550, 620};
     int8 i;
     if(deviation <= deviation_table[0])
     {
@@ -386,4 +387,5 @@ void direction_pd_fuzzy(int16 deviation, float *p, float *d)
     {
         *d = *d * 3;
     }
+    return;
 }
