@@ -42,14 +42,15 @@ void main()
     seekfree_wireless_init();  // 无线串口初始化
     motor_init();  // 电机初始化
     l_init();  // ad初始化
+    // adc_init(ADC_P15, ADC_SYSclk_DIV_2);
     encoder_init();  // 编码器初始化
-    // ccd_init();  // 线性ccd初始化
+    ccd_init();  // 线性ccd初始化
     delay_ms(10);
     EnableGlobalIRQ(); //  开启总中断
     while(1)
     {
         // 上位机示波器查看
-        data_conversion(ad[0], ad[1], test[0], test[1], virtual_scope_data);
+        data_conversion(ad[0], ad[1], test[0], 0, virtual_scope_data);
         // uart_putbuff(WIRELESS_UART, virtual_scope_data, sizeof(virtual_scope_data));
         seekfree_wireless_send_buff(virtual_scope_data, sizeof(virtual_scope_data));
         //  ccd_send_data(WIRELESS_UART, ccd_data);

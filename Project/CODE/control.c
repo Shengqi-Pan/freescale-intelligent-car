@@ -52,7 +52,7 @@ float speed_control(int16 speed_real, int16 speed_set)
     speed_deviation_integrate += speed_deviation;   //积分项累加
     switch (car_info.state)
     {
-        case TAKE_OFF: case STRAIGHT_AHEAD: case RING:
+        case TAKE_OFF: case STRAIGHT_AHEAD: case RING: case STOP:
         /************直道控速************/
             if(speed_real < 1200)
             {
@@ -67,13 +67,13 @@ float speed_control(int16 speed_real, int16 speed_set)
         /************出/入弯控速************/
             // TODO:参数待调
             angle_bias = -(speed_deviation * SPEED_CONTROL_P + speed_deviation_integrate * SPEED_CONTROL_I);
-            angle_bias -= 3;
+            angle_bias -= 2;
             break;
         case IN_TURN:
         /************弯中控速************/
             // TODO:参数待调
             angle_bias = -(speed_deviation * SPEED_CONTROL_P + speed_deviation_integrate * SPEED_CONTROL_I);
-            angle_bias -= 6;
+            angle_bias -= 4;
             break;
         case RAMP_UP:
         /************上坡************/
@@ -114,8 +114,8 @@ float speed_control(int16 speed_real, int16 speed_set)
         angle_bias = angle_bias>12 ? 12 : angle_bias;
         angle_bias = angle_bias<-12 ? -12 : angle_bias;
     }*/
-    if(angle_bias > 5 && speed_real < 1500)
-        angle_bias = 5;
+    if(angle_bias > 7 && speed_real < 1500)
+        angle_bias = 7;
     angle_bias_last = angle_bias;
     return angle_bias;
 }
@@ -165,12 +165,32 @@ int16 direction_control(void)
     ad[2] = (4*ad[2] + l_s_1)/5;
     ad[3] = (4*ad[3] + l_s_2)/5;
     ad[4] = (4*ad[4] + l_h_m)/5;
-    if(car_info.state == TAKE_OFF && take_off_state == TURN_LEFT)
-        return 1300;
-    else if(car_info.state == TAKE_OFF && take_off_state == TURN_RIGHT)
-        return -1300;
-    else if(car_info.state == TAKE_OFF)
-        return 0;
+    switch(car_info.state)
+    {
+        case TAKE_OFF:
+            switch(take_off_state)
+            {
+                case TAKE_OFF_LEFT:
+                    return 1300;
+                case TAKE_OFF_RIGHT:
+                    return -1300;
+                default:
+                    return 0;
+            }
+            break;
+        case STOP:
+            switch(stop_state)
+            {
+                case STOP_LEFT:
+                    return 1000;
+                case STOP_RIGHT:
+                    return -1000;
+                default:
+                    return 0;
+            }
+            break;
+            
+    }
     sensor[0] = (int)(ad[0]*HENG_FACTOR/induc_ref[0]); // -angle_additional*低头ad变化/偏差度数 进行补偿 //归一化，小心溢出，factor取值不溢出越大越好
     sensor[1] = (int)(ad[1]*HENG_FACTOR/induc_ref[1]);
     sensor[2] = (int)(ad[2]*SHU_FACTOR/induc_ref[2]);
@@ -219,7 +239,7 @@ int16 direction_control(void)
         direction_pd_fuzzy(deviation_h, &turn_p, &turn_d);  //模糊控制得到p，d
         // turn_p = 8;
         // turn_d = 0;
-        motor_turn = (int16)(turn_p * deviation_h * 0.86 + turn_d * deviation_h_dot * 2.5);
+        motor_turn = (int16)(turn_p * deviation_h * 0.9 + turn_d * deviation_h_dot * 2.5);
         /*if(motor_turn - motor_turn_last > 100)
             motor_turn = motor_turn_last + 100;
         else if(motor_turn - motor_turn_last < -100)
@@ -301,8 +321,8 @@ void direction_pd_fuzzy(int16 deviation, float *p, float *d)
     // static float turn_p_table[15] =     { 10,   12,   14,  13,  12,  11,    9, 7,  9, 11, 12, 13, 14,  12,  10 };
     // static float turn_d_table[15] =     {750, 700,  620, 500, 400, 320, 200,150, 200, 320, 400, 500, 620, 700, 750};
     static int16 deviation_table[15] = {-195, -160, -125, -90, -75, -45, -25, 0, 25, 45, 75, 90, 125, 160, 195};    //注意分割，转弯时尽量控制在70以内
-    static float turn_p_table[15] =     { 5,  5.7,   7,     8,  7.5,  7,    6, 2,  6,  7,  7.5,   8,  7, 5.7,  5 };
-    static float turn_d_table[15] =     {560, 520,  470, 430, 370, 330,  260,  180, 260, 330, 370, 430, 470, 520, 560};
+    static float turn_p_table[15] =     { 5,  5.7,   7,     8,  7.5,  8,    7, 6,  7,  8,  7.5,   8,  7, 5.7,  5 };
+    static float turn_d_table[15] =     {620, 550,  500, 430, 370, 230,  180,  120, 180, 230, 370, 430, 500, 550, 620};
     int8 i;
     if(deviation <= deviation_table[0])
     {

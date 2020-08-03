@@ -38,8 +38,8 @@ typedef enum
 {
     STAND_UP,
     GO_STRAIGHT,
-    TURN_LEFT,
-    TURN_RIGHT
+    TAKE_OFF_LEFT,
+    TAKE_OFF_RIGHT
 }TakeOffState;
 
 //--------------    结束当前状态---------------//
@@ -99,4 +99,5 @@ extern RingState ring_state;
 extern TakeOffState take_off_state;
 extern float angle_test;
 extern StopState stop_state;
+extern uint16 ad12_test;
 #endif

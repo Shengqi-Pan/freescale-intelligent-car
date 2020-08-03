@@ -128,7 +128,7 @@ void TM1_Isr() interrupt 3
     static Omega omega;
     static float stand_duty;  //控直立的占空比
     static int16 speed_set = SPEED_STRAIGHT;  // 给定速度1000mm/s
-    static float angle_set = 6;  // 给定角度,要前进可以多给一些
+    static float angle_set = 3;  // 给定角度,要前进可以多给一些
     static float angle_bias = 0;  // 用于控直立的偏移角
     static int16 turn_duty = 0; //控转向的占空比    
     //--------------下面存一些定时间隔---------------//
@@ -142,8 +142,10 @@ void TM1_Isr() interrupt 3
     static uint8 proceed_dir = 0;   //用于指示方向
     static uint8 start_distance_flag = 0;
     // 读取角度和角速度并卡尔曼滤波
+    // ad12_test = adc_once(ADC_P15,ADC_10BIT);
     angle = get_angle_from_icm();
     omega = get_omega_from_icm();
+    test[1] = angle * 10;
     if (angle - car_info.angle > 13)
     {
         angle = car_info.angle + 13;
@@ -152,6 +154,14 @@ void TM1_Isr() interrupt 3
     {
         angle = car_info.angle - 13;
     }
+    /*if (angle> 50)
+    {
+        angle = 50;
+    }
+    else if (angle < -10)
+    {
+        angle = -10;
+    }*/
     kalman(angle, omega.y);
     // 测试 angle_test += omega.y;
     // 控直立
@@ -210,24 +220,24 @@ void TM1_Isr() interrupt 3
                         stop_distance_calc();
                         if(proceed_dir == 0)
                         {
-                            take_off_state = TURN_LEFT;
+                            take_off_state = TAKE_OFF_LEFT;
                             start_turn_angle_calc();
                         }
                         else
                         {
-                            take_off_state = TURN_RIGHT;
+                            take_off_state = TAKE_OFF_RIGHT;
                             start_turn_angle_calc();
                         }        
                     }
                     break;
-                case TURN_LEFT:
+                case TAKE_OFF_LEFT:
                     if(car_info.turn_angle < -70)
                     {
                         car_info.state = STRAIGHT_AHEAD;
                         stop_turn_angle_calc();
                     }
                     break;
-                case TURN_RIGHT:
+                case TAKE_OFF_RIGHT:
                     if(car_info.turn_angle > 70)
                     {
                         car_info.state = STRAIGHT_AHEAD;
@@ -416,16 +426,16 @@ void TM1_Isr() interrupt 3
             switch(stop_state)
             {
                 case TURN_READY:
-                    if(car_info.distance > 10)
+                    if(car_info.distance > 30)
                     {
                         stop_distance_calc();
                         if(proceed_dir == 0)
                         {
-                            stop_state = TURN_LEFT;
+                            stop_state = STOP_LEFT;
                         }
                         else if(proceed_dir == 1)
                         {
-                            stop_state = TURN_RIGHT;
+                            stop_state = STOP_RIGHT;
                         }
                         start_turn_angle_calc();
                     }
@@ -449,6 +459,7 @@ void TM1_Isr() interrupt 3
                     break;
                 default: break;
             }
+            speed_set = 500;
             break;
         default:
             break;

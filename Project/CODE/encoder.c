@@ -56,13 +56,16 @@ Speed get_speed(uint16 time)
     {
         // 对里程计数 里程单位mm
         // car_info.distance += (temp_pulse_left + temp_pulse_right) * 5.913411764705883 / 2;
-        car_info.distance += (temp_pulse_left + temp_pulse_right) * 5.9 / 2;
+        // car_info.distance += (temp_pulse_left + temp_pulse_right) * 5.9 / 2;
+        car_info.distance += (temp_pulse_left + temp_pulse_right) * 5.155 / 2;
     }
     // 计算速度 速度单位:mm/s
     // speed.left = (int16)(temp_pulse_left * 5913.411764705883 / time);
     // speed.right = (int16)(temp_pulse_right * 5913.411764705883 / time);
-    speed.left = (int16)(temp_pulse_left * 5913.4 / time);
-    speed.right = (int16)(temp_pulse_right * 5913.4 / time);
+    // speed.left = (int16)(temp_pulse_left * 5913.4 / time);
+    // speed.right = (int16)(temp_pulse_right * 5913.4 / time);
+    speed.left = (int16)(temp_pulse_left * 5167.05 / time);
+    speed.right = (int16)(temp_pulse_right * 5167.05 / time);
     speed.average = (4 * speed.average + (speed.left + speed.right) / 2) / 5;
     // 计算两轮差速
     speed.left_right_diff = (speed.left - speed.right);
