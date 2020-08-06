@@ -50,9 +50,9 @@ void main()
     while(1)
     {
         // 上位机示波器查看
-        data_conversion(car_info.speed.average, test[3], test[1], test[2], virtual_scope_data);
+        data_conversion(car_info.angle * 100, test[3], test[1], test[2], virtual_scope_data);
         // uart_putbuff(WIRELESS_UART, virtual_scope_data, sizeof(virtual_scope_data));
         seekfree_wireless_send_buff(virtual_scope_data, sizeof(virtual_scope_data));
-        //  ccd_send_data(WIRELESS_UART, ccd_data);
+        // ccd_send_data(WIRELESS_UART, ccd_data);
     }
 }

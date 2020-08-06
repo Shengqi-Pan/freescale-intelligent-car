@@ -10,9 +10,9 @@
 void motor_init(void)
 {
     pwm_init(PWM5_P00,  17000, 10000); //初始化PWM0  使用P00引脚  初始化频率为17Khz
-	// pwm_init(PWM6_P01,  17000, 0); //初始化PWM0  使用P01引脚  初始化频率为17Khz
+	pwm_init(PWM6_P01,  17000, 10000); //初始化PWM0  使用P01引脚  初始化频率为17Khz
 	pwm_init(PWM2P_P22, 17000, 10000); //初始化PWM2  使用P22引脚  初始化频率为17Khz
-	// pwm_init(PWM4P_P26, 17000, 0); //初始化PWM2  使用P26引脚  初始化频率为17Khz
+	pwm_init(PWM4P_P26, 17000, 0); //初始化PWM2  使用P26引脚  初始化频率为17Khz
 }
 
 void motor_output(float motor_angle_control, int16 motor_turn_control)
@@ -29,8 +29,8 @@ void motor_output(float motor_angle_control, int16 motor_turn_control)
     }
     motor_left = motor_angle_control - motor_turn_control;
     motor_right = motor_angle_control + motor_turn_control;  
-    // motor_left = motor_left>0 ? motor_left + 75 : motor_left - 75; //电机转差补偿，补偿1.5%
-    // motor_right = motor_right>0 ? motor_right - 75 : motor_right + 75;
+    motor_left = motor_left>0 ? motor_left + 50 : motor_left - 50; //电机转差补偿，补偿1.5%
+    motor_right = motor_right>0 ? motor_right - 50 : motor_right + 50;
     /*if(motor_left - motor_left_old >= 1000)
         motor_left = motor_left_old + 1000;
     else if(motor_left - motor_left_old <= -1000)
@@ -69,7 +69,7 @@ void motor_output(float motor_angle_control, int16 motor_turn_control)
         motor_right = -AMPLITUDE_LIMIT_MIN;
         motor_left -= AMPLITUDE_LIMIT_MIN + motor_right;
     }*/
-    if(motor_left > 0)
+    /*if(motor_left > 0)
     {
         motor_left += DEAD_TIME;
     }
@@ -84,7 +84,7 @@ void motor_output(float motor_angle_control, int16 motor_turn_control)
     else if(motor_right < 0)
     {
         motor_right -= DEAD_TIME;
-    }
+    }*/
     /*if(motor_left >= 0)
     {
         pwm_duty(PWM5_P00, (int)motor_left + 1000); //右电机弱，补强2%的占空比
@@ -110,22 +110,22 @@ void motor_output(float motor_angle_control, int16 motor_turn_control)
     if(motor_left >= 0)
     {
         pwm_duty(PWM5_P00, (uint16)(10000 - motor_left));
-        P01 = 0;
+        pwm_duty(PWM6_P01,  0);
     }
     else
     {
         pwm_duty(PWM5_P00, (uint16)(10000 + motor_left));
-        P01 = 1;
+        pwm_duty(PWM6_P01,  10000);
     }
     if(motor_right >= 0)
     {
         pwm_duty(PWM2P_P22, (uint16)(10000 - motor_right));
-        P26 = 1;
+        pwm_duty(PWM4P_P26,  10000);
     }
     else
     {
         pwm_duty(PWM2P_P22, (uint16)(10000 + motor_right));
-        P26 = 0;
+        pwm_duty(PWM4P_P26,  0);
     }
 }
 

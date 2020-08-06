@@ -21,18 +21,17 @@ uint8 is_ring()
     // uint8 i;
     // ad3_ad4_diff = ad[2] - ad[3];
     // ad3_ad4_diff_reg[3] = ad3_ad4_diff;
-    return 0;
-    if(ad[0] > (500 + (car_info.angle - 27) * (car_info.angle<27 ? 4 : 3)) && ad[1] > (400 + (car_info.angle - 27) * (car_info.angle<27 ? 4 : 3))) //TODO: 由于电感原因，右环条件可能需要进一步调节
+    if(ad[0] > (550 + (car_info.angle - 9) * (car_info.angle<9 ? 10 : 3)) && ad[1] > (420 + (car_info.angle - 9) * (car_info.angle<9 ? 10 : 3))) //TODO: 由于电感原因，右环条件可能需要进一步调节
     {
-        if(ad[2] > 1.5 * ad[3] && ad[2] > 50)
+        if(ad[2] > ad[3] && ad[2] > 160 + (car_info.angle - 9) * (car_info.angle<9 ? 10 : 3))
         {
             ring_dir = LEFT;
             return 1;
         }
     }
-    if(ad[1] > (500 + (car_info.angle - 27) * (car_info.angle<27 ? 4 : 3)) && ad[0] > (400 + (car_info.angle - 27) * (car_info.angle<27 ? 4 : 3)))
+    if(ad[1] > (550 + (car_info.angle - 9) * (car_info.angle<9 ? 10 : 3)) && ad[0] > (420 + (car_info.angle - 9) * (car_info.angle<9 ? 10 : 3)))
     {
-        if(ad[3] > 2.5 * ad[2] && ad[3] > 90)
+        if(ad[3] > ad[2] && ad[3] > 160 + (car_info.angle - 9) * (car_info.angle<9 ? 10 : 3))
         {
             ring_dir = RIGHT;
             return 1;
@@ -118,14 +117,14 @@ uint8 is_motor_tangent()
 {
     if(ring_dir == RIGHT)
     {
-        if(car_info.distance > 520 - (car_info.speed.average - 1700) / 5)  // 移动超过25cm
+        if(car_info.distance > 400)  // 移动超过25cm
             return 1;
         else
             return 0;
     }
     else
     {
-        if(car_info.distance > 520 - (car_info.speed.average - 1700) / 5)  // 移动超过10cm
+        if(car_info.distance > 400)  // 移动超过10cm
             return 1;
         else
             return 0;
@@ -164,6 +163,7 @@ uint8 is_terminal()
 {
     uint8 i = 0;
     uint16 sum = 0;
+    return 0;
     if (!tsl1401_finish_flag)
     {
         return 0;
@@ -172,7 +172,7 @@ uint8 is_terminal()
     {
         for (i = 0; i < 125; ++i)
         {
-            if((int16)(ccd_data[i+2] - ccd_data[i]) >= 200)
+            if((int16)(ccd_data[i+2] - ccd_data[i]) >= 100)
                 sum += 1;
         }
         tsl1401_finish_flag = 0;  // 清除标志位

@@ -128,7 +128,7 @@ void TM1_Isr() interrupt 3
     static Omega omega;
     static float stand_duty;  //控直立的占空比
     static int16 speed_set = SPEED_STRAIGHT;  // 给定速度1000mm/s
-    static float angle_set = 3;  // 给定角度,要前进可以多给一些
+    static float angle_set = 1;  // 给定角度,要前进可以多给一些
     static float angle_bias = 0;  // 用于控直立的偏移角
     static int16 turn_duty = 0; //控转向的占空比    
     //--------------下面存一些定时间隔---------------//
@@ -141,6 +141,14 @@ void TM1_Isr() interrupt 3
     static uint8 begin_flag = 1;        // 开始标志
     static uint8 proceed_dir = 0;   //用于指示方向
     static uint8 start_distance_flag = 0;
+    if(P44 == 0)
+    {
+        proceed_dir = 0;
+    }
+    else if(P44 == 1)
+    {
+        proceed_dir = 1;
+    }
     // 读取角度和角速度并卡尔曼滤波
     // ad12_test = adc_once(ADC_P15,ADC_10BIT);
     angle = get_angle_from_icm();
@@ -177,15 +185,13 @@ void TM1_Isr() interrupt 3
             begin_flag = 0;
     }
     else
-        motor_output(stand_duty, turn_duty);
-    if (++encoder_read_cnt == 40)
+        //motor_output(stand_duty, turn_duty);
+        motor_output(0, 0);
+    if (++encoder_read_cnt == 4)
     {
         encoder_read_cnt = 0;
         // 读速度, 90ms一次
-        car_info.speed = get_speed(60);
-    }
-    if(encoder_read_cnt % 4 == 0)
-    {
+        car_info.speed = get_speed(6);
         angle_bias = speed_control(car_info.speed.average, speed_set);
     }
 
@@ -256,6 +262,10 @@ void TM1_Isr() interrupt 3
             if (car_info.speed.left_right_diff > 600)
                 car_info.state = IN_TURN;
             speed_set = SPEED_STRAIGHT;
+            if(P45 == 0 && P40 == 1)
+                speed_set += 250;
+            else if(P45 == 1 && P40 == 0)
+                speed_set -= 250;
             // 判圆环
             if(is_ring())
             {
@@ -299,6 +309,10 @@ void TM1_Isr() interrupt 3
             if (car_info.speed.left_right_diff < 300)
                 car_info.state = STRAIGHT_AHEAD;
             speed_set = SPEED_CURL;
+            if(P45 == 0 && P40 == 1)
+                speed_set += 250;
+            else if(P45 == 1 && P40 == 0)
+                speed_set -= 250;
             if(is_ramp())
             {
                 LED = 0;
@@ -336,6 +350,10 @@ void TM1_Isr() interrupt 3
             if (car_info.speed.left_right_diff >= 300 && car_info.speed.left_right_diff <= 600)
                 car_info.state = INTO_TURN;
             speed_set = SPEED_CURL;
+            if(P45 == 0 && P40 == 1)
+                speed_set += 250;
+            else if(P45 == 1 && P40 == 0)
+                speed_set -= 250;
             if(is_ramp())
             {
                 LED = 0;
@@ -419,13 +437,17 @@ void TM1_Isr() interrupt 3
                     break;
             }
             speed_set = SPEED_CURL;
+            if(P45 == 0 && P40 == 1)
+                speed_set += 250;
+            else if(P45 == 1 && P40 == 0)
+                speed_set -= 250;
             break;
 
         case STOP:
             switch(stop_state)
             {
                 case TURN_READY:
-                    if(car_info.distance > 30)
+                    if(car_info.distance > 100)
                     {
                         stop_distance_calc();
                         if(proceed_dir == 0)
