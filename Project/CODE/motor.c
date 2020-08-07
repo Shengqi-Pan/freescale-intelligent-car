@@ -101,6 +101,11 @@ void motor_output(float motor_angle_control, int16 motor_turn_control)
 
 void motor_stop()
 {
+    pwm_duty(PWM5_P00,  1000); //初始化PWM0  使用P00引脚  初始化频率为17Khz
+    pwm_duty(PWM6_P01,  2500); //初始化PWM0  使用P01引脚  初始化频率为17Khz
+    pwm_duty(PWM2P_P22, 1000); //初始化PWM2  使用P22引脚  初始化频率为17Khz
+    pwm_duty(PWM4P_P26, 2500); //初始化PWM2  使用P26引脚  初始化频率为17Khz
+    delay_ms(800);
     while (1)
     {
         pwm_duty(PWM5_P00,  1000); //初始化PWM0  使用P00引脚  初始化频率为17Khz

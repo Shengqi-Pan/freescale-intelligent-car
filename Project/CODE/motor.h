@@ -10,8 +10,9 @@
 
 #include "zf_pwm.h"
 #include "car_info.h"
+#include "zf_delay.h"
 
-#define AMPLITUDE_LIMIT 8000
+#define AMPLITUDE_LIMIT 9500
 #define AMPLITUDE_LIMIT_MIN 1000
 #define DEAD_TIME 40
 

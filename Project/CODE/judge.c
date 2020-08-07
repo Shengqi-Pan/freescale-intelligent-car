@@ -16,13 +16,12 @@
  ***************************/
 uint8 is_ring()
 {
-    // static int16 ad3_ad4_diff;
-    // static int16 ad3_ad4_diff_reg[4];
-    // uint8 i;
-    // ad3_ad4_diff = ad[2] - ad[3];
-    // ad3_ad4_diff_reg[3] = ad3_ad4_diff;
-    return 0;
-    if(ad[0] > (550 + (car_info.angle - 9) * (car_info.angle<9 ? 10 : 3)) && ad[1] > (420 + (car_info.angle - 9) * (car_info.angle<9 ? 10 : 3))) //TODO: 由于电感原因，右环条件可能需要进一步调节
+    static int16 ad3_ad4_diff;
+    static int16 ad3_ad4_diff_reg[4] = {0,0,0,0};
+    uint8 i;
+    ad3_ad4_diff = ad[2] - ad[3];
+    ad3_ad4_diff_reg[3] = ad3_ad4_diff;
+    /*if(ad[0] > (550 + (car_info.angle - 9) * (car_info.angle<9 ? 10 : 3)) && ad[1] > (420 + (car_info.angle - 9) * (car_info.angle<9 ? 10 : 3))) //TODO: 由于电感原因，右环条件可能需要进一步调节
     {
         if(ad[2] > ad[3] && ad[2] > 160 + (car_info.angle - 9) * (car_info.angle<9 ? 10 : 3))
         {
@@ -37,6 +36,26 @@ uint8 is_ring()
             ring_dir = RIGHT;
             return 1;
         }
+    }*/
+    if(ad[0] > 700 && ad[1] > 580) //TODO: 由于电感原因，右环条件可能需要进一步调节
+    {
+        if(ad3_ad4_diff_reg[0] <= 0 && ad3_ad4_diff_reg[1] <= 0 && ad3_ad4_diff_reg[2] >=0 && ad3_ad4_diff_reg[3] >= 0 && ad[2] > 190)
+        {
+            ring_dir = LEFT;
+            return 1;
+        }
+    }
+    if(ad[0] > 580 && ad[1] > 700) //TODO: 由于电感原因，右环条件可能需要进一步调节
+    {
+        if(ad3_ad4_diff_reg[0] >= 0 && ad3_ad4_diff_reg[1] >= 0 && ad3_ad4_diff_reg[2] <=0 && ad3_ad4_diff_reg[3] <= 0 && ad[3] > 190)
+        {
+            ring_dir = RIGHT;
+            return 1;
+        }
+    }
+    for(i=0;i<3;++i)
+    {
+        ad3_ad4_diff_reg[i] = ad3_ad4_diff_reg[i+1];
     }
     return 0;
 }

@@ -114,8 +114,8 @@ float speed_control(int16 speed_real, int16 speed_set)
         angle_bias = angle_bias>12 ? 12 : angle_bias;
         angle_bias = angle_bias<-12 ? -12 : angle_bias;
     }*/
-    //if(angle_bias > 5 && speed_real < 1500)
-    //   angle_bias = 5;
+    if(angle_bias > 5 && speed_real < 1500)
+       angle_bias = 5;
     angle_bias_last = angle_bias;
     return angle_bias;
 }
@@ -182,9 +182,9 @@ int16 direction_control(void)
             switch(stop_state)
             {
                 case STOP_LEFT:
-                    return 1000;
+                    return 2800;
                 case STOP_RIGHT:
-                    return -1000;
+                    return -2800;
                 default:
                     return 0;
             }
@@ -203,7 +203,7 @@ int16 direction_control(void)
         deviation_l_reg = 0;
         deviation_l_dot = 0;
         //限幅
-        if((ad[0]<25 && ad[1]<25 && car_info.state != TAKE_OFF || car_info.angle < -15)) //意外情况电机抱死
+        if(0 && (ad[0]<25 && ad[1]<25 && car_info.state != TAKE_OFF || car_info.angle < -15)) //意外情况电机抱死
         {
             motor_stop();
         }
@@ -236,7 +236,7 @@ int16 direction_control(void)
         //     deviation_h = 0.6 * deviation_h;
         // else if(ring_state == RING_OUT)
         //     deviation_h = 0.8 * deviation_h;
-        // if(car_info.state == RAMP_UP)
+        // if(car_info.speed.average < 1000)
         //     deviation_h = 0.3 * deviation_h;
         direction_pd_fuzzy(deviation_h, &turn_p, &turn_d);  //模糊控制得到p，d
         // turn_p = 8;
@@ -323,9 +323,9 @@ void direction_pd_fuzzy(float deviation, float *p, float *d)
     // static float turn_p_table[15] =     { 10,   12,   14,  13,  12,  11,    9, 7,  9, 11, 12, 13, 14,  12,  10 };
     // static float turn_d_table[15] =     {750, 700,  620, 500, 400, 320, 200,150, 200, 320, 400, 500, 620, 700, 750};
     static float deviation_table[15] = {-195, -160, -125, -90, -75, -45, -25, 0, 25, 45, 75, 90, 125, 160, 195};    //注意分割，转弯时尽量控制在70以内
-    static float turn_p_table[15] =     { 5,     6,    7, 8.5,   9,  10,   8, 6,  8, 10,  9,8.5,   7,   6,  5 };
+    static float turn_p_table[15] =     { 5,     6,    7, 8.5,   9,  8.5,   8, 6,  8, 8.5,  9,8.5,   7,   6,  5 };
     // static float turn_d_table[15] =     {620, 550,  500, 430, 370, 280,  220,  180,220, 280, 370, 430, 500, 550, 620};
-    static float turn_d_table[15] =     {920, 820,  720, 650, 620, 590,  550, 520, 550, 590, 620, 650, 720, 820, 920};
+    static float turn_d_table[15] =     {960, 880,  820, 750, 720, 690,  650, 620, 650, 690, 720, 750, 820, 880, 960};
     int8 i;
     if(deviation <= deviation_table[0])
     {

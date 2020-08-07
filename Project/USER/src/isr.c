@@ -144,11 +144,11 @@ void TM1_Isr() interrupt 3
     test[1] = adc_once(ADC_P15,ADC_10BIT);	//采集ADC_P12电压，精度10位
     if(P44 == 0)
     {
-        proceed_dir = 0;
+        proceed_dir = 1;
     }
     else if(P44 == 1)
     {
-        proceed_dir = 1;
+        proceed_dir = 0;
     }
     // 读取角度和角速度并卡尔曼滤波
     // ad12_test = adc_once(ADC_P15,ADC_10BIT);
@@ -192,11 +192,11 @@ void TM1_Isr() interrupt 3
     {
         // 起步
         case TAKE_OFF:
-            // if(car_info.angle > -10)
-            // {
-            //     car_info.state = STRAIGHT_AHEAD;
-            // }
-            // break;
+            if(car_info.angle > -10)
+            {
+                car_info.state = STRAIGHT_AHEAD;
+            }
+            break;
             switch(take_off_state)
             {
                 case STAND_UP:
@@ -208,11 +208,11 @@ void TM1_Isr() interrupt 3
                     if(car_info.angle > -10)
                     {
                         take_off_state = GO_STRAIGHT;
-                        speed_set = 2000;
+                        speed_set = 1500;
                     }
                     break;
                 case GO_STRAIGHT:
-                    if(car_info.distance > 200)
+                    if(car_info.distance > 250)
                     {
                         stop_distance_calc();
                         if(proceed_dir == 0)
@@ -439,7 +439,7 @@ void TM1_Isr() interrupt 3
             switch(stop_state)
             {
                 case TURN_READY:
-                    if(car_info.distance > 100)
+                    if(car_info.distance > 0)
                     {
                         stop_distance_calc();
                         if(proceed_dir == 0)
@@ -454,14 +454,14 @@ void TM1_Isr() interrupt 3
                     }
                     break;
                 case STOP_LEFT:
-                    if(car_info.turn_angle < -75)
+                    if(car_info.turn_angle < -55)
                     {
                         stop_turn_angle_calc();
                         stop_state = STOP_BRAKE;
                     }
                     break;
                 case STOP_RIGHT:
-                    if(car_info.turn_angle > 75)
+                    if(car_info.turn_angle > 55)
                     {
                         stop_turn_angle_calc();
                         stop_state = STOP_BRAKE;
@@ -472,7 +472,7 @@ void TM1_Isr() interrupt 3
                     break;
                 default: break;
             }
-            speed_set = 500;
+            speed_set = -1200;
             break;
         default:
             break;
