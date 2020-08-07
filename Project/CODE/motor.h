@@ -12,9 +12,11 @@
 #include "car_info.h"
 #include "zf_delay.h"
 
-#define AMPLITUDE_LIMIT 9500
+#define AMPLITUDE_LIMIT 8700
 #define AMPLITUDE_LIMIT_MIN 1000
 #define DEAD_TIME 40
+
+#define MOTOR_STOP_P 1
 
 void motor_init(void);
 void motor_output(float motor_angle_control, int16 motor_turn_control);
