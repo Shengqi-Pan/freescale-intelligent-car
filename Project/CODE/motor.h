@@ -14,7 +14,6 @@
 #define AMPLITUDE_LIMIT 8000
 #define AMPLITUDE_LIMIT_MIN 1000
 #define DEAD_TIME 40
-#define TURN_LIMIT 2500
 
 void motor_init(void);
 void motor_output(float motor_angle_control, int16 motor_turn_control);

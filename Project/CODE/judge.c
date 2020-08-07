@@ -21,6 +21,7 @@ uint8 is_ring()
     // uint8 i;
     // ad3_ad4_diff = ad[2] - ad[3];
     // ad3_ad4_diff_reg[3] = ad3_ad4_diff;
+    return 0;
     if(ad[0] > (550 + (car_info.angle - 9) * (car_info.angle<9 ? 10 : 3)) && ad[1] > (420 + (car_info.angle - 9) * (car_info.angle<9 ? 10 : 3))) //TODO: 由于电感原因，右环条件可能需要进一步调节
     {
         if(ad[2] > ad[3] && ad[2] > 160 + (car_info.angle - 9) * (car_info.angle<9 ? 10 : 3))
@@ -163,7 +164,6 @@ uint8 is_terminal()
 {
     uint8 i = 0;
     uint16 sum = 0;
-    return 0;
     if (!tsl1401_finish_flag)
     {
         return 0;

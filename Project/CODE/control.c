@@ -21,7 +21,6 @@ float angle_control(float car_angle, float car_w, float angle_set)   //控直立
 {
     static float motor_angle_control, angle_control;
     angle_control = car_angle - angle_set;
-    test[3] = angle_set * 100;
     if(car_info.state == TAKE_OFF && take_off_state == STAND_UP)         //起步时p，d应用独立参数
         motor_angle_control = angle_control * ANGLE_CONTROL_P_BEGIN + car_w * ANGLE_CONTROL_D_BEGIN;
     // else if(car_info.state == RAMP_UP || car_info.state == RAMP_DOWN)       //过坡时减p加d
@@ -68,13 +67,13 @@ float speed_control(int16 speed_real, int16 speed_set)
         /************出/入弯控速************/
             // TODO:参数待调
             angle_bias = -(speed_deviation * SPEED_CONTROL_P + speed_deviation_integrate * SPEED_CONTROL_I);
-            angle_bias -= 2;
+            angle_bias -= 4;
             break;
         case IN_TURN:
         /************弯中控速************/
             // TODO:参数待调
             angle_bias = -(speed_deviation * SPEED_CONTROL_P + speed_deviation_integrate * SPEED_CONTROL_I);
-            angle_bias -= 4;
+            angle_bias -= 7;
             break;
         case RAMP_UP:
         /************上坡************/
@@ -115,8 +114,8 @@ float speed_control(int16 speed_real, int16 speed_set)
         angle_bias = angle_bias>12 ? 12 : angle_bias;
         angle_bias = angle_bias<-12 ? -12 : angle_bias;
     }*/
-    if(angle_bias > 7 && speed_real < 1500)
-        angle_bias = 7;
+    //if(angle_bias > 5 && speed_real < 1500)
+    //   angle_bias = 5;
     angle_bias_last = angle_bias;
     return angle_bias;
 }
@@ -242,7 +241,7 @@ int16 direction_control(void)
         direction_pd_fuzzy(deviation_h, &turn_p, &turn_d);  //模糊控制得到p，d
         // turn_p = 8;
         // turn_d = 0;
-        motor_turn = (int16)(turn_p * deviation_h * 0.93 + turn_d * deviation_h_dot * 2.8);
+        motor_turn = (int16)(turn_p * deviation_h * 0.94 + turn_d * deviation_h_dot * 2.3);
         /*if(motor_turn - motor_turn_last > 100)
             motor_turn = motor_turn_last + 100;
         else if(motor_turn - motor_turn_last < -100)
@@ -324,9 +323,9 @@ void direction_pd_fuzzy(float deviation, float *p, float *d)
     // static float turn_p_table[15] =     { 10,   12,   14,  13,  12,  11,    9, 7,  9, 11, 12, 13, 14,  12,  10 };
     // static float turn_d_table[15] =     {750, 700,  620, 500, 400, 320, 200,150, 200, 320, 400, 500, 620, 700, 750};
     static float deviation_table[15] = {-195, -160, -125, -90, -75, -45, -25, 0, 25, 45, 75, 90, 125, 160, 195};    //注意分割，转弯时尽量控制在70以内
-    static float turn_p_table[15] =     { 5,  6,   8,   8.5,  9,  9,    8, 6,  8,  9,  9,  8.5,  8, 6,  5 };
+    static float turn_p_table[15] =     { 5,     6,    7, 8.5,   9,  10,   8, 6,  8, 10,  9,8.5,   7,   6,  5 };
     // static float turn_d_table[15] =     {620, 550,  500, 430, 370, 280,  220,  180,220, 280, 370, 430, 500, 550, 620};
-    static float turn_d_table[15] =     {420, 420,  420, 400, 370, 280,  250,  220,250, 280, 370, 400, 420, 420, 420};
+    static float turn_d_table[15] =     {920, 820,  720, 650, 620, 590,  550, 520, 550, 590, 620, 650, 720, 820, 920};
     int8 i;
     if(deviation <= deviation_table[0])
     {

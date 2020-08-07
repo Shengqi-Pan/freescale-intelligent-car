@@ -24,7 +24,6 @@
 #include "motor.h"
 #include "encoder.h"
 #include "control.h"
-
 //board.h文件中FOSC的值设置为0,则程序自动识别系统频率
 
 /*board.h文件中FOSC的值设置不为0，则系统频率为FOSC的值，
@@ -32,7 +31,6 @@
 
 /*在board_init中,已经将P54引脚设置为复位，
 如果需要使用P54引脚,可以在board.c文件中的board_init()函数中删除SET_P54_RESRT即可*/
-
 void main()
 {
     DisableGlobalIRQ();  //  关闭总中断
@@ -50,7 +48,7 @@ void main()
     while(1)
     {
         // 上位机示波器查看
-        data_conversion(car_info.angle * 100, test[3], test[1], test[2], virtual_scope_data);
+        data_conversion(car_info.speed.average, ad[1], test[0], test[1], virtual_scope_data);
         // uart_putbuff(WIRELESS_UART, virtual_scope_data, sizeof(virtual_scope_data));
         seekfree_wireless_send_buff(virtual_scope_data, sizeof(virtual_scope_data));
         // ccd_send_data(WIRELESS_UART, ccd_data);

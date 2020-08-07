@@ -128,7 +128,7 @@ void TM1_Isr() interrupt 3
     static Omega omega;
     static float stand_duty;  //控直立的占空比
     static int16 speed_set = SPEED_STRAIGHT;  // 给定速度1000mm/s
-    static float angle_set = 1;  // 给定角度,要前进可以多给一些
+    static float angle_set = 0;  // 给定角度,要前进可以多给一些
     static float angle_bias = 0;  // 用于控直立的偏移角
     static int16 turn_duty = 0; //控转向的占空比    
     //--------------下面存一些定时间隔---------------//
@@ -141,6 +141,7 @@ void TM1_Isr() interrupt 3
     static uint8 begin_flag = 1;        // 开始标志
     static uint8 proceed_dir = 0;   //用于指示方向
     static uint8 start_distance_flag = 0;
+    test[1] = adc_once(ADC_P15,ADC_10BIT);	//采集ADC_P12电压，精度10位
     if(P44 == 0)
     {
         proceed_dir = 0;
@@ -161,14 +162,6 @@ void TM1_Isr() interrupt 3
     {
         angle = car_info.angle - 13;
     }
-    /*if (angle> 50)
-    {
-        angle = 50;
-    }
-    else if (angle < -10)
-    {
-        angle = -10;
-    }*/
     kalman(angle, omega.y);
     // 测试 angle_test += omega.y;
     // 控直立
@@ -185,8 +178,7 @@ void TM1_Isr() interrupt 3
             begin_flag = 0;
     }
     else
-        //motor_output(stand_duty, turn_duty);
-        motor_output(0, 0);
+        motor_output(stand_duty, turn_duty);
     if (++encoder_read_cnt == 4)
     {
         encoder_read_cnt = 0;
@@ -200,11 +192,11 @@ void TM1_Isr() interrupt 3
     {
         // 起步
         case TAKE_OFF:
-            if(car_info.angle > -10)
-            {
-                car_info.state = STRAIGHT_AHEAD;
-            }
-            break;
+            // if(car_info.angle > -10)
+            // {
+            //     car_info.state = STRAIGHT_AHEAD;
+            // }
+            // break;
             switch(take_off_state)
             {
                 case STAND_UP:
@@ -213,10 +205,10 @@ void TM1_Isr() interrupt 3
                         start_distance_calc();
                         start_distance_flag = 1;
                     }
-                    if(car_info.angle > 20)
+                    if(car_info.angle > -10)
                     {
                         take_off_state = GO_STRAIGHT;
-                        speed_set = 800;
+                        speed_set = 2000;
                     }
                     break;
                 case GO_STRAIGHT:
