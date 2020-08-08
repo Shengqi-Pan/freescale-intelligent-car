@@ -125,46 +125,41 @@ void motor_stop()
 void motor_stop_plus()
 {
     int16 motor_left, motor_right;   
-    while (1)
-    {
-        car_info.speed = get_speed(5);
-        motor_left = -MOTOR_STOP_P * car_info.speed.left;
-        motor_right = -MOTOR_STOP_P * car_info.speed.right;
-        if(car_info.speed.left < 50 && car_info.speed.left > -50)
-            motor_left = 0;
-        if(car_info.speed.right < 50 && car_info.speed.right > -50)
-            motor_right = 0;
-       
-        if(motor_left > AMPLITUDE_LIMIT)
-            motor_left = AMPLITUDE_LIMIT;
-        else if(motor_left < -AMPLITUDE_LIMIT)
-            motor_left = -AMPLITUDE_LIMIT;
-        if(motor_right > AMPLITUDE_LIMIT)
-            motor_right = AMPLITUDE_LIMIT;
-        else if(motor_right < -AMPLITUDE_LIMIT)
-            motor_right = -AMPLITUDE_LIMIT;
-        if(motor_left >= 0)
-        {
-            pwm_duty(PWM5_P00, (int)motor_left + 1000); //右电机弱，补强2%的占空比
-            pwm_duty(PWM6_P01, 1000);	
-        }
-        else
-        {
-            pwm_duty(PWM5_P00, 1000);
-            pwm_duty(PWM6_P01, (int)(-motor_left) + 1000);	
-        }
-        if(motor_right >= 0)
-        {
-            pwm_duty(PWM2P_P22, (int)motor_right + 1000);
-            pwm_duty(PWM4P_P26, 1000);	
-        }
-        else
-        {
-            pwm_duty(PWM2P_P22, 1000);
-            pwm_duty(PWM4P_P26, (int)(-motor_right) + 1000);	
-        }
-        delay_ms(5);
-    }
+    car_info.speed = get_speed(5);
+    motor_left = -MOTOR_STOP_P * car_info.speed.left;
+    motor_right = -MOTOR_STOP_P * car_info.speed.right;
+    if(car_info.speed.left < 50 && car_info.speed.left > -50)
+        motor_left = 0;
+    if(car_info.speed.right < 50 && car_info.speed.right > -50)
+        motor_right = 0;
     
-
+    if(motor_left > AMPLITUDE_LIMIT)
+        motor_left = AMPLITUDE_LIMIT;
+    else if(motor_left < -AMPLITUDE_LIMIT)
+        motor_left = -AMPLITUDE_LIMIT;
+    if(motor_right > AMPLITUDE_LIMIT)
+        motor_right = AMPLITUDE_LIMIT;
+    else if(motor_right < -AMPLITUDE_LIMIT)
+        motor_right = -AMPLITUDE_LIMIT;
+    if(motor_left >= 0)
+    {
+        pwm_duty(PWM5_P00, (int)motor_left + 1000); //右电机弱，补强2%的占空比
+        pwm_duty(PWM6_P01, 1000);	
+    }
+    else
+    {
+        pwm_duty(PWM5_P00, 1000);
+        pwm_duty(PWM6_P01, (int)(-motor_left) + 1000);	
+    }
+    if(motor_right >= 0)
+    {
+        pwm_duty(PWM2P_P22, (int)motor_right + 1000);
+        pwm_duty(PWM4P_P26, 1000);	
+    }
+    else
+    {
+        pwm_duty(PWM2P_P22, 1000);
+        pwm_duty(PWM4P_P26, (int)(-motor_right) + 1000);	
+    }
+    delay_ms(5);
 }

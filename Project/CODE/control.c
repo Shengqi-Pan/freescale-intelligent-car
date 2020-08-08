@@ -23,7 +23,7 @@ float angle_control(float car_angle, float car_w, float angle_set)   //控直立
     angle_control = car_angle - angle_set;
     if(car_info.state == TAKE_OFF && take_off_state == STAND_UP)         //起步时p，d应用独立参数
         motor_angle_control = angle_control * ANGLE_CONTROL_P_BEGIN + car_w * ANGLE_CONTROL_D_BEGIN;
-    else if(car_info.state == STOP)
+    else if(car_info.state == STOP && (stop_state = STOP_LEFT || stop_state = STOP_RIGHT))
         motor_angle_control = 2000;
     // else if(car_info.state == RAMP_UP || car_info.state == RAMP_DOWN)       //过坡时减p加d
     //     motor_angle_control = angle_control * (ANGLE_CONTROL_P - 300) + car_w * (ANGLE_CONTROL_D + 8);
@@ -101,6 +101,8 @@ float speed_control(int16 speed_real, int16 speed_set)
             // }
             return -20;
             break;
+        case STOP:
+            angle_bias = -(speed_deviation * SPEED_CONTROL_P + speed_deviation_integrate * SPEED_CONTROL_I);
         default:
             return 0;
             break;

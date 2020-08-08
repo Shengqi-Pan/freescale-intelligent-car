@@ -141,6 +141,7 @@ void TM1_Isr() interrupt 3
     static uint8 begin_flag = 1;        // 开始标志
     static uint8 proceed_dir = 0;   //用于指示方向
     static uint8 start_distance_flag = 0;
+    static int16 stop_distance_overshoot = 0;  // 结束过冲距离
     test[1] = adc_once(ADC_P15,ADC_10BIT);	//采集ADC_P12电压，精度10位
     test[2] = adc_once(ADC_P16,ADC_10BIT);	//采集ADC_P12电压，精度10位
     if(P44 == 0)
@@ -438,13 +439,21 @@ void TM1_Isr() interrupt 3
             break;
 
         case STOP:
-            motor_stop_plus();
             switch(stop_state)
             {
-                case TURN_READY:
-                    if(car_info.distance > 0)
+                case STOP_READY:
+                    // 先刹车，再倒车
+                    while(car_info.speed.average > 100)
                     {
-                        stop_distance_calc();
+                        motor_stop_plus();
+                    }
+                    stop_state = TURN_READY;
+                    speed_set = -200;
+                    break;
+                case TURN_READY:
+                    // stop_distance_calc();
+                    if(car_info.distance < 0)
+                    {
                         if(proceed_dir == 0)
                         {
                             stop_state = STOP_LEFT;
@@ -453,25 +462,26 @@ void TM1_Isr() interrupt 3
                         {
                             stop_state = STOP_RIGHT;
                         }
-                        start_turn_angle_calc();
                     }
-                    break;
+                    stop_distance_calc();
+                    start_turn_angle_calc();
                 case STOP_LEFT:
-                    if(car_info.turn_angle < -35)
+                    if(car_info.turn_angle < -90)
                     {
                         stop_turn_angle_calc();
                         stop_state = STOP_BRAKE;
                     }
                     break;
                 case STOP_RIGHT:
-                    if(car_info.turn_angle > 35)
+                    if(car_info.turn_angle > 90)
                     {
                         stop_turn_angle_calc();
                         stop_state = STOP_BRAKE;
                     }
                     break;
                 case STOP_BRAKE:
-                    motor_stop_plus();
+                    while (1)
+                        motor_stop_plus();
                     break;
                 default: break;
             }

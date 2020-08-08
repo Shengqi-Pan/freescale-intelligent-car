@@ -6,7 +6,7 @@ CarInfo car_info = {0, {0, 0}, {0, 0, 0, 0}, TAKE_OFF, 0, 0};
 RingState ring_state = NOT_A_RING;
 RingDir ring_dir = NOT_A_RING;
 TakeOffState take_off_state = STAND_UP;
-StopState stop_state = TURN_READY;
+StopState stop_state = STOP_READY;
 uint16 ad12_test;
 int16 test[4] = {0, 0, 0, 0};
 float angle_test = 0;
