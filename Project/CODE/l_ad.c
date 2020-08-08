@@ -10,6 +10,7 @@ void l_init(void)
 	adc_init(ADC_P14, ADC_SYSclk_DIV_2);						//P14引脚		
 	adc_init(ADC_P12, ADC_SYSclk_DIV_2);						//P12引脚，中间电感读取		
     adc_init(ADC_P15, ADC_SYSclk_DIV_2);						//P15引脚，电容电压读取		
+    adc_init(ADC_P16, ADC_SYSclk_DIV_2);						//P16引脚，电容电压读取		
 }
 
 void getl_once(void)

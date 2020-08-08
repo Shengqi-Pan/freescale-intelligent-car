@@ -142,6 +142,7 @@ void TM1_Isr() interrupt 3
     static uint8 proceed_dir = 0;   //用于指示方向
     static uint8 start_distance_flag = 0;
     test[1] = adc_once(ADC_P15,ADC_10BIT);	//采集ADC_P12电压，精度10位
+    test[2] = adc_once(ADC_P16,ADC_10BIT);	//采集ADC_P12电压，精度10位
     if(P44 == 0)
     {
         proceed_dir = 1;
@@ -395,7 +396,7 @@ void TM1_Isr() interrupt 3
                     break;
                 case RING_INTO:
                 // 用竖电感进环并在转过50度时移交控制权给横电感
-                    if(car_info.turn_angle > 50 || car_info.turn_angle < -50)
+                    if(car_info.turn_angle > 30 || car_info.turn_angle < -30)
                     {
                         LED = 0;
                         ring_state = RING_IN;
@@ -413,6 +414,7 @@ void TM1_Isr() interrupt 3
                 case RING_OUT:
                     if(++ring_out_cnt > 800)
                     {
+                        LED = 0;
                         ring_out_cnt = 0;
                         ring_dir = NOT_A_RING;
                         ring_state = NOT_A_RING;
@@ -428,7 +430,7 @@ void TM1_Isr() interrupt 3
                 default:
                     break;
             }
-            speed_set = SPEED_CURL;
+            speed_set = SPEED_CURL - 200;
             if(P45 == 0 && P40 == 1)
                 speed_set += 250;
             else if(P45 == 1 && P40 == 0)
@@ -436,6 +438,7 @@ void TM1_Isr() interrupt 3
             break;
 
         case STOP:
+            motor_stop_plus();
             switch(stop_state)
             {
                 case TURN_READY:
@@ -454,25 +457,24 @@ void TM1_Isr() interrupt 3
                     }
                     break;
                 case STOP_LEFT:
-                    if(car_info.turn_angle < -55)
+                    if(car_info.turn_angle < -35)
                     {
                         stop_turn_angle_calc();
                         stop_state = STOP_BRAKE;
                     }
                     break;
                 case STOP_RIGHT:
-                    if(car_info.turn_angle > 55)
+                    if(car_info.turn_angle > 35)
                     {
                         stop_turn_angle_calc();
                         stop_state = STOP_BRAKE;
                     }
                     break;
                 case STOP_BRAKE:
-                    motor_stop();
+                    motor_stop_plus();
                     break;
                 default: break;
             }
-            speed_set = -1200;
             break;
         default:
             break;

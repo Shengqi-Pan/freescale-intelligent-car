@@ -37,7 +37,7 @@ uint8 is_ring()
             return 1;
         }
     }*/
-    if(ad[0] > 700 && ad[1] > 580) //TODO: 由于电感原因，右环条件可能需要进一步调节
+    if(ad[0] > 600 && ad[1] > 580) //TODO: 由于电感原因，右环条件可能需要进一步调节
     {
         if(ad3_ad4_diff_reg[0] <= 0 && ad3_ad4_diff_reg[1] <= 0 && ad3_ad4_diff_reg[2] >=0 && ad3_ad4_diff_reg[3] >= 0 && ad[2] > 190)
         {
@@ -45,7 +45,7 @@ uint8 is_ring()
             return 1;
         }
     }
-    if(ad[0] > 580 && ad[1] > 700) //TODO: 由于电感原因，右环条件可能需要进一步调节
+    if(ad[0] > 580 && ad[1] > 600) //TODO: 由于电感原因，右环条件可能需要进一步调节
     {
         if(ad3_ad4_diff_reg[0] >= 0 && ad3_ad4_diff_reg[1] >= 0 && ad3_ad4_diff_reg[2] <=0 && ad3_ad4_diff_reg[3] <= 0 && ad[3] > 190)
         {
