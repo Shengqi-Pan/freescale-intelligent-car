@@ -161,16 +161,15 @@ uint8 is_motor_tangent()
 uint8 is_ramp()
 {
     return 0;
-    if(car_info.angle > 40)
-        return 0;
-    if(ad[4] > (induc_ref[4] + (0.37 * car_info.angle - 14) * car_info.angle) * 3 ) //已经乘了1.5
+    if(ad[4] > 330 && ad[0]<550 && ad[1] < 550)
     {
         return 1;
     }
     else
     {
         return 0;
-    } 
+    }
+    
 }
 
 /***************************

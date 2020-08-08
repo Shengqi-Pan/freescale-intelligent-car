@@ -21,12 +21,12 @@ float angle_control(float car_angle, float car_w, float angle_set)   //控直立
 {
     static float motor_angle_control, angle_control;
     angle_control = car_angle - angle_set;
-    if(car_info.state == TAKE_OFF && take_off_state == STAND_UP)         //起步时p，d应用独立参数
-        motor_angle_control = angle_control * ANGLE_CONTROL_P_BEGIN + car_w * ANGLE_CONTROL_D_BEGIN;
+    if(car_info.state == TAKE_OFF)         //起步时p，d应用独立参数
+        motor_angle_control = angle_control * ANGLE_CONTROL_P_BEGIN + car_w * ANGLE_CONTROL_D_BEGIN + 2000;
     else if(car_info.state == STOP)
         motor_angle_control = 5000 - car_info.speed.average * 1.4;
-    // else if(car_info.state == RAMP_UP || car_info.state == RAMP_DOWN)       //过坡时减p加d
-    //     motor_angle_control = angle_control * (ANGLE_CONTROL_P - 300) + car_w * (ANGLE_CONTROL_D + 8);
+    if(car_info.state == RAMP_UP || car_info.state == RAMP_DOWN)       //过坡时减p加d
+        motor_angle_control = angle_control * ANGLE_CONTROL_P + car_w * ANGLE_CONTROL_D + 5000;
     else
         motor_angle_control = angle_control * ANGLE_CONTROL_P + car_w * ANGLE_CONTROL_D;
     return motor_angle_control;
@@ -79,15 +79,14 @@ float speed_control(int16 speed_real, int16 speed_set)
             break;
         case RAMP_UP:
         /************上坡************/
-            // if(speed_real < 1200)
-            // {
-            //     angle_bias = -speed_deviation * SPEED_CONTROL_P;
-            // }
-            // else
-            // {
-            //     angle_bias = -(speed_deviation * SPEED_CONTROL_P + speed_deviation_integrate * SPEED_CONTROL_I);
-            // }
-            return -8;
+            if(speed_real < 1200)
+            {
+                angle_bias = -speed_deviation * SPEED_CONTROL_P;
+            }
+            else
+            {
+                angle_bias = -(speed_deviation * SPEED_CONTROL_P + speed_deviation_integrate * SPEED_CONTROL_I);
+            }
             break;
         case RAMP_DOWN:
         /************下坡************/
@@ -116,8 +115,8 @@ float speed_control(int16 speed_real, int16 speed_set)
         angle_bias = angle_bias>12 ? 12 : angle_bias;
         angle_bias = angle_bias<-12 ? -12 : angle_bias;
     }*/
-    if(angle_bias > 7 && speed_real < 1600)
-       angle_bias = 7;
+    if(angle_bias > 6 && speed_real < 1600)
+       angle_bias = 6;
     angle_bias_last = angle_bias;
     return angle_bias;
 }
@@ -158,8 +157,8 @@ int16 direction_control(void)
     }
     else if(ring_state == RING_INTO && ring_dir == RIGHT)
     {
-        induc_ref[2] = 100;
-        induc_ref[3] = 320;
+        induc_ref[2] = 140;
+        induc_ref[3] = 270;
     }
     getl_once();     //读一次电感值
     ad[0] = (4*ad[0] + l_h_1)/5;        //读取滤波
@@ -173,9 +172,9 @@ int16 direction_control(void)
             switch(take_off_state)
             {
                 case TAKE_OFF_LEFT:
-                    return 1000;
+                    return 900;
                 case TAKE_OFF_RIGHT:
-                    return -1000;
+                    return -750;
                 default:
                     return 0;
             }
@@ -205,7 +204,7 @@ int16 direction_control(void)
         deviation_l_reg = 0;
         deviation_l_dot = 0;
         //限幅
-        if((ad[0]<25 && ad[1]<25 && car_info.state != TAKE_OFF || car_info.angle < -15)) //意外情况电机抱死
+        if((ad[0]<25 && ad[1]<25 && car_info.state != TAKE_OFF)) //意外情况电机抱死
         {
             motor_stop();
         }
@@ -249,6 +248,8 @@ int16 direction_control(void)
         else if(motor_turn - motor_turn_last < -100)
             motor_turn = motor_turn_last - 100;*/
         // motor_turn = (19 * motor_turn_last + motor_turn) / 20;
+        if(car_info.state == RAMP_UP)
+            motor_turn *= 0.7;
         motor_turn_last = motor_turn;
         return motor_turn;
     }
@@ -285,7 +286,7 @@ int16 direction_control(void)
             deviation_l_dot = 12;
         else if (deviation_l_dot < -12)
             deviation_l_dot = -12;
-        direction_pd_fuzzy(deviation_l * 0.05, &turn_p, &turn_d);  //模糊控制得到p，d
+        direction_pd_fuzzy(deviation_l * 0.043, &turn_p, &turn_d);  //模糊控制得到p，d
         motor_turn = (int16)(turn_p * deviation_l  + turn_d * deviation_l_dot);
         /*if(motor_turn - motor_turn_last > 300)
             motor_turn = motor_turn_last + 300;
