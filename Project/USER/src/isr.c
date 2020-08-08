@@ -204,11 +204,11 @@ void TM1_Isr() interrupt 3
     {
         // Æð²½
         case TAKE_OFF:
-            // if(car_info.angle > -10)
-            // {
-            //     car_info.state = STRAIGHT_AHEAD;
-            // }
-            // break;
+            if(car_info.angle > -10)
+            {
+                car_info.state = STRAIGHT_AHEAD;
+            }
+            break;
             switch(take_off_state)
             {
                 case STAND_UP:

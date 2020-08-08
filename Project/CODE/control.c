@@ -152,12 +152,12 @@ int16 direction_control(void)
     static float turn_p, turn_d;
     if(ring_state == RING_INTO && ring_dir == LEFT) //左环右环进行不同的归一化
     {
-        induc_ref[2] = 420;
+        induc_ref[2] = 370;
         induc_ref[3] = 100;
     }
     else if(ring_state == RING_INTO && ring_dir == RIGHT)
     {
-        induc_ref[2] = 140;
+        induc_ref[2] = 100;
         induc_ref[3] = 270;
     }
     getl_once();     //读一次电感值
@@ -286,7 +286,7 @@ int16 direction_control(void)
             deviation_l_dot = 12;
         else if (deviation_l_dot < -12)
             deviation_l_dot = -12;
-        direction_pd_fuzzy(deviation_l * 0.043, &turn_p, &turn_d);  //模糊控制得到p，d
+        direction_pd_fuzzy(deviation_l * 0.06, &turn_p, &turn_d);  //模糊控制得到p，d
         motor_turn = (int16)(turn_p * deviation_l  + turn_d * deviation_l_dot);
         /*if(motor_turn - motor_turn_last > 300)
             motor_turn = motor_turn_last + 300;
