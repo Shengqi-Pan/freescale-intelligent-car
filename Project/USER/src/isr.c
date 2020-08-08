@@ -193,11 +193,11 @@ void TM1_Isr() interrupt 3
     {
         // Æð²½
         case TAKE_OFF:
-            if(car_info.angle > -10)
-            {
-                car_info.state = STRAIGHT_AHEAD;
-            }
-            break;
+            // if(car_info.angle > -10)
+            // {
+            //     car_info.state = STRAIGHT_AHEAD;
+            // }
+            // break;
             switch(take_off_state)
             {
                 case STAND_UP:
@@ -209,11 +209,11 @@ void TM1_Isr() interrupt 3
                     if(car_info.angle > -10)
                     {
                         take_off_state = GO_STRAIGHT;
-                        speed_set = 1500;
+                        speed_set = 1900;
                     }
                     break;
                 case GO_STRAIGHT:
-                    if(car_info.distance > 250)
+                    if(car_info.distance > 170)
                     {
                         stop_distance_calc();
                         if(proceed_dir == 0)
@@ -229,14 +229,14 @@ void TM1_Isr() interrupt 3
                     }
                     break;
                 case TAKE_OFF_LEFT:
-                    if(car_info.turn_angle < -70)
+                    if(car_info.turn_angle < -78)
                     {
                         car_info.state = STRAIGHT_AHEAD;
                         stop_turn_angle_calc();
                     }
                     break;
                 case TAKE_OFF_RIGHT:
-                    if(car_info.turn_angle > 70)
+                    if(car_info.turn_angle > 78)
                     {
                         car_info.state = STRAIGHT_AHEAD;
                         stop_turn_angle_calc();
@@ -438,7 +438,6 @@ void TM1_Isr() interrupt 3
             break;
 
         case STOP:
-            motor_stop_plus();
             switch(stop_state)
             {
                 case TURN_READY:

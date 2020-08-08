@@ -24,7 +24,7 @@ float angle_control(float car_angle, float car_w, float angle_set)   //控直立
     if(car_info.state == TAKE_OFF && take_off_state == STAND_UP)         //起步时p，d应用独立参数
         motor_angle_control = angle_control * ANGLE_CONTROL_P_BEGIN + car_w * ANGLE_CONTROL_D_BEGIN;
     else if(car_info.state == STOP)
-        motor_angle_control = 2000;
+        motor_angle_control = 5000 - car_info.speed.average * 1.4;
     // else if(car_info.state == RAMP_UP || car_info.state == RAMP_DOWN)       //过坡时减p加d
     //     motor_angle_control = angle_control * (ANGLE_CONTROL_P - 300) + car_w * (ANGLE_CONTROL_D + 8);
     else
@@ -116,8 +116,8 @@ float speed_control(int16 speed_real, int16 speed_set)
         angle_bias = angle_bias>12 ? 12 : angle_bias;
         angle_bias = angle_bias<-12 ? -12 : angle_bias;
     }*/
-    if(angle_bias > 6 && speed_real < 1500)
-       angle_bias = 6;
+    if(angle_bias > 7 && speed_real < 1600)
+       angle_bias = 7;
     angle_bias_last = angle_bias;
     return angle_bias;
 }
@@ -173,9 +173,9 @@ int16 direction_control(void)
             switch(take_off_state)
             {
                 case TAKE_OFF_LEFT:
-                    return 1300;
+                    return 1000;
                 case TAKE_OFF_RIGHT:
-                    return -1300;
+                    return -1000;
                 default:
                     return 0;
             }
