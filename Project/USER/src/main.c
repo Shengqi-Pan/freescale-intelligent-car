@@ -48,9 +48,9 @@ void main()
     while(1)
     {
         // 上位机示波器查看
-        data_conversion(ad[0], ad[1], ad[2], car_info.speed.average, virtual_scope_data);
+        // data_conversion(ad[0], car_info.speed.left, car_info.speed.right, car_info.speed.average, virtual_scope_data);
         // uart_putbuff(WIRELESS_UART, virtual_scope_data, sizeof(virtual_scope_data));
-        seekfree_wireless_send_buff(virtual_scope_data, sizeof(virtual_scope_data));
+        // seekfree_wireless_send_buff(virtual_scope_data, sizeof(virtual_scope_data));
         // ccd_send_data(WIRELESS_UART, ccd_data);
     }
 }

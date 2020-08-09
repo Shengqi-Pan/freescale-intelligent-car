@@ -235,7 +235,7 @@ int16 direction_control(void)
         if(ring_state == RING_IN)   //使圆环更加圆滑
             deviation_h = 0.5 * deviation_h;
         else if(ring_state == RING_OUT)
-            deviation_h = 0.06* deviation_h;
+            deviation_h = 0.1* deviation_h;
         // if(car_info.speed.average < 1000)
         //     deviation_h = 0.3 * deviation_h;
         direction_pd_fuzzy(deviation_h, &turn_p, &turn_d);  //模糊控制得到p，d
@@ -387,7 +387,7 @@ void direction_pd_fuzzy(float deviation, float *p, float *d)
     }*/
     if(ring_state == RING_OUT && car_info.state == RING)  //防止出环过调
     {
-        *d = *d * 1.1;
+        *d = *d * 1.2;
     }
     return;
 }

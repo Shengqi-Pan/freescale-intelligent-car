@@ -136,7 +136,7 @@ void motor_stop_plus()
             pwm_duty(PWM6_P01,  1000); //初始化PWM0  使用P01引脚  初始化频率为17Khz
             pwm_duty(PWM2P_P22, 4000); //初始化PWM2  使用P22引脚  初始化频率为17Khz
             pwm_duty(PWM4P_P26, 1000); //初始化PWM2  使用P26引脚  初始化频率为17Khz
-            delay_ms(150);
+            delay_ms(300);
         }
         car_info.speed = get_speed(5);
         motor_left = -MOTOR_STOP_P * car_info.speed.left;
