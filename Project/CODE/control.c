@@ -171,9 +171,9 @@ int16 direction_control(void)
             switch(take_off_state)
             {
                 case TAKE_OFF_LEFT:
-                    return 900;
+                    return 1100;
                 case TAKE_OFF_RIGHT:
-                    return -750;
+                    return -950;
                 default:
                     return 0;
             }

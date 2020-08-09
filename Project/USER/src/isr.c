@@ -176,7 +176,6 @@ void TM1_Isr() interrupt 3
         if(ad_mid > threshold)
         {
             begin_flag =0;   
-            LED = 0;
         }
     }
     if(begin_flag == 0)
@@ -255,25 +254,20 @@ void TM1_Isr() interrupt 3
                         start_distance_calc();
                         start_distance_flag = 1;
                     }
-                    if(car_info.angle > -10)
-                    {
-                        take_off_state = GO_STRAIGHT;
-                        speed_set = 2900;
-                    }
+                    take_off_state = GO_STRAIGHT;
+                    speed_set = 2900;
                     break;
                 case GO_STRAIGHT:
-                    if(car_info.distance > 140)
+                    if(car_info.distance > 130)
                     {
                         stop_distance_calc();
                         if(proceed_dir == 0)
                         {
-                            LED = 0;
                             take_off_state = TAKE_OFF_LEFT;
                             start_turn_angle_calc();
                         }
                         else
                         {
-                            LED = 0;
                             take_off_state = TAKE_OFF_RIGHT;
                             start_turn_angle_calc();
                         }        
@@ -282,6 +276,7 @@ void TM1_Isr() interrupt 3
                 case TAKE_OFF_LEFT:
                     if(car_info.turn_angle < -65)
                     {
+                        LED = 0;
                         car_info.state = STRAIGHT_AHEAD;
                         stop_turn_angle_calc();
                     }
@@ -289,6 +284,7 @@ void TM1_Isr() interrupt 3
                 case TAKE_OFF_RIGHT:
                     if(car_info.turn_angle > 65)
                     {
+                        LED = 0;
                         car_info.state = STRAIGHT_AHEAD;
                         stop_turn_angle_calc();
                     }
