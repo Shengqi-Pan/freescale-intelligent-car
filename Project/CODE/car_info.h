@@ -45,6 +45,7 @@ typedef enum
 //--------------    结束当前状态---------------//
 typedef enum
 {
+    STOP_READY,
     TURN_READY,
     STOP_LEFT,
     STOP_RIGHT,

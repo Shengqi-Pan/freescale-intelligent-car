@@ -100,6 +100,8 @@ float speed_control(int16 speed_real, int16 speed_set)
             // }
             return -20;
             break;
+        case STOP:
+            angle_bias = -(speed_deviation * SPEED_CONTROL_P + speed_deviation_integrate * SPEED_CONTROL_I);
         default:
             return 0;
             break;

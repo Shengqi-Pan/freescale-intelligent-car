@@ -176,6 +176,20 @@ void motor_stop_plus()
         }
         delay_ms(5);
     }
-    
-
+    else
+    {
+        pwm_duty(PWM5_P00, 1000);
+        pwm_duty(PWM6_P01, (int)(-motor_left) + 1000);	
+    }
+    if(motor_right >= 0)
+    {
+        pwm_duty(PWM2P_P22, (int)motor_right + 1000);
+        pwm_duty(PWM4P_P26, 1000);	
+    }
+    else
+    {
+        pwm_duty(PWM2P_P22, 1000);
+        pwm_duty(PWM4P_P26, (int)(-motor_right) + 1000);	
+    }
+    delay_ms(5);
 }

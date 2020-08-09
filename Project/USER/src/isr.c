@@ -486,10 +486,19 @@ void TM1_Isr() interrupt 3
         case STOP:
             switch(stop_state)
             {
-                case TURN_READY:
-                    if(car_info.distance > 0)
+                case STOP_READY:
+                    // 先刹车，再倒车
+                    while(car_info.speed.average > 100)
                     {
-                        stop_distance_calc();
+                        motor_stop_plus();
+                    }
+                    stop_state = TURN_READY;
+                    speed_set = -200;
+                    break;
+                case TURN_READY:
+                    // stop_distance_calc();
+                    if(car_info.distance < 0)
+                    {
                         if(proceed_dir == 0)
                         {
                             stop_state = STOP_LEFT;
@@ -498,9 +507,9 @@ void TM1_Isr() interrupt 3
                         {
                             stop_state = STOP_RIGHT;
                         }
-                        start_turn_angle_calc();
                     }
-                    break;
+                    stop_distance_calc();
+                    start_turn_angle_calc();
                 case STOP_LEFT:
                     if(car_info.turn_angle < -32)
                     {
@@ -516,7 +525,8 @@ void TM1_Isr() interrupt 3
                     }
                     break;
                 case STOP_BRAKE:
-                    motor_stop_plus();
+                    while (1)
+                        motor_stop_plus();
                     break;
                 default: break;
             }
