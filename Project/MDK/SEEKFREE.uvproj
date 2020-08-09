@@ -721,6 +721,11 @@
               <FileType>1</FileType>
               <FilePath>..\CODE\ccd.c</FilePath>
             </File>
+            <File>
+              <FileName>charge.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\CODE\charge.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -775,6 +780,11 @@
               <FileName>ccd.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\CODE\ccd.h</FilePath>
+            </File>
+            <File>
+              <FileName>charge.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\CODE\charge.h</FilePath>
             </File>
           </Files>
         </Group>

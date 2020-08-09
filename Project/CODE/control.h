@@ -18,8 +18,8 @@
 
 #define ANGLE_CONTROL_P 1000
 #define ANGLE_CONTROL_P_BEGIN 1000
-#define ANGLE_CONTROL_D 13
-#define ANGLE_CONTROL_D_BEGIN 13
+#define ANGLE_CONTROL_D 18
+#define ANGLE_CONTROL_D_BEGIN 18
 #define HENG_FACTOR 30
 #define SHU_FACTOR 30
 #define AMP_FACTOR 400.0
@@ -34,6 +34,6 @@ void induc_test(void);
 int16 direction_control(void);
 float speed_control(int16 speed_real, int16 speed_set);
 void take_off(void);
-void direction_pd_fuzzy(int16 deviation, float *p, float *d);
+void direction_pd_fuzzy(float deviation, float *p, float *d);
 
 #endif
