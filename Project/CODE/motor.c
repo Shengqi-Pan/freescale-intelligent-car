@@ -124,9 +124,20 @@ void motor_stop()
  ***************************/
 void motor_stop_plus()
 {
-    int16 motor_left, motor_right;   
+    int16 motor_left, motor_right;  
+    int16 forward_cnt = 0;
+    int16 forward_flag = 1;
     while (1)
     {
+        if(forward_flag == 1 && ++forward_cnt == 200)
+        {
+            forward_flag = 0;
+            pwm_duty(PWM5_P00,  4000); //初始化PWM0  使用P00引脚  初始化频率为17Khz
+            pwm_duty(PWM6_P01,  1000); //初始化PWM0  使用P01引脚  初始化频率为17Khz
+            pwm_duty(PWM2P_P22, 4000); //初始化PWM2  使用P22引脚  初始化频率为17Khz
+            pwm_duty(PWM4P_P26, 1000); //初始化PWM2  使用P26引脚  初始化频率为17Khz
+            delay_ms(150);
+        }
         car_info.speed = get_speed(5);
         motor_left = -MOTOR_STOP_P * car_info.speed.left;
         motor_right = -MOTOR_STOP_P * car_info.speed.right;
